@@ -1,9 +1,2 @@
-<h3>Ano, funguje to</h3>
-
-<a href="/">Home</a>
-
-<style>
-    :global(main){
-        background-color: green;
-    }
-</style>
+<h1>Welcome to login</h1>
+<p>Visit <a href="/">kit.svelte.dev</a>Home</p>
