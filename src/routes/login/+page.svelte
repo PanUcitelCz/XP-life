@@ -1,14 +1,28 @@
-<script lang="ts">
-    export let data: { users: Array<{ name: string; email: string }> };
+<script>
+  let nickname = '';
+  let password = '';
+
+  async function login() {
+    const formData = new FormData();
+    formData.append('nickname', nickname);
+    formData.append('password', password);
+
+    const response = await fetch('/login', {
+      method: 'POST',
+      body: formData
+    });
+
+    if (response.ok) {
+      alert('Login successful');
+      window.location.href = '/profile';
+    } else {
+      alert('Login failed');
+    }
+  }
 </script>
-  
-  
-<main>
-  <h1>Users</h1>
-  <ul>
-    {#each data.users as user}
-      <li>{user.name} ({user.email})</li>
-    {/each}
-  </ul>
-</main>
-  
+
+<form on:submit|preventDefault={login}>
+  <input type="text" bind:value={nickname} placeholder="Nickname" required />
+  <input type="password" bind:value={password} placeholder="Password" required />
+  <button type="submit">Login</button>
+</form>

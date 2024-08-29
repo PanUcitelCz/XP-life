@@ -8,6 +8,13 @@
       "when": 1724958376102,
       "tag": "0000_massive_psylocke",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1724968982582,
+      "tag": "0001_steady_malice",
+      "breakpoints": true
     }
   ]
 }
