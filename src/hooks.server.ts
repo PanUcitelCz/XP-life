@@ -11,8 +11,15 @@ export async function handle({ event, resolve }) {
       const user = await db.select().from(usersTable).where(eq(usersTable.id, parseInt(session))).get();
       if (user) {
         event.locals.user = user;
+        console.log('User found:', user); // Přidáno logování
+      } else {
+        console.log('User not found');
       }
+    } else {
+      console.log('Session not found');
     }
+  } else {
+    console.log('Cookie not found');
   }
   return resolve(event);
 }

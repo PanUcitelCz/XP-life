@@ -1,4 +1,5 @@
-<script>
+<script lang="ts">
+  import { enhance } from '$app/forms';
   let nickname = '';
   let password = '';
 
@@ -19,9 +20,10 @@
       alert('Login failed');
     }
   }
+  
 </script>
 
-<form on:submit|preventDefault={login}>
+<form on:submit|preventDefault={login} method="POST" use:enhance>
   <input type="text" bind:value={nickname} placeholder="Nickname" required />
   <input type="password" bind:value={password} placeholder="Password" required />
   <button type="submit">Login</button>

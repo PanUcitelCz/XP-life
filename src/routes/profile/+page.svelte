@@ -1,5 +1,7 @@
 <script lang="ts">
-  export let user: { nickname: string; email: string } | undefined;
+  const {data} = $props(); // Svelte 5 import data
+  
+  const user = data.props?.user; // props - writing select object
 
   async function logout() {
     await fetch('/logout', { method: 'POST' });
@@ -10,7 +12,7 @@
 {#if user}
   <h1>Welcome, {user.nickname}!</h1>
   <p>Email: {user.email}</p>
-  <button on:click={logout}>Logout</button>
+  <button onclick={logout}>Logout</button> <!-- onlick in svelte 5 -->
 {:else}
   <p>You are not logged in.</p>
-{/if}
+{/if} 

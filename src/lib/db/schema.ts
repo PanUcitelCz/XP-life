@@ -6,6 +6,7 @@ export const usersTable = sqliteTable('users', {
   email: text('email').unique().notNull(),
   nickname: text('nickname').unique().notNull(),
   password_hash: text('password_hash').notNull(),
+  token: text('token'), // Přidán sloupec pro token
   createdAt: text('created_at').default(sql`(CURRENT_TIMESTAMP)`).notNull(),
   updatedAt: integer('updated_at', { mode: 'timestamp' }).$onUpdate(() => new Date()),
 });

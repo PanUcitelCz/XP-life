@@ -15,6 +15,13 @@
       "when": 1724968982582,
       "tag": "0001_steady_malice",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1725205389519,
+      "tag": "0002_natural_gorilla_man",
+      "breakpoints": true
     }
   ]
 }

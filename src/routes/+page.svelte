@@ -1,5 +1,5 @@
 <h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="/login">kit.svelte.dev</a> to read the documentation</p>
+<p>Visit <a href="/login">Login</a> to read the documentation</p>
 
 <style lang="stylus">
     a

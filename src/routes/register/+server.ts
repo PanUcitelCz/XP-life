@@ -2,6 +2,8 @@ import { db } from '$lib/db';
 import { usersTable } from '$lib/db/schema';
 import bcrypt from 'bcryptjs';
 import { eq } from 'drizzle-orm';
+import { serialize } from 'cookie';
+import nodemailer from 'nodemailer';
 
 export async function POST({ request }) {
   const formData = await request.formData();
@@ -9,45 +11,82 @@ export async function POST({ request }) {
   const nickname = formData.get('nickname') as string;
   const password = formData.get('password') as string;
 
-  // Validace vstupů
   if (!email || !nickname || !password) {
-    console.error('Invalid input');
     return new Response('Invalid input', { status: 400 });
   }
 
-  // Kontrola, zda uživatel s daným emailem nebo přezdívkou již existuje
   try {
     const existingUserByNickname = await db.select().from(usersTable).where(eq(usersTable.nickname, nickname)).get();
     const existingUserByEmail = await db.select().from(usersTable).where(eq(usersTable.email, email)).get();
 
     if (existingUserByNickname || existingUserByEmail) {
-      console.error('User with this email or nickname already exists');
       return new Response('User with this email or nickname already exists', { status: 409 });
     }
   } catch (error) {
-    console.error('Error checking existing user:', error);
     return new Response('Error checking existing user', { status: 500 });
   }
 
-  // Hashování hesla
   let password_hash;
   try {
     password_hash = await bcrypt.hash(password, 10);
   } catch (error) {
-    console.error('Error hashing password:', error);
     return new Response('Error hashing password', { status: 500 });
   }
 
-  // Uložení uživatele do databáze
+  const token = generateToken(); // Generování tokenu
+
+  let user;
   try {
-    await db.insert(usersTable).values({
+    user = await db.insert(usersTable).values({
       email,
       nickname,
-      password_hash
-    }).run();
-    return new Response('User registered', { status: 201 });
+      password_hash,
+      token // Uložení tokenu
+    }).returning().get();
   } catch (error) {
-    console.error('Error registering user:', error);
     return new Response('Error registering user', { status: 500 });
   }
+
+  const cookie = serialize('session', user.id.toString(), {
+    httpOnly: true,
+    maxAge: 60 * 60 * 24 * 7,
+    sameSite: 'strict',
+    secure: true
+  });
+
+  // Odeslání ověřovacího e-mailu
+  try {
+    const transporter = nodemailer.createTransport({
+      host: 'smtp.resend.com',
+      port: 465,
+      secure: false, // true for 465, false for other ports
+      auth: {
+        user: 'resend',
+        pass: 're_cqj2nbNz_JuifGReNHGUG6K85fDpYpRZZ'
+      }
+    });
+
+    const mailOptions = {
+      from: 'smtp.resend.com',
+      to: email,
+      subject: 'Verify your email',
+      text: `Hello ${nickname}, please verify your email using this token: ${token}`
+    };
+
+    await transporter.sendMail(mailOptions);
+  } catch (error) {
+    return new Response('Error sending verification email', { status: 500 });
+  }
+
+  return new Response('User registered', {
+    status: 201,
+    headers: {
+      'Set-Cookie': cookie,
+      'Location': '/profile'
+    }
+  });
+}
+
+function generateToken() {
+  return Math.random().toString(36).substr(2); // Jednoduchý generátor tokenů
 }

@@ -23,4 +23,6 @@ export const db = drizzle(client);
             npx drizzle-kit generate - Create migrations documentions jason
             npx drizzle-kit push - Pushed schema.ts to db
 
+            alt + shift + a = coment celý blok
+
 */
