@@ -1,5 +1,7 @@
 <h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="/login">Login</a> to read the documentation</p>
+<a href="/login">Login</a>
+<a href="/register">Register</a>
+<a href="/profile">Profile</a>
 
 <style lang="stylus">
     a

@@ -3,4 +3,8 @@
 </script>
 
 <h1>{$page.error?.message}</h1>
-<p>Nejste přihlášený</p>    
+<p>Nejste přihlášený</p>
+
+<a href="/login">Login</a>
+<a href="/register">Register</a>
+<a href="/">Home page</a>

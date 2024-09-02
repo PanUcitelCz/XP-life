@@ -24,6 +24,12 @@
   }
 </script>
 
+<svelte:head><title>XP Life - Register</title></svelte:head>
+
+<a href="/login">Login</a>
+<a href="/profile">Profile</a>
+<a href="/">Home page</a>
+
 <form on:submit|preventDefault={register}>
   <input type="email" bind:value={email} placeholder="Email" required />
   <input type="text" bind:value={nickname} placeholder="Nickname" required />

@@ -1,12 +1,15 @@
 import fetch from 'node-fetch';
-import { SECRET_RESEND_API_KEY } from '$env/static/private' // Zde ho importují pomocí svelte.kit https://joyofcode.xyz/sveltekit-environment-variables
+import { SECRET_RESEND_API_KEY } from '$env/static/private';
 
-export async function sendEmail(to: string, subject: string, text: string) {
+export async function sendVerificationEmail(to: string, nickname: string, token: string) {
+  const subject = "Verify Your Email";
+  const text = `Hello ${nickname}, please verify your email by clicking on the following link: https://localhost/verify?token=${token}`;
+
   const response = await fetch('https://api.resend.com/v1/send', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${SECRET_RESEND_API_KEY}` // takhle se importuje pomocí svelte.kit
+      'Authorization': `Bearer ${SECRET_RESEND_API_KEY}`
     },
     body: JSON.stringify({
       to,

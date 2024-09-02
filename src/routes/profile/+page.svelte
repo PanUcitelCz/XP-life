@@ -9,6 +9,12 @@
   }
 </script>
 
+<svelte:head><title>XP Life - Profile</title></svelte:head>
+
+<a href="/login">Login</a>
+<a href="/register">Register</a>
+<a href="/">Home page</a>
+
 {#if user}
   <h1>Welcome, {user.nickname}!</h1>
   <p>Email: {user.email}</p>
