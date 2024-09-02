@@ -1,10 +1,15 @@
 <script lang="ts">
-  import { enhance } from '$app/forms';
+  import { goto } from '$app/navigation';  // Importování goto z SvelteKit
+  import { fade } from 'svelte/transition'; // Importování fade pro přechod
+
   let loginSuccess = false;
+  let notification = '';
   let nickname = '';
   let password = '';
 
   async function login() {
+    notification = '';
+
     const formData = new FormData();
     formData.append('nickname', nickname);
     formData.append('password', password);
@@ -15,27 +20,38 @@
     });
 
     if (response.ok) {
-      loginSuccess = true;
-      setTimeout(() => window.location.href = '/profile', 2000); // Přesměrování po 2 sekundách
+      const result = await response.json();
+      if (result.success) {
+        loginSuccess = true;
+        setTimeout(() => {
+          goto('/profile');
+        }, 1000); // Přesměrování s 2 sekundovým zpožděním
+      } else if (result.message === 'Please verify your email before logging in.') {
+        notification = 'Váš email nebyl ještě potvrzen. Prosím ověřte ho před přihlášením.';
+      } else {
+        notification = result.message;
+      }
     } else {
-      alert('Login failed');
+      const errorResult = await response.json();
+      notification = errorResult.message;
     }
   }
-  
 </script>
 
-<svelte:head><title>XP Life - Login</title></svelte:head>
-
-<a href="/register">Register</a>
 <a href="/profile">Profile</a>
+<a href="/register">Register</a>
 <a href="/">Home page</a>
 
-<form on:submit|preventDefault={login} method="POST" use:enhance>
+<form on:submit|preventDefault={login}>
   <input type="text" bind:value={nickname} placeholder="Nickname" required />
   <input type="password" bind:value={password} placeholder="Password" required />
   <button type="submit">Login</button>
 </form>
 
+{#if notification}
+  <div transition:fade class="notification">{notification}</div>
+{/if}
+
 {#if loginSuccess}
-  <div class="notification">Úspěšné přihlášení!</div>
+  <div transition:fade class="notification">Přihlášení úspěšné! Přesměrováváme na profil...</div>
 {/if}

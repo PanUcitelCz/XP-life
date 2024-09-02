@@ -1,11 +1,20 @@
 <script lang="ts">
-  const {data} = $props(); // Svelte 5 import data
+  import { goto } from '$app/navigation';  // Importování goto z SvelteKit
+  import { fade } from 'svelte/transition'; // Importování fade pro přechod
   
+  const { data } = $props(); // Svelte 5 import data
   const user = data.props?.user; // props - writing select object
 
   async function logout() {
-    await fetch('/logout', { method: 'POST' });
-    window.location.href = '/login';
+    const response = await fetch('/logout', { method: 'POST' });
+
+    if (response.ok) {
+      setTimeout(() => {
+        goto('/login'); // Přesměrování po úspěšném odhlášení
+      }, 1000); // 1 sekundové zpoždění před přesměrováním
+    } else {
+      alert('Logout failed');
+    }
   }
 </script>
 
@@ -21,4 +30,4 @@
   <button onclick={logout}>Logout</button> <!-- onlick in svelte 5 -->
 {:else}
   <p>You are not logged in.</p>
-{/if} 
+{/if}

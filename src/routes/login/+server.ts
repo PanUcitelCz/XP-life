@@ -10,23 +10,23 @@ export async function POST({ request }) {
   const password = formData.get('password') as string;
 
   if (!nickname || !password) {
-    return new Response('Invalid input', { status: 400 });
+    return new Response(JSON.stringify({ success: false, message: 'Invalid input' }), { status: 400 });
   }
 
   try {
     const user = await db.select().from(usersTable).where(eq(usersTable.nickname, nickname)).get();
 
     if (!user) {
-      return new Response('User not found', { status: 404 });
+      return new Response(JSON.stringify({ success: false, message: 'User not found' }), { status: 404 });
     }
 
     const valid = await bcrypt.compare(password, user.password_hash);
     if (!valid) {
-      return new Response('Invalid password', { status: 401 });
+      return new Response(JSON.stringify({ success: false, message: 'Invalid password' }), { status: 401 });
     }
 
     if (user.isEmailVerified !== 1) {
-      return new Response('Please verify your email before logging in.', { status: 403 });
+      return new Response(JSON.stringify({ success: false, message: 'Please verify your email before logging in.' }), { status: 403 });
     }
 
     await db.update(usersTable)
@@ -41,7 +41,7 @@ export async function POST({ request }) {
       secure: true
     });
 
-    return new Response('Login successful', {
+    return new Response(JSON.stringify({ success: true, message: 'Login successful' }), {
       status: 200,
       headers: {
         'Set-Cookie': cookie,
@@ -50,6 +50,6 @@ export async function POST({ request }) {
     });
   } catch (error) {
     console.error('Login error:', error);
-    return new Response('Internal Server Error', { status: 500 });
+    return new Response(JSON.stringify({ success: false, message: 'Internal Server Error' }), { status: 500 });
   }
 }
