@@ -13,52 +13,43 @@ export async function POST({ request }) {
     return new Response('Invalid input', { status: 400 });
   }
 
-  let user;
   try {
-    user = await db.select().from(usersTable).where(eq(usersTable.nickname, nickname)).get();
-  } catch (error) {
-    return new Response('Error finding user', { status: 500 });
-  }
+    const user = await db.select().from(usersTable).where(eq(usersTable.nickname, nickname)).get();
 
-  if (!user) {
-    return new Response('User not found', { status: 404 });
-  }
-
-  let valid;
-  try {
-    valid = await bcrypt.compare(password, user.password_hash);
-  } catch (error) {
-    return new Response('Error comparing password', { status: 500 });
-  }
-
-  if (!valid) {
-    return new Response('Invalid password', { status: 401 });
-  }
-
-  const token = generateToken(); // Generování tokenu
-
-  try {
-    await db.update(usersTable).set({ token }).where(eq(usersTable.id, user.id)).run();
-  } catch (error) {
-    return new Response('Error saving token', { status: 500 });
-  }
-
-  const cookie = serialize('session', user.id.toString(), {
-    httpOnly: true,
-    maxAge: 60 * 60 * 24 * 7,
-    sameSite: 'strict',
-    secure: true
-  });
-
-  return new Response('Login successful', {
-    status: 200,
-    headers: {
-      'Set-Cookie': cookie,
-      'Location': '/profile'
+    if (!user) {
+      return new Response('User not found', { status: 404 });
     }
-  });
-}
 
-function generateToken() {
-  return Math.random().toString(36).substr(2); // Jednoduchý generátor tokenů
+    const valid = await bcrypt.compare(password, user.password_hash);
+    if (!valid) {
+      return new Response('Invalid password', { status: 401 });
+    }
+
+    if (user.isEmailVerified !== 1) {
+      return new Response('Please verify your email before logging in.', { status: 403 });
+    }
+
+    await db.update(usersTable)
+      .set({ isOnline: 1 })
+      .where(eq(usersTable.id, user.id))
+      .run();
+
+    const cookie = serialize('session', user.id.toString(), {
+      httpOnly: true,
+      maxAge: 60 * 60 * 24 * 7,
+      sameSite: 'strict',
+      secure: true
+    });
+
+    return new Response('Login successful', {
+      status: 200,
+      headers: {
+        'Set-Cookie': cookie,
+        'Location': '/profile' // Přesměrování na profil pouze při úspěšném přihlášení
+      }
+    });
+  } catch (error) {
+    console.error('Login error:', error);
+    return new Response('Internal Server Error', { status: 500 });
+  }
 }

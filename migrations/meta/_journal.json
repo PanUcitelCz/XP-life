@@ -22,6 +22,13 @@
       "when": 1725205389519,
       "tag": "0002_natural_gorilla_man",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1725292460590,
+      "tag": "0003_even_maestro",
+      "breakpoints": true
     }
   ]
 }

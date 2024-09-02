@@ -19,41 +19,27 @@ export async function POST({ request }) {
     const existingUserByNickname = await db.select().from(usersTable).where(eq(usersTable.nickname, nickname)).get();
     const existingUserByEmail = await db.select().from(usersTable).where(eq(usersTable.email, email)).get();
 
-    if (existingUserByNickname || existingUserByEmail) { // Ošetření, že 'get' může vrátit 'undefined' nebo objekt
-      if (existingUserByNickname !== undefined || existingUserByEmail !== undefined) {
-        return new Response('User with this email or nickname already exists', { status: 409 });
-      }
+    if (existingUserByNickname || existingUserByEmail) {
+      return new Response('User with this email or nickname already exists', { status: 409 });
     }
-  } catch (error) {
-    console.error('Error checking existing user:', error);
-    return new Response('Error checking existing user', { status: 500 });
-  }
 
-  const password_hash = await bcrypt.hash(password, 10);
-  const token = Math.random().toString(36).substr(2); // Generování tokenu
+    const password_hash = await bcrypt.hash(password, 10);
+    const token = Math.random().toString(36).substr(2);
 
-  try {
     const user = await db.insert(usersTable).values({
       email,
       nickname,
       password_hash,
-      token // Uložení tokenu
+      token,
+      isEmailVerified: 0, // Nastavení jako neověřený
     }).returning().get();
 
     // Odeslání ověřovacího emailu
     await sendVerificationEmail(email, nickname, token);
 
-    const cookie = serialize('session', user.id.toString(), {
-      httpOnly: true,
-      maxAge: 60 * 60 * 24 * 7,
-      sameSite: 'strict',
-      secure: true
-    });
-
     return new Response('User registered. Please verify your email.', {
       status: 201,
       headers: {
-        'Set-Cookie': cookie,
         'Location': '/login'
       }
     });

@@ -1,5 +1,6 @@
 <script lang="ts">
   import { enhance } from '$app/forms';
+  let loginSuccess = false;
   let nickname = '';
   let password = '';
 
@@ -14,8 +15,8 @@
     });
 
     if (response.ok) {
-      alert('Login successful');
-      window.location.href = '/profile';
+      loginSuccess = true;
+      setTimeout(() => window.location.href = '/profile', 2000); // Přesměrování po 2 sekundách
     } else {
       alert('Login failed');
     }
@@ -34,3 +35,7 @@
   <input type="password" bind:value={password} placeholder="Password" required />
   <button type="submit">Login</button>
 </form>
+
+{#if loginSuccess}
+  <div class="notification">Úspěšné přihlášení!</div>
+{/if}
