@@ -1,6 +1,8 @@
 <script lang="ts">
   import { goto } from '$app/navigation';  // Importování goto z SvelteKit
   import { fade } from 'svelte/transition'; // Importování fade pro přechod
+  import FormButton from '../../lib/components/FormButton.svelte';
+  import Button from '../../lib/components/Button.svelte';
 
   let loginSuccess = false;
   let notification = '';
@@ -27,7 +29,7 @@
           goto('/profile');
         }, 1000); // Přesměrování s 2 sekundovým zpožděním
       } else if (result.message === 'Please verify your email before logging in.') {
-        notification = 'Váš email nebyl ještě potvrzen. Prosím ověřte ho před přihlášením.';
+        notification = 'The email has not been verified yet. Please verify it before logging in.';
       } else {
         notification = result.message;
       }
@@ -37,21 +39,94 @@
     }
   }
 </script>
+<div class="login">
+  <h1>Login in</h1>
+  <form on:submit|preventDefault={login}>
+    <input type="text" bind:value={nickname} placeholder="Nickname" required />
+    <input type="password" bind:value={password} placeholder="Password" required />
+    <FormButton type="submit" color="green">Login</FormButton>
+  </form>
+  <a href="/login">Forgot passowrd?</a>
+  <div class="login-buttons">
+    <Button href="/" color="grey" >Home</Button>
+    <Button href="/register" color="ghost">Register</Button>
+  </div>
+  {#if notification}
+    <div transition:fade class="notification">{notification}</div>
+  {/if}
 
-<a href="/profile">Profile</a>
-<a href="/register">Register</a>
-<a href="/">Home page</a>
+  {#if loginSuccess}
+    <div transition:fade class="notification" style="color: green">Login successful! Redirecting to your profile...</div>
+  {/if}
 
-<form on:submit|preventDefault={login}>
-  <input type="text" bind:value={nickname} placeholder="Nickname" required />
-  <input type="password" bind:value={password} placeholder="Password" required />
-  <button type="submit">Login</button>
-</form>
+</div>
 
-{#if notification}
-  <div transition:fade class="notification">{notification}</div>
-{/if}
 
-{#if loginSuccess}
-  <div transition:fade class="notification">Přihlášení úspěšné! Přesměrováváme na profil...</div>
-{/if}
+
+<style lang="stylus">
+  :global(main)
+    display flex
+    justify-content center
+    align-items center
+    flex-direction column
+
+  .login
+    display flex
+    flex-direction column
+    max-width 500px
+    width 100%
+    background white
+    padding 21px 0
+    justify-content center
+    align-items center
+    box-shadow: rgba(17, 12, 46, 0.15) 0px 48px 100px 0px
+    border-radius 10px
+    gap 10px
+    transition ease .3s
+    min-height 400px
+    
+    form
+      display flex
+      justify-content center
+      align-items center
+      flex-direction column
+      gap 21px
+      max-width 400px
+      width calc(100% - 10px)
+
+      input
+        width 100%
+        height 40px
+        border-radius 10px
+        border 0px
+        background #F6F5F5
+        text-align center
+        font-size 21px
+
+    a
+      text-decoration none
+      color #334257
+      transition ease .3s
+      padding 10px
+      border-radius 10px
+
+      &:hover
+        color black
+        background #F5F5F5
+
+    &-buttons
+      display flex
+      max-width 400px
+      width calc(100% - 10px)
+      justify-content center
+      align-items center
+      gap 10px
+
+    .notification
+      transition all ease .3s
+      font-size 30px
+      font-weight 600
+      color red
+      width calc(100% - 10px)
+      text-align center
+</style>

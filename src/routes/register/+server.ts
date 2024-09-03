@@ -19,11 +19,11 @@ export async function POST({ request }) {
     const existingUserByEmail = await db.select().from(usersTable).where(eq(usersTable.email, email)).get();
 
     if (existingUserByNickname) {
-      return new Response(JSON.stringify({ success: false, message: 'Tento nick již existuje, zkuste jiný' }), { status: 409 });
+      return new Response(JSON.stringify({ success: false, message: 'This username already exists, please try another one' }), { status: 409 });
     }
 
     if (existingUserByEmail) {
-      return new Response(JSON.stringify({ success: false, message: 'Tento email již existuje, zkuste jiný' }), { status: 409 });
+      return new Response(JSON.stringify({ success: false, message: 'This email already exists, please try another one' }), { status: 409 });
     }
 
     const password_hash = await bcrypt.hash(password, 10);
