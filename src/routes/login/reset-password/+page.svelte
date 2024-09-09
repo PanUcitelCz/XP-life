@@ -69,10 +69,7 @@
   <h1>Reset Password</h1>
   
   <form on:submit|preventDefault={resetPassword}>
-    <label for="newPassword">New Password</label>
     <input type="password" bind:value={newPassword} placeholder="Enter new password" required />
-  
-    <label for="confirmPassword">Confirm Password</label>
     <input type="password" bind:value={confirmPassword} placeholder="Confirm new password" required />
     
     <div class="form-buttons">
