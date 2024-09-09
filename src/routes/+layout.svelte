@@ -35,7 +35,7 @@
 <style lang="stylus">
 
     :global(body)
-        background-image url('/imgs/Home.svg')
+        background-image url('../lib/static/imgs/Home.svg')
         background-size cover
         background-position center
         background-size: cover; /* Zajistí, že se obrázek roztáhne tak, aby pokryl celé okno */
