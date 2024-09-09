@@ -4,12 +4,14 @@
   import FormButton from '../../lib/components/FormButton.svelte';
   import Button from '../../lib/components/Button.svelte';
 
-  let loginSuccess = false;
-  let notification = '';
-  let nickname = '';
-  let password = '';
+  // Reaktivní proměnné
+  let loginSuccess = $state(false);
+  let notification = $state('');
+  let nickname = $state('');
+  let password = $state('');
 
-  async function login() {
+  async function login(event: Event) {
+    event.preventDefault(); // Zamezíme přirozenému odeslání formuláře
     notification = '';
 
     const formData = new FormData();
@@ -27,7 +29,7 @@
         loginSuccess = true;
         setTimeout(() => {
           goto('/profile');
-        }, 1000); // Přesměrování s 2 sekundovým zpožděním
+        }, 1000); // Přesměrování s 1 sekundovým zpožděním
       } else if (result.message === 'Please verify your email before logging in.') {
         notification = 'The email has not been verified yet. Please verify it before logging in.';
       } else {
@@ -39,26 +41,30 @@
     }
   }
 </script>
+
 <div class="login">
-  <h1>Login in</h1>
-  <form on:submit|preventDefault={login}>
+  <h1>Login</h1>
+  <!-- Zde už není `|preventDefault`, používáme pouze `onsubmit` -->
+  <form onsubmit={login}>
     <input type="text" bind:value={nickname} placeholder="Nickname" required />
     <input type="password" bind:value={password} placeholder="Password" required />
     <FormButton type="submit" color="green">Login</FormButton>
   </form>
-  <a href="/login">Forgot passowrd?</a>
+  <a href="/login/forgot-password">Forgot password?</a>
   <div class="login-buttons">
-    <Button href="/" color="grey" >Home</Button>
+    <Button href="/" color="grey">Home</Button>
     <Button href="/register" color="ghost">Register</Button>
   </div>
+
   {#if notification}
     <div transition:fade class="notification">{notification}</div>
   {/if}
 
   {#if loginSuccess}
-    <div transition:fade class="notification" style="color: green">Login successful! Redirecting to your profile...</div>
+    <div transition:fade class="notification" style="color: green">
+      Login successful! Redirecting to your profile...
+    </div>
   {/if}
-
 </div>
 
 

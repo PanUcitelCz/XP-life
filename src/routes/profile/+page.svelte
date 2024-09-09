@@ -20,7 +20,7 @@
 
 <svelte:head><title>XP Life - Profile</title></svelte:head>
 
-<a href="/login">Login</a>
+<a href="/profile/settings">Profile settings</a>
 <a href="/register">Register</a>
 <a href="/">Home page</a>
 

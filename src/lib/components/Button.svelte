@@ -1,13 +1,14 @@
 <script lang="ts">
-    export let href: string;
-    export let color: string;
+    // Typové argumenty pro props
+    let { href, color, children } = $props<{ href: string, color: string, children: any }>();
 
-    $: buttonClass = `${color} button`;
+    let buttonClass = $derived(`${color} button`);
 </script>
 
 <a href="{href}" class={buttonClass}>
-    <slot />
+    {@render children()}
 </a>
+
 
 <style lang="stylus">
 

@@ -1,13 +1,16 @@
 <script lang="ts">
-    export let type: 'button' | 'submit' | 'reset' = 'button'; 
-    export let color: string;
+    // Použití $props() přímo, bez $state
+    let { type = 'submit', color, children } = $props<{ type: 'button' | 'submit' | 'reset', color: string, children: any }>();
 
-    $: buttonClass = `${color} button`;
+    // Derivace třídy
+    let buttonClass = $derived(`${color} button`);
 </script>
 
 <button type={type} class={buttonClass}>
-    <slot />
+    {@render children()}
 </button>
+
+
 
 <style lang="stylus">
     .button
