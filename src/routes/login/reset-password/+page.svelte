@@ -75,8 +75,7 @@
     <div class="form-buttons">
       <FormButton type="submit" color="green">Change</FormButton>
       <Button href="/profile" color="grey">Home</Button>
-  </div>
-    
+    </div>
   </form>
   
   {#if notification}
