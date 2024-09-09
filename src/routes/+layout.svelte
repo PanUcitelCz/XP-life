@@ -34,20 +34,28 @@
 
 <style lang="stylus">
 
-
     :global(body)
         background-image url('../lib/imgs/home.svg')
         background-size cover
         background-position center
+        background-size: cover; /* Zajistí, že se obrázek roztáhne tak, aby pokryl celé okno */
+        background-attachment: fixed;
         width 100%
-        height 100vh
+        min-height 100vh
         margin 0
         padding 0
         overflow visible
         font-family "Poppins", sans-serif
 
     :global(main)
-        height 100vh
+        min-height 100vh
+        max-width 1300px
+        margin auto
+        flex-direction column
+        padding 10px 5px
+        display grid
+        place-items: center
+        box-sizing border-box
 
     :global(body.page-transitioning)
         overflow hidden 

@@ -1,10 +1,13 @@
 import preprocess from 'svelte-preprocess';
 import adapter from '@sveltejs/adapter-auto';
-import path from 'path';
 
 export default {
   kit: {
     adapter: adapter(),
   },
-  preprocess: preprocess(),
+  preprocess: preprocess({
+    stylus: {
+      imports: ['./src/lib/css/global.styl'], // Globální import pro Stylus
+    },
+  }),
 };

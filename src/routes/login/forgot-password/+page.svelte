@@ -1,4 +1,6 @@
 <script lang="ts">
+    import FormButton from '$lib/components/FormButton.svelte';
+    import Button from '$lib/components/Button.svelte';
     import { goto } from '$app/navigation'; // Import funkce pro navigaci
   
     let email = '';
@@ -25,16 +27,23 @@
     }
   </script>
   
-  <h1>Forgot Password?</h1>
-  
-  <form on:submit|preventDefault={handleForgotPassword}>
-    <label for="email">Email Address</label>
-    <input type="email" bind:value={email} placeholder="Enter your email" required />
-  
-    <button type="submit">Send Reset Link</button>
-  </form>
-  
-  {#if notification}
-    <div class="notification">{notification}</div>
-  {/if}
-  
+  <div class="form">
+    <h1>Forgot Password?</h1>
+    <form on:submit|preventDefault={handleForgotPassword}>
+      <label for="email">Email Address</label>
+      <input type="email" bind:value={email} placeholder="Enter your email" required />
+      <div class="form-buttons">
+        <FormButton type="submit" color="green">Send</FormButton>
+        <Button href="/login" color="grey">Back</Button>
+      </div>
+    </form>
+    
+    
+    {#if notification}
+      <div class="notification">{notification}</div>
+    {/if}
+  </div>
+
+<style lang="stylus">
+  @import '../../../lib/css/form.styl'
+</style>

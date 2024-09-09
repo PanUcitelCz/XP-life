@@ -68,7 +68,7 @@
 
 <svelte:head><title>XP Life - Register</title></svelte:head>
 
-<div class="register">
+<div class="form">
   <h1>Register</h1>
   <form on:submit|preventDefault={register}>
     <input type="email" bind:value={email} placeholder="Email" required />
@@ -77,8 +77,7 @@
     <input type="password" bind:value={confirmPassword} placeholder="Confirm Password" required />
     <FormButton type="submit" color="green">Register new account</FormButton>
   </form>
-  <a href="/register">Forgot passowrd?</a>
-  <div class="register-buttons">
+  <div class="form-buttons">
     <Button href="/" color="grey" >Home</Button>
     <Button href="/login" color="ghost">Login</Button>
   </div>
@@ -93,69 +92,6 @@
 </div>
 
 <style lang="stylus">
-  :global(main)
-    display flex
-    justify-content center
-    align-items center
-    flex-direction column
-
-  .register
-    display flex
-    flex-direction column
-    max-width 500px
-    width 100%
-    background white
-    padding 21px 0
-    justify-content center
-    align-items center
-    box-shadow: rgba(17, 12, 46, 0.15) 0px 48px 100px 0px
-    border-radius 10px
-    gap 10px
-    transition ease .3s
-    min-height 400px
+  @import '../../lib/css/form.styl'
     
-    form
-      display flex
-      justify-content center
-      align-items center
-      flex-direction column
-      gap 21px
-      max-width 400px
-      width calc(100% - 10px)
-
-      input
-        width 100%
-        height 40px
-        border-radius 10px
-        border 0px
-        background #F6F5F5
-        text-align center
-        font-size 21px
-
-    a
-      text-decoration none
-      color #334257
-      transition ease .3s
-      padding 10px
-      border-radius 10px
-
-      &:hover
-        color black
-        background #F5F5F5
-
-    &-buttons
-      display flex
-      max-width 400px
-      width calc(100% - 10px)
-      justify-content center
-      align-items center
-      gap 10px
-
-    .notification
-      transition all ease .3s
-      font-size 30px
-      font-weight 600
-      color red
-      width calc(100% - 10px)
-      text-align center
 </style>

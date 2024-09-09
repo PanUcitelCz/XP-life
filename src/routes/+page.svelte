@@ -12,6 +12,7 @@
 </div>
 
 <style lang="stylus">
+    
     .Hero
         display flex
         flex-direction column

@@ -1,5 +1,7 @@
 <script lang="ts">
     import { goto } from '$app/navigation'; // Import funkce pro navigaci
+    import FormButton from '$lib/components/FormButton.svelte';
+    import Button from '$lib/components/Button.svelte';
   
     let newPassword = '';
     let confirmPassword = '';
@@ -61,8 +63,9 @@
         notification = result.message;
       }
     }
-  </script>
+</script>
   
+<div class="form">
   <h1>Reset Password</h1>
   
   <form on:submit|preventDefault={resetPassword}>
@@ -71,11 +74,19 @@
   
     <label for="confirmPassword">Confirm Password</label>
     <input type="password" bind:value={confirmPassword} placeholder="Confirm new password" required />
-  
-    <button type="submit">Change Password</button>
+    
+    <div class="form-buttons">
+      <FormButton type="submit" color="green">Change</FormButton>
+      <Button href="/profile" color="grey">Home</Button>
+  </div>
+    
   </form>
   
   {#if notification}
     <div class="notification">{notification}</div>
   {/if}
-  
+</div>
+
+<style lang="stylus">
+      @import '../../../lib/css/form.styl'
+</style>
