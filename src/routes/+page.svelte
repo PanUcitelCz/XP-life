@@ -26,6 +26,7 @@
             font-size clamp(50px, 10vw, 100px)
             margin 0
             text-align center
+            
         h2
             font-size clamp(30px, 10vw, 60px)
             margin 0
