@@ -1,40 +1,29 @@
-import { db } from '$lib/db'; // Zde odkaž na tvůj databázový přístup
-import { activitiesTable, userActivitiesTable } from '$lib/db/schema';
-import { error, json, type RequestEvent } from '@sveltejs/kit';
-import { eq, and } from 'drizzle-orm';
+import { db } from '$lib/db'; // Import databázové instance
+import { usersTable, activitiesTable } from '$lib/db/schema'; // Importuj obě tabulky
+import { eq } from 'drizzle-orm';
+import { json, error, type RequestEvent } from '@sveltejs/kit';
 
 export async function POST({ request }: RequestEvent) {
-  const { userId, activityName, category } = await request.json();
+  const { userId, category, activityName, description, difficulty } = await request.json();
 
-  // Zjisti, zda již aktivita existuje
-  let activity = await db.select().from(activitiesTable).where(eq(activitiesTable.name, activityName)).get();
-  
-  // Pokud aktivita neexistuje, vytvoříme ji
-  if (!activity) {
-    const [newActivity] = await db.insert(activitiesTable).values({
-      name: activityName,
-      category: category,
-    }).returning();
-    activity = newActivity;
+  // Zkontroluj, zda uživatel existuje
+  const user = await db.select().from(usersTable).where(eq(usersTable.id, userId)).get();
+
+  if (!user) {
+    throw error(400, 'User not found');
   }
 
-  // Zkontroluj, zda uživatel už tuto aktivitu nemá
-  const userActivity = await db.select().from(userActivitiesTable)
-    .where(and(eq(userActivitiesTable.userId, userId), eq(userActivitiesTable.activityId, activity.id)))
-    .get();
-    
-  if (userActivity) {
-    throw error(400, 'User already has this activity.');
-  }
-
-  // Přidej aktivitu uživateli
-  await db.insert(userActivitiesTable).values({
+  // Vložení nové aktivity do tabulky activities
+  await db.insert(activitiesTable).values({
     userId,
-    activityId: activity.id,
+    activityName,
+    category,
     level: 1,
     points: 0,
-    lastXPAdded: null,
+    description,
+    difficulty,
+    createdAt: new Date().toISOString(),
   });
 
-  return json({ message: 'Activity added successfully!' });
+  return json({ message: 'Activity added successfully' });
 }

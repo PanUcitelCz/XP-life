@@ -43,6 +43,62 @@
       "when": 1726054762916,
       "tag": "0005_fast_the_renegades",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1726078406521,
+      "tag": "0006_black_nighthawk",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "6",
+      "when": 1726078742312,
+      "tag": "0007_lyrical_champions",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "6",
+      "when": 1726079129149,
+      "tag": "0008_curious_dreadnoughts",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "6",
+      "when": 1726079210483,
+      "tag": "0009_charming_meggan",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "6",
+      "when": 1726079359763,
+      "tag": "0010_charming_red_ghost",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "6",
+      "when": 1726079508759,
+      "tag": "0011_overconfident_sentry",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "6",
+      "when": 1726080336854,
+      "tag": "0012_magenta_multiple_man",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "6",
+      "when": 1726084897593,
+      "tag": "0013_past_vampiro",
+      "breakpoints": true
     }
   ]
 }

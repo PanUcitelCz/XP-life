@@ -15,21 +15,17 @@ export const usersTable = sqliteTable('users', {
   updatedAt: integer('updated_at', { mode: 'timestamp' }).$onUpdate(() => new Date()),
 });
 
-// Tabulka aktivit
+// Tabulka aktivit, která obsahuje všechny aktivity napříč kategoriemi
 export const activitiesTable = sqliteTable('activities', {
   id: integer('id').primaryKey(),
-  name: text('name').notNull(), // Název aktivity
-  category: text('category').notNull(), // Kategorie (Intelligence, Strength, Dexterity, Hobbies)
+  userId: integer('user_id').references(() => usersTable.id).notNull(),
+  activityName: text('activity_name').notNull(),
+  category: text('category').notNull(),
+  level: integer('level').default(1).notNull(),
+  points: integer('points').default(0).notNull(),
+  description: text('description').notNull(),
+  difficulty: text('difficulty').notNull(),
+  lastXPAdded: text('last_xp_added'), // Datum posledního přidání XP
   createdAt: text('created_at').default(sql`(CURRENT_TIMESTAMP)`).notNull(),
 });
 
-// Tabulka aktivit uživatele
-export const userActivitiesTable = sqliteTable('user_activities', {
-  id: integer('id').primaryKey(),
-  userId: integer('user_id').references(() => usersTable.id).notNull(), // Reference na uživatele
-  activityId: integer('activity_id').references(() => activitiesTable.id).notNull(), // Reference na aktivitu
-  level: integer('level').default(1).notNull(), // Úroveň uživatele v aktivitě
-  points: integer('points').default(0).notNull(), // Body, které uživatel nasbíral v aktivitě
-  lastXPAdded: text('last_xp_added'), // Datum posledního přidání XP (pro kontrolu, zda už přidal body dnes)
-  createdAt: text('created_at').default(sql`(CURRENT_TIMESTAMP)`).notNull(),
-});
