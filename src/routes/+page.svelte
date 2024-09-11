@@ -1,8 +1,8 @@
 <script lang="ts">
-    import Button from '../lib/components/Button.svelte';
+     import Button from '$lib/components/Button.svelte';
 </script>
 
-<div class="Hero">
+<div class="Hero">  
     <h1>XP Life</h1>
     <h2>Level Up Your Day</h2>
     <div class="buttons">

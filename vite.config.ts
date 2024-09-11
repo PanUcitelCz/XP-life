@@ -11,4 +11,9 @@ export default defineConfig({
       },
     },
   },
+  resolve: {
+    alias: {
+      $lib: path.resolve('./src/lib'), // Správná cesta k aliasu $lib
+    },
+  },
 });
