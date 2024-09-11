@@ -1,5 +1,5 @@
 import { db } from '$lib/db';
-import { usersTable, activitiesTable } from '$lib/db/schema';
+import { usersTable, strengthTable, dexterityTable, constitutionTable, intelligenceTable, wisdomTable, charismaTable } from '$lib/db/schema';
 import { eq } from 'drizzle-orm';
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
@@ -19,15 +19,23 @@ export const load: PageServerLoad = async ({ locals }) => {
     });
   }
 
-  // Načtení aktivit uživatele
-  const activities = await db.select().from(activitiesTable).where(eq(activitiesTable.userId, user.id)).all();
-  console.log('Loaded activities:', activities);
+  // Načtení aktivit z jednotlivých tabulek podle kategorií
+  const strengthActivities = await db.select().from(strengthTable).where(eq(strengthTable.userId, user.id)).all();
+  const dexterityActivities = await db.select().from(dexterityTable).where(eq(dexterityTable.userId, user.id)).all();
+  const constitutionActivities = await db.select().from(constitutionTable).where(eq(constitutionTable.userId, user.id)).all();
+  const intelligenceActivities = await db.select().from(intelligenceTable).where(eq(intelligenceTable.userId, user.id)).all();
+  const wisdomActivities = await db.select().from(wisdomTable).where(eq(wisdomTable.userId, user.id)).all();
+  const charismaActivities = await db.select().from(charismaTable).where(eq(charismaTable.userId, user.id)).all();
 
-  if (!activities) {
-    throw error(404, {
-      message: 'Activities not found',
-    });
-  }
+  // Zkombinování všech aktivit do jednoho objektu
+  const activities = {
+    strength: strengthActivities,
+    dexterity: dexterityActivities,
+    constitution: constitutionActivities,
+    intelligence: intelligenceActivities,
+    wisdom: wisdomActivities,
+    charisma: charismaActivities
+  };
 
   // Předání uživatele a aktivit na stránku
   return {
@@ -37,7 +45,7 @@ export const load: PageServerLoad = async ({ locals }) => {
         email: user.email,
         nickname: user.nickname
       },
-      activities // Předání aktivit
+      activities // Předání aktivit rozdělených podle kategorií
     }
   };
 };

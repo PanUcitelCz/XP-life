@@ -15,17 +15,80 @@ export const usersTable = sqliteTable('users', {
   updatedAt: integer('updated_at', { mode: 'timestamp' }).$onUpdate(() => new Date()),
 });
 
-// Tabulka aktivit, která obsahuje všechny aktivity napříč kategoriemi
-export const activitiesTable = sqliteTable('activities', {
+// Tabulka pro Strength kategorii
+export const strengthTable = sqliteTable('strength', {
   id: integer('id').primaryKey(),
   userId: integer('user_id').references(() => usersTable.id).notNull(),
   activityName: text('activity_name').notNull(),
-  category: text('category').notNull(),
-  level: integer('level').default(1).notNull(),
-  points: integer('points').default(0).notNull(),
   description: text('description').notNull(),
   difficulty: text('difficulty').notNull(),
-  lastXPAdded: text('last_xp_added'), // Datum posledního přidání XP
-  createdAt: text('created_at').default(sql`(CURRENT_TIMESTAMP)`).notNull(),
+  level: integer('level').default(1).notNull(),
+  points: integer('points').default(0).notNull(),
+  lastXPAdded: text('last_xp_added'),
+  createdAt: text('created_at').default(sql`CURRENT_TIMESTAMP`).notNull(),
 });
 
+// Tabulka pro Dexterity kategorii
+export const dexterityTable = sqliteTable('dexterity', {
+  id: integer('id').primaryKey(),
+  userId: integer('user_id').references(() => usersTable.id).notNull(),
+  activityName: text('activity_name').notNull(),
+  description: text('description').notNull(),
+  difficulty: text('difficulty').notNull(),
+  level: integer('level').default(1).notNull(),
+  points: integer('points').default(0).notNull(),
+  lastXPAdded: text('last_xp_added'),
+  createdAt: text('created_at').default(sql`CURRENT_TIMESTAMP`).notNull(),
+});
+
+// Tabulka pro Constitution kategorii
+export const constitutionTable = sqliteTable('constitution', {
+  id: integer('id').primaryKey(),
+  userId: integer('user_id').references(() => usersTable.id).notNull(),
+  activityName: text('activity_name').notNull(),
+  description: text('description').notNull(),
+  difficulty: text('difficulty').notNull(),
+  level: integer('level').default(1).notNull(),
+  points: integer('points').default(0).notNull(),
+  lastXPAdded: text('last_xp_added'),
+  createdAt: text('created_at').default(sql`CURRENT_TIMESTAMP`).notNull(),
+});
+
+// Tabulka pro Intelligence kategorii
+export const intelligenceTable = sqliteTable('intelligence', {
+  id: integer('id').primaryKey(),
+  userId: integer('user_id').references(() => usersTable.id).notNull(),
+  activityName: text('activity_name').notNull(),
+  description: text('description').notNull(),
+  difficulty: text('difficulty').notNull(),
+  level: integer('level').default(1).notNull(),
+  points: integer('points').default(0).notNull(),
+  lastXPAdded: text('last_xp_added'),
+  createdAt: text('created_at').default(sql`CURRENT_TIMESTAMP`).notNull(),
+});
+
+// Tabulka pro Wisdom kategorii
+export const wisdomTable = sqliteTable('wisdom', {
+  id: integer('id').primaryKey(),
+  userId: integer('user_id').references(() => usersTable.id).notNull(),
+  activityName: text('activity_name').notNull(),
+  description: text('description').notNull(),
+  difficulty: text('difficulty').notNull(),
+  level: integer('level').default(1).notNull(),
+  points: integer('points').default(0).notNull(),
+  lastXPAdded: text('last_xp_added'),
+  createdAt: text('created_at').default(sql`CURRENT_TIMESTAMP`).notNull(),
+});
+
+// Tabulka pro Charisma kategorii
+export const charismaTable = sqliteTable('charisma', {
+  id: integer('id').primaryKey(),
+  userId: integer('user_id').references(() => usersTable.id).notNull(),
+  activityName: text('activity_name').notNull(),
+  description: text('description').notNull(),
+  difficulty: text('difficulty').notNull(),
+  level: integer('level').default(1).notNull(),
+  points: integer('points').default(0).notNull(),
+  lastXPAdded: text('last_xp_added'),
+  createdAt: text('created_at').default(sql`CURRENT_TIMESTAMP`).notNull(),
+});

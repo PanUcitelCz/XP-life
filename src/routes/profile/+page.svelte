@@ -1,38 +1,53 @@
 <script lang="ts">
-  import AddActivityModal from '$lib/components/AddActivityModal.svelte';
-  import { goto } from '$app/navigation';
   import { onMount } from 'svelte';
+  import { goto } from '$app/navigation';
+  import AddActivityModal from '$lib/components/AddActivityModal.svelte';
+  import CategorySection from '$lib/components/CategorySection.svelte';
 
   const { data } = $props();
   const user = data.props?.user;
 
-  // Aktivity uživatele
-  let activities = $state<{ 
+  // Kategoriální data uživatele
+  let categories = $state<{ 
     activityName: string, 
     level: number, 
     points: number, 
     category: string, 
     id: number, 
-    description: string, 
-    difficulty: string,
-    lastXPAdded: string,
+    lastXPAdded: string 
   }[]>([]);
+
   let showActivityModal = $state(false);
-  let selectedActivityId = $state<number | null>(null);
   let selectedCategory = $state<string | null>(null);
 
-  // Funkce pro načtení aktivit uživatele
-  async function fetchActivities() {
-    const response = await fetch('/api/get-user-activities');
+  let strengthTotalPoints = $state(0);
+  let dexterityTotalPoints = $state(0);
+  let constitutionTotalPoints = $state(0);
+  let intelligenceTotalPoints = $state(0);
+  let wisdomTotalPoints = $state(0);
+  let charismaTotalPoints = $state(0);
+
+  // Funkce pro načtení kategorií uživatele
+  async function fetchCategories() {
+    const response = await fetch('/api/get-user-categories');
     if (response.ok) {
-      activities = await response.json();
+      const categoriesData = await response.json();
+      categories = categoriesData;
+
+      // Spočítání celkových bodů pro každou kategorii
+      strengthTotalPoints = categories.filter(a => a.category === 'Strength').reduce((total, activity) => total + activity.points, 0);
+      dexterityTotalPoints = categories.filter(a => a.category === 'Dexterity').reduce((total, activity) => total + activity.points, 0);
+      constitutionTotalPoints = categories.filter(a => a.category === 'Constitution').reduce((total, activity) => total + activity.points, 0);
+      intelligenceTotalPoints = categories.filter(a => a.category === 'Intelligence').reduce((total, activity) => total + activity.points, 0);
+      wisdomTotalPoints = categories.filter(a => a.category === 'Wisdom').reduce((total, activity) => total + activity.points, 0);
+      charismaTotalPoints = categories.filter(a => a.category === 'Charisma').reduce((total, activity) => total + activity.points, 0);
     } else {
-      console.error('Failed to fetch activities');
+      console.error('Failed to fetch categories');
     }
   }
 
-  // Načti aktivity při mountování komponenty
-  onMount(fetchActivities);
+  // Načti kategorie při mountování komponenty
+  onMount(fetchCategories);
 
   // Funkce pro odhlášení uživatele
   async function logout() {
@@ -47,54 +62,48 @@
     }
   }
 
-  // Funkce pro přidání XP podle obtížnosti
-  async function addXP(activityId: number, difficulty: string) {
-    let xp = 0;
+  // Funkce pro zobrazení modálu pro přidání aktivity
+  function showAddActivityModal(category: string) {
+  if (category) {
+    selectedCategory = category;
+    showActivityModal = true;
+  }
+}
 
-    switch (difficulty) {
-      case 'easy':
-        xp = 5;
-        break;
-      case 'normal':
-        xp = 10;
-        break;
-      case 'hard':
-        xp = 15;
-        break;
-      default:
-        return;
+  // Zavření modálu po přidání aktivity
+  function closeModal() {
+    showActivityModal = false;
+    selectedCategory = null;
+    fetchCategories(); // Znovu načti kategorie po přidání aktivity
+  }
+
+  // Funkce pro přidání XP do aktivity na základě obtížnosti
+  async function addXP(activityId: number, category: string) {
+    const activity = categories.find(a => a.id === activityId && a.category === category);
+    
+    if (!activity) {
+      console.error('Activity not found');
+      return;
     }
 
+    // Odeslání požadavku na server, kde se vyřeší přidání XP
     const response = await fetch('/api/add-xp', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ activityId, xp })
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ activityId, category }) // Pošleme ID aktivity a kategorii
     });
 
     if (response.ok) {
-      fetchActivities(); // Znovu načte aktivity
+      fetchCategories(); // Znovu načteme kategorie po úspěšném přidání XP
     } else {
       console.error('Failed to add XP');
     }
   }
 
-  // Zobrazení modálu pro přidání aktivity
-  function showAddActivityModal(category: string) {
-    selectedCategory = category;
-    showActivityModal = true;
-  }
 
-  // Zavření modálu pro přidání aktivity
-  function closeModal() {
-    showActivityModal = false;
-    selectedCategory = null;
-    fetchActivities(); // Znovu načti aktivity po přidání nové
-  }
 
-  // Filtrování aktivit podle kategorie
-  function filterActivitiesByCategory(category: string) {
-    return activities.filter(activity => activity.category === category);
-  }
 </script>
 
 <svelte:head>
@@ -108,147 +117,64 @@
     <a href="/profile/settings">Profile settings</a>
     <button onclick={logout}>Logout</button>
 
-    <!-- Zobrazení aktivit podle kategorií -->
     <section>
-      <h2>Your Activities</h2>
+      <CategorySection 
+        categoryName="Strength" 
+        activities={categories.filter(a => a.category === 'Strength')}
+        totalPoints={strengthTotalPoints} 
+        onAddXP={(activityId: number) => addXP(activityId, 'Strength')} 
+      />
     
-      <div>
-        <h3>Strength</h3>
-        {#if filterActivitiesByCategory('Strength').length > 0}
-          {#each filterActivitiesByCategory('Strength') as activity}
-            <div class="activity">
-              <h3>{activity.activityName ? activity.activityName: 'Unnamed Activity'}</h3> <!-- Zkontroluj, zda `activity.name` není prázdné -->
-              <p>Level: {activity.level}</p>
-              <p>XP: {activity.points}</p>
-              {#if activity.lastXPAdded && new Date(activity.lastXPAdded).toDateString() === new Date().toDateString()}
-                <button disabled>XP already added today</button>
-              {:else}
-                <button onclick={() => addXP(activity.id, activity.difficulty)}>Add XP</button>
-              {/if}
-            </div>
-          {/each}
-        {:else}
-          <p>No activities yet. Add one!</p>
-        {/if}
-        <button onclick={() => showAddActivityModal('Strength')}>Add Activity</button>
-      </div>
-
-      <div>
-        <h3>Dexterity</h3>
-        {#if filterActivitiesByCategory('Dexterity').length > 0}
-          {#each filterActivitiesByCategory('Dexterity') as activity}
-            <div class="activity">
-              <h3>{activity.activityName ? activity.activityName : 'Unnamed Activity'}</h3>
-              <p>Level: {activity.level}</p>
-              <p>XP: {activity.points}</p>
-              {#if activity.lastXPAdded && new Date(activity.lastXPAdded).toDateString() === new Date().toDateString()}
-                <button disabled>XP already added today</button>
-              {:else}
-                <button onclick={() => addXP(activity.id, activity.difficulty)}>Add XP</button>
-              {/if}
-            </div>
-          {/each}
-        {:else}
-          <p>No activities yet. Add one!</p>
-        {/if}
-        <button onclick={() => showAddActivityModal('Dexterity')}>Add Activity</button>
-      </div>
-
-      <div>
-        <h3>Constitution</h3>
-        {#if filterActivitiesByCategory('Constitution').length > 0}
-          {#each filterActivitiesByCategory('Constitution') as activity}
-            <div class="activity">
-              <h3>{activity.activityName ? activity.activityName : 'Unnamed Activity'}</h3>
-              <p>Level: {activity.level}</p>
-              <p>XP: {activity.points}</p>
-              {#if activity.lastXPAdded && new Date(activity.lastXPAdded).toDateString() === new Date().toDateString()}
-                <button disabled>XP already added today</button>
-              {:else}
-                <button onclick={() => addXP(activity.id, activity.difficulty)}>Add XP</button>
-              {/if}
-            </div>
-          {/each}
-        {:else}
-          <p>No activities yet. Add one!</p>
-        {/if}
-        <button onclick={() => showAddActivityModal('Constitution')}>Add Activity</button>
-      </div>
-
-      <div>
-        <h3>Intelligence</h3>
-        {#if filterActivitiesByCategory('Intelligence').length > 0}
-          {#each filterActivitiesByCategory('Intelligence') as activity}
-            <div class="activity">
-              <h3>{activity.activityName ? activity.activityName : 'Unnamed Activity'}</h3>
-              <p>Level: {activity.level}</p>
-              <p>XP: {activity.points}</p>
-              {#if activity.lastXPAdded && new Date(activity.lastXPAdded).toDateString() === new Date().toDateString()}
-                <button disabled>XP already added today</button>
-              {:else}
-                <button onclick={() => addXP(activity.id, activity.difficulty)}>Add XP</button>
-              {/if}
-            </div>
-          {/each}
-        {:else}
-          <p>No activities yet. Add one!</p>
-        {/if}
-        <button onclick={() => showAddActivityModal('Intelligence')}>Add Activity</button>
-      </div>
-
-      <div>
-        <h3>Wisdom</h3>
-        {#if filterActivitiesByCategory('Wisdom').length > 0}
-          {#each filterActivitiesByCategory('Wisdom') as activity}
-            <div class="activity">
-              <h3>{activity.activityName ? activity.activityName : 'Unnamed Activity'}</h3>
-              <p>Level: {activity.level}</p>
-              <p>XP: {activity.points}</p>
-              {#if activity.lastXPAdded && new Date(activity.lastXPAdded).toDateString() === new Date().toDateString()}
-                <button disabled>XP already added today</button>
-              {:else}
-                <button onclick={() => addXP(activity.id, activity.difficulty)}>Add XP</button>
-              {/if}
-            </div>
-          {/each}
-        {:else}
-          <p>No activities yet. Add one!</p>
-        {/if}
-        <button onclick={() => showAddActivityModal('Wisdom')}>Add Activity</button>
-      </div>
-
-      <div>
-        <h3>Charisma</h3>
-        {#if filterActivitiesByCategory('Charisma').length > 0}
-          {#each filterActivitiesByCategory('Charisma') as activity}
-            <div class="activity">
-              <h3>{activity.activityName ? activity.activityName : 'Unnamed Activity'}</h3>
-              <p>Level: {activity.level}</p>
-              <p>XP: {activity.points}</p>
-              {#if activity.lastXPAdded && new Date(activity.lastXPAdded).toDateString() === new Date().toDateString()}
-                <button disabled>XP already added today</button>
-              {:else}
-                <button onclick={() => addXP(activity.id, activity.difficulty)}>Add XP</button>
-              {/if}
-            </div>
-          {/each}
-        {:else}
-          <p>No activities yet. Add one!</p>
-        {/if}
-        <button onclick={() => showAddActivityModal('Charisma')}>Add Activity</button>
-      </div>
+      <CategorySection 
+        categoryName="Dexterity" 
+        activities={categories.filter(a => a.category === 'Dexterity')}
+        totalPoints={dexterityTotalPoints} 
+        onAddXP={(activityId: number) => addXP(activityId, 'Dexterity')}  
+      />
+    
+      <CategorySection 
+        categoryName="Constitution" 
+        activities={categories.filter(a => a.category === 'Constitution')}
+        totalPoints={constitutionTotalPoints} 
+        onAddXP={(activityId: number) => addXP(activityId, 'Constitution')} 
+      />
+    
+      <CategorySection 
+        categoryName="Intelligence" 
+        activities={categories.filter(a => a.category === 'Intelligence')}
+        totalPoints={intelligenceTotalPoints} 
+        onAddXP={(activityId: number) => addXP(activityId, 'Intelligence')} 
+      />
+    
+      <CategorySection 
+        categoryName="Wisdom" 
+        activities={categories.filter(a => a.category === 'Wisdom')}
+        totalPoints={wisdomTotalPoints} 
+        onAddXP={(activityId: number) => addXP(activityId, 'Wisdom')}  
+      />
+    
+      <CategorySection 
+        categoryName="Charisma" 
+        activities={categories.filter(a => a.category === 'Charisma')}
+        totalPoints={charismaTotalPoints} 
+        onAddXP={(activityId: number) => addXP(activityId, 'Charisma')}  
+      />
     </section>
+    
+    
+    <!-- Tlačítko pro přidání nové aktivity -->
+    <button onclick={() => showAddActivityModal('Strength')}>Add Activity</button>
 
     {#if showActivityModal && selectedCategory !== null}
-      <AddActivityModal userId={user.id} category={selectedCategory} closeModal={closeModal} />
+      <AddActivityModal userId={user.id} category={selectedCategory!} closeModal={closeModal} />
     {/if}
+
+  
 
   </div>
 {:else}
   <p>You are not logged in.</p>
 {/if}
-
-
 
 <style lang="stylus">
   .hero
@@ -264,16 +190,6 @@
     background white
     border-radius 21px
     box-shadow rgba(17, 12, 46, 0.15) 0px 48px 100px 0px
-
-  .activity
-    margin-bottom 20px
-    padding 10px
-    border 1px solid #ccc
-    border-radius 10px
-    background-color #f9f9f9
-    box-shadow rgba(0, 0, 0, 0.1) 0px 4px 8px 0px
-    text-align left
-    width 100%
 
   button
     background-color #007bff

@@ -99,6 +99,34 @@
       "when": 1726084897593,
       "tag": "0013_past_vampiro",
       "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "6",
+      "when": 1726089031747,
+      "tag": "0014_nebulous_mauler",
+      "breakpoints": true
+    },
+    {
+      "idx": 15,
+      "version": "6",
+      "when": 1726090164011,
+      "tag": "0015_tiny_mad_thinker",
+      "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "6",
+      "when": 1726090268876,
+      "tag": "0016_exotic_scorpion",
+      "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "6",
+      "when": 1726090433252,
+      "tag": "0017_mute_agent_brand",
+      "breakpoints": true
     }
   ]
 }

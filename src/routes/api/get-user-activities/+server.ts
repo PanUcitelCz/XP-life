@@ -1,18 +1,27 @@
 import { db } from '$lib/db';
-import { activitiesTable } from '$lib/db/schema';
+import { strengthTable, dexterityTable, constitutionTable, intelligenceTable, wisdomTable, charismaTable } from '$lib/db/schema';
 import { eq } from 'drizzle-orm';
-import type { RequestHandler } from '@sveltejs/kit';
+import { json } from '@sveltejs/kit';
 
-export const GET: RequestHandler = async ({ locals }) => {
+export const GET = async ({ locals }) => {
   if (!locals.user) {
-    return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 });
+    return json({ error: 'Not authenticated' }, { status: 401 });
   }
 
-  const activities = await db
-    .select()
-    .from(activitiesTable)
-    .where(eq(activitiesTable.userId, locals.user.id)) // Podle ID uživatele
-    .all();
+  // Načíst všechny kategorie pro uživatele
+  const strength = await db.select().from(strengthTable).where(eq(strengthTable.userId, locals.user.id)).all();
+  const dexterity = await db.select().from(dexterityTable).where(eq(dexterityTable.userId, locals.user.id)).all();
+  const constitution = await db.select().from(constitutionTable).where(eq(constitutionTable.userId, locals.user.id)).all();
+  const intelligence = await db.select().from(intelligenceTable).where(eq(intelligenceTable.userId, locals.user.id)).all();
+  const wisdom = await db.select().from(wisdomTable).where(eq(wisdomTable.userId, locals.user.id)).all();
+  const charisma = await db.select().from(charismaTable).where(eq(charismaTable.userId, locals.user.id)).all();
 
-  return new Response(JSON.stringify(activities), { status: 200 });
+  return json({
+    strength,
+    dexterity,
+    constitution,
+    intelligence,
+    wisdom,
+    charisma
+  });
 };
