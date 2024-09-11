@@ -1,4 +1,4 @@
-<script lang="ts">
+a<script lang="ts">
   import { goto } from '$app/navigation';  
   import { onMount } from 'svelte';
   import AddActivityModal from '$lib/components/AddActivityModal.svelte';
