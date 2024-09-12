@@ -42,31 +42,33 @@
     }
   }
 </script>
-
-<div class="form">
-  <h1>Login</h1>
-  <!-- Zde už není `|preventDefault`, používáme pouze `onsubmit` -->
-  <form onsubmit={login}>
-    <input type="text" bind:value={nickname} placeholder="Nickname" required />
-    <input type="password" bind:value={password} placeholder="Password" required />
-    <FormButton type="submit" color="green">Login</FormButton>
-  </form>
-  <a href="/login/forgot-password">Forgot password?</a>
-  <div class="form-buttons">
-    <Button href="/" color="grey">Home</Button>
-    <Button href="/register" color="ghost">Register</Button>
-  </div>
-
-  {#if notification}
-    <div transition:fade class="notification">{notification}</div>
-  {/if}
-
-  {#if loginSuccess}
-    <div transition:fade class="notification" style="color: green">
-      Login successful! Redirecting to your profile...
+<div class="Main">
+  <div class="form">
+    <h1>Login</h1>
+    <!-- Zde už není `|preventDefault`, používáme pouze `onsubmit` -->
+    <form onsubmit={login}>
+      <input type="text" bind:value={nickname} placeholder="Nickname" required />
+      <input type="password" bind:value={password} placeholder="Password" required />
+      <FormButton type="submit" color="green">Login</FormButton>
+    </form>
+    <a href="/login/forgot-password">Forgot password?</a>
+    <div class="form-buttons">
+      <Button href="/" color="grey">Home</Button>
+      <Button href="/register" color="ghost">Register</Button>
     </div>
-  {/if}
+
+    {#if notification}
+      <div transition:fade class="notification">{notification}</div>
+    {/if}
+
+    {#if loginSuccess}
+      <div transition:fade class="notification" style="color: green">
+        Login successful! Redirecting to your profile...
+      </div>
+    {/if}
+  </div>
 </div>
+
 
 
 

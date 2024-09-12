@@ -64,24 +64,27 @@
       }
     }
 </script>
-  
-<div class="form">
-  <h1>Reset Password</h1>
-  
-  <form on:submit|preventDefault={resetPassword}>
-    <input type="password" bind:value={newPassword} placeholder="Enter new password" required />
-    <input type="password" bind:value={confirmPassword} placeholder="Confirm new password" required />
+
+<div class="Main">
+  <div class="form">
+    <h1>Reset Password</h1>
     
-    <div class="form-buttons">
-      <FormButton type="submit" color="green">Change</FormButton>
-      <Button href="/profile" color="grey">Home</Button>
-    </div>
-  </form>
-  
-  {#if notification}
-    <div class="notification">{notification}</div>
-  {/if}
+    <form on:submit|preventDefault={resetPassword}>
+      <input type="password" bind:value={newPassword} placeholder="Enter new password" required />
+      <input type="password" bind:value={confirmPassword} placeholder="Confirm new password" required />
+      
+      <div class="form-buttons">
+        <FormButton type="submit" color="green">Change</FormButton>
+        <Button href="/profile" color="grey">Home</Button>
+      </div>
+    </form>
+    
+    {#if notification}
+      <div class="notification">{notification}</div>
+    {/if}
+  </div>
 </div>
+
 
 <style lang="stylus">
       @import '../../../lib/css/form.styl'

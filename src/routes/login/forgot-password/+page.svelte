@@ -25,8 +25,8 @@
         notification = 'Failed to send the password reset link. Please try again.';
       }
     }
-  </script>
-  
+</script>
+<div class="Main">
   <div class="form">
     <h1>Forgot Password?</h1>
     <form on:submit|preventDefault={handleForgotPassword}>
@@ -37,11 +37,12 @@
         <Button href="/login" color="grey">Back</Button>
       </div>
     </form>
-    
-    
     {#if notification}
       <div class="notification">{notification}</div>
     {/if}
+</div>
+    
+
   </div>
 
 <style lang="stylus">

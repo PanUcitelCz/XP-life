@@ -67,29 +67,31 @@
 </script>
 
 <svelte:head><title>XP Life - Register</title></svelte:head>
+<div class="Main">
+  <div class="form">
+    <h1>Register</h1>
+    <form on:submit|preventDefault={register}>
+      <input type="email" bind:value={email} placeholder="Email" required />
+      <input type="text" bind:value={nickname} placeholder="Nickname" required />
+      <input type="password" bind:value={password} placeholder="Password" required />
+      <input type="password" bind:value={confirmPassword} placeholder="Confirm Password" required />
+      <FormButton type="submit" color="green">Register new account</FormButton>
+    </form>
+    <div class="form-buttons">
+      <Button href="/" color="grey" >Home</Button>
+      <Button href="/login" color="ghost">Login</Button>
+    </div>
+    {#if notification}
+      <div transition:fade class="notification">{notification}</div>
+    {/if}
 
-<div class="form">
-  <h1>Register</h1>
-  <form on:submit|preventDefault={register}>
-    <input type="email" bind:value={email} placeholder="Email" required />
-    <input type="text" bind:value={nickname} placeholder="Nickname" required />
-    <input type="password" bind:value={password} placeholder="Password" required />
-    <input type="password" bind:value={confirmPassword} placeholder="Confirm Password" required />
-    <FormButton type="submit" color="green">Register new account</FormButton>
-  </form>
-  <div class="form-buttons">
-    <Button href="/" color="grey" >Home</Button>
-    <Button href="/login" color="ghost">Login</Button>
-  </div>
-  {#if notification}
-    <div transition:fade class="notification">{notification}</div>
-  {/if}
+    {#if registrationSuccess}
+      <div transition:fade class="notification">Registrace úspěšná! Přesměrováváme na přihlášení...</div>
+    {/if}
 
-  {#if registrationSuccess}
-    <div transition:fade class="notification">Registrace úspěšná! Přesměrováváme na přihlášení...</div>
-  {/if}
-
+  </div> 
 </div>
+
 
 <style lang="stylus">
   @import '../../lib/css/form.styl'
