@@ -92,7 +92,6 @@
     height: 100vh;
     background-color: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(5px);
-    z-index: 10;
   }
 
   .modal {
@@ -107,6 +106,8 @@
     z-index: 20;
     width: 90%;
     max-width: 400px;
+    margin: 10px;
+    box-sizing: border-box;
   }
 
   h2 {
@@ -124,6 +125,7 @@
     margin-top: 5px;
     border: 1px solid #ccc;
     border-radius: 5px;
+    box-sizing: border-box;
   }
 
   .modal-buttons {

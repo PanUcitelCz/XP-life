@@ -49,13 +49,12 @@
 
     :global(main)
         min-height 100vh
-        max-width 1300px
+        width 100%  // Zajistí, že main bude vždy 100% široký
+        max-width 1800px  // Maximální šířka pro centralizaci obsahu
         margin auto
-        flex-direction column
         padding 10px 5px
-        display grid
-        place-items: center
         box-sizing border-box
+
 
     :global(body.page-transitioning)
         overflow hidden 

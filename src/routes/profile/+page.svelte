@@ -7,7 +7,6 @@
   const { data } = $props();
   const user = data.props?.user;
 
-  // Kategoriální data uživatele
   let categories = $state<{ 
     activityName: string, 
     level: number, 
@@ -27,14 +26,12 @@
   let wisdomTotalPoints = $state(0);
   let charismaTotalPoints = $state(0);
 
-  // Funkce pro načtení kategorií uživatele
   async function fetchCategories() {
     const response = await fetch('/api/get-user-categories');
     if (response.ok) {
       const categoriesData = await response.json();
       categories = categoriesData;
 
-      // Spočítání celkových bodů pro každou kategorii
       strengthTotalPoints = categories.filter(a => a.category === 'Strength').reduce((total, activity) => total + activity.points, 0);
       dexterityTotalPoints = categories.filter(a => a.category === 'Dexterity').reduce((total, activity) => total + activity.points, 0);
       constitutionTotalPoints = categories.filter(a => a.category === 'Constitution').reduce((total, activity) => total + activity.points, 0);
@@ -46,13 +43,10 @@
     }
   }
 
-  // Načti kategorie při mountování komponenty
   onMount(fetchCategories);
 
-  // Funkce pro odhlášení uživatele
   async function logout() {
     const response = await fetch('/logout', { method: 'POST' });
-
     if (response.ok) {
       setTimeout(() => {
         goto('/login');
@@ -62,48 +56,58 @@
     }
   }
 
-  // Funkce pro zobrazení modálu pro přidání aktivity
   function showAddActivityModal(category: string) {
-  if (category) {
-    selectedCategory = category;
-    showActivityModal = true;
+    if (category) {
+      selectedCategory = category;
+      showActivityModal = true;
+    }
   }
-}
 
-  // Zavření modálu po přidání aktivity
   function closeModal() {
     showActivityModal = false;
     selectedCategory = null;
-    fetchCategories(); // Znovu načti kategorie po přidání aktivity
+    fetchCategories();
   }
 
-  // Funkce pro přidání XP do aktivity na základě obtížnosti
   async function addXP(activityId: number, category: string) {
     const activity = categories.find(a => a.id === activityId && a.category === category);
-    
     if (!activity) {
       console.error('Activity not found');
       return;
     }
 
-    // Odeslání požadavku na server, kde se vyřeší přidání XP
     const response = await fetch('/api/add-xp', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ activityId, category }) // Pošleme ID aktivity a kategorii
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ activityId, category })
     });
 
     if (response.ok) {
-      fetchCategories(); // Znovu načteme kategorie po úspěšném přidání XP
+      fetchCategories();
     } else {
       console.error('Failed to add XP');
     }
   }
 
+  function calculateLevel(points: number) {
+    let level = 1;
+    let threshold = 50;
+    while (points >= threshold) {
+      points -= threshold;
+      level++;
+      threshold += 25;
+    }
+    return { level, remainingXP: points, nextLevelXP: threshold };
+  }
 
+  function getTotalPoints(categoryName: String) {
+    return categories.filter(c => c.category === categoryName).reduce((acc, activity) => acc + activity.points, 0);
+  }
 
+  function getLevelData(categoryName: String) {
+    const totalPoints = getTotalPoints(categoryName);
+    return calculateLevel(totalPoints);
+  }
 </script>
 
 <svelte:head>
@@ -112,12 +116,30 @@
 
 {#if user}
   <div class="hero">
-    <h1>Welcome, {user.nickname}!</h1>
-    <p>Email: {user.email}</p>
-    <a href="/profile/settings">Profile settings</a>
-    <button onclick={logout}>Logout</button>
-
-    <section>
+    <section class="profile-section">
+      <h1>Welcome, {user.nickname}!</h1>
+      <img src="https://preview.redd.it/new-lore-ekko-or-old-lore-ekko-v0-rk1pnlymql5c1.jpg?width=300&format=pjpg&auto=webp&s=769e3a4b5537853cea944cfb4ccf350320975d18" alt="Profile picdture">
+      <p>Email: {user.email}</p>
+      <a href="/profile/settings">Profile settings</a>
+      <button onclick={logout}>Logout</button>
+    </section>
+    
+    <!-- Střední část - Kategorie a postup levelů -->
+    <section class="levels">
+      {#each ['Strength', 'Dexterity', 'Constitution', 'Intelligence', 'Wisdom', 'Charisma'] as categoryName}
+        {#key categoryName}
+          <div class="category-tile">
+            <h3>{categoryName} (Level {getLevelData(categoryName).level})</h3>
+            <div class="progress-bar">
+              <div class="progress" style="width: {(getLevelData(categoryName).remainingXP / getLevelData(categoryName).nextLevelXP) * 100}%"></div>
+            </div>
+            <p>{getLevelData(categoryName).remainingXP} / {getLevelData(categoryName).nextLevelXP} XP to next level</p>
+          </div>
+      {/key}
+      {/each}
+    </section>
+  </div>
+    <section class="activities">
       <CategorySection 
         categoryName="Strength" 
         activities={categories.filter(a => a.category === 'Strength')}
@@ -160,44 +182,128 @@
         onAddXP={(activityId: number) => addXP(activityId, 'Charisma')}  
       />
     </section>
-    
-    
-    <!-- Tlačítko pro přidání nové aktivity -->
-    <button onclick={() => showAddActivityModal('Strength')}>Add Activity</button>
-
-    {#if showActivityModal && selectedCategory !== null}
-      <AddActivityModal userId={user.id} category={selectedCategory!} closeModal={closeModal} />
-    {/if}
-
-  
-
-  </div>
+    <section class="buttons">
+      <button onclick={() => showAddActivityModal('Strength')}>Add Activity</button>
+      {#if showActivityModal && selectedCategory !== null}
+        <AddActivityModal userId={user.id} category={selectedCategory!} closeModal={closeModal} />
+      {/if}
+    </section>
 {:else}
   <p>You are not logged in.</p>
 {/if}
 
 <style lang="stylus">
   .hero
-    max-width 300px
-    width 100%
+    display grid
+    grid-template-columns 1fr 3fr // První potomek zabere 1fr, zbytek 4fr
+    grid-gap 20px
+    margin-bottom 10px
+    padding 0 36px
+    min-height 400px
     box-sizing border-box
-    padding 21px
+    gap 10px
+
+    @media (max-width: 768px) // Na mobilu bude profil nahoře a ostatní sekce pod sebou
+      display flex
+      justify-content center
+      align-items center
+      flex-direction column
+      
+
+  .profile-section
     display flex
+    flex-direction column
     justify-content center
     align-items center
-    flex-direction column
-    text-align center
-    background white
-    border-radius 21px
+    background-color white
+    padding 20px
+    border-radius 10px
     box-shadow rgba(17, 12, 46, 0.15) 0px 48px 100px 0px
+    width 100%
+    text-align center
+    box-sizing border-box
+
+    @media (max-width: 768px)
+      width 100%
+      max-width 100%
+    
+    img
+      width 150px
+      height 150px
+      border-radius 50%
+      object-fit cover
+      margin-bottom 20px
+
+  .levels
+    display grid
+    width 100% 
+    grid-template-columns repeat(auto-fit, minmax(400px, 1fr))
+    gap 20px
+
+    @media (max-width: 768px)
+        display flex
+        justify-content center
+        align-items center
+        flex-direction column
+
+    .category-tile
+      background white
+      padding 20px
+      border-radius 10px
+      box-shadow rgba(17, 12, 46, 0.15) 0px 48px 100px 0px
+      text-align center
+      display flex
+      flex-direction column
+      justify-content center
+      align-items center
+      box-sizing: border-box;
+
+      @media (max-width: 768px)
+        width 100%
+
+      .progress-bar
+        width 100%
+        height 10px
+        background-color #e0e0e0
+        border-radius 5px
+        overflow hidden
+        .progress
+          height 100%
+          background-color #007bff
+          transition width 0.3s
+
+  .activities
+    display flex
+    flex-direction row
+    flex-wrap wrap
+    gap 20px
+    width 100%
+    padding 0 36px
+    margin 0
+    box-sizing border-box
+
+    @media (max-width: 768px)
+      width 100%
+
+.buttons
+  display flex
+  justify-content center
+  gap 10px
+  align-items center
+  box-sizing border-box
 
   button
-    background-color #007bff
+    background blue
     color white
-    padding 10px 20px
-    border none
-    border-radius 5px
+    border 0px solid blue
+    border-radius 10px
+    padding 10px
+    max-width 300px
+    width 100%
+    height 3rem
+    transition ease .3s
     cursor pointer
+
     &:hover
-      background-color #0056b3
+      background #007bff
 </style>
