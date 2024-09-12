@@ -75,39 +75,43 @@
         notification = errorResult.message;
       }
     }
-  </script>
+</script>
   
-  <svelte:head><title>XP Life - Profile Settings</title></svelte:head>
+<svelte:head><title>XP Life - Profile Settings</title></svelte:head>
+
+<div class="Main">
   <div class="form">
     <h1>Account Settings</h1>
-    
-    <form on:submit|preventDefault={saveChanges}>
-        <label for="newNickname">New Nickname</label>
-        <input type="text" bind:value={newNickname} placeholder={currentNickname} />
-    
-        <label for="newEmail">New Email</label>
-        <input type="email" bind:value={newEmail} placeholder={currentEmail} />
-    
-        <label for="currentPassword">Current Password (required to confirm changes)</label>
-        <input type="password" bind:value={currentPassword} required />
-    
-        <label for="newPassword">New Password (optional)</label>
-        <input type="password" bind:value={newPassword} />
-    
-        <label for="confirmPassword">Confirm New Password</label>
-        <input type="password" bind:value={confirmPassword} />
         
-        <FormButton type="submit" color="green">Save Changes</FormButton>
-        <div class="form-buttons">
-            <Button href="/profile" color="grey">Back</Button>
-            <Button href="/profile" color="grey">Odstranit účet</Button>
-        </div>
+    <form on:submit|preventDefault={saveChanges}>
+      <label for="newNickname">New Nickname</label>
+      <input type="text" bind:value={newNickname} placeholder={currentNickname} />
+        
+      <label for="newEmail">New Email</label>
+      <input type="email" bind:value={newEmail} placeholder={currentEmail} />
+        
+      <label for="currentPassword">Current Password (required to confirm changes)</label>
+      <input type="password" bind:value={currentPassword} required />
+        
+      <label for="newPassword">New Password (optional)</label>
+      <input type="password" bind:value={newPassword} />
+        
+      <label for="confirmPassword">Confirm New Password</label>
+      <input type="password" bind:value={confirmPassword} />
+            
+      <FormButton type="submit" color="green">Save Changes</FormButton>
+      <div class="form-buttons">
+          <Button href="/profile" color="grey">Back</Button>
+          <Button href="/profile" color="grey">Odstranit účet</Button>
+      </div>
     </form>
-  
+      
     {#if notification}
         <div transition:fade class="notification">{notification}</div>
     {/if}
   </div>
+</div>
+  
 
 <style lang="stylus">
   @import '../../../lib/css/form.styl'
