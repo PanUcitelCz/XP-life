@@ -20,7 +20,7 @@ export async function POST({ request }) {
       return new Response(JSON.stringify({ success: false, message: 'User not found' }), { status: 404 });
     }
 
-    const valid = await bcrypt.compare(password, user.password_hash);
+    const valid = await bcrypt.compare(password, user.passwordHash);
     if (!valid) {
       return new Response(JSON.stringify({ success: false, message: 'Invalid password' }), { status: 401 });
     }

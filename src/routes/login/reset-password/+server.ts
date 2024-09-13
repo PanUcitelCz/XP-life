@@ -28,7 +28,7 @@ export async function POST({ request }) {
   // Uložíme nové heslo a odstraníme token
   await db.update(usersTable)
     .set({
-      password_hash: hashedPassword,
+      passwordHash: hashedPassword,
       token: null,
       tokenExpires: null
     })

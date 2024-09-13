@@ -13,7 +13,8 @@
     points: number, 
     category: string, 
     id: number, 
-    lastXPAdded: string 
+    lastXPAdded: string,
+    
   }[]>([]);
 
   let showActivityModal = $state(false);
@@ -108,6 +109,7 @@
     const totalPoints = getTotalPoints(categoryName);
     return calculateLevel(totalPoints);
   }
+
 </script>
 
 <svelte:head>
@@ -119,6 +121,9 @@
     <section class="profile-section">
       <h1>Welcome, {user.nickname}!</h1>
       <img src="https://preview.redd.it/new-lore-ekko-or-old-lore-ekko-v0-rk1pnlymql5c1.jpg?width=300&format=pjpg&auto=webp&s=769e3a4b5537853cea944cfb4ccf350320975d18" alt="Profile picdture">
+      <div>
+        Level: {user.userLevel}
+      </div>
       <p>Email: {user.email}</p>
       <a href="/profile/settings">Profile settings</a>
       <button onclick={logout}>Logout</button>

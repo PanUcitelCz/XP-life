@@ -9,5 +9,6 @@ export default {
     stylus: {
       imports: ['./src/lib/css/global.styl'], // Globální import pro Stylus
     },
+    sourceMap: false, // Povolit zdrojové mapy pro lepší debugging
   }),
 };

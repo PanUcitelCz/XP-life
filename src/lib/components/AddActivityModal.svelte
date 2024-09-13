@@ -106,7 +106,6 @@
     z-index: 20;
     width: 90%;
     max-width: 400px;
-    margin: 10px;
     box-sizing: border-box;
   }
 

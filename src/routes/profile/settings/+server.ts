@@ -31,7 +31,7 @@ export async function POST({ request, locals }) {
     }
 
     // Verify current password
-    const isPasswordValid = await bcrypt.compare(currentPassword, user.password_hash);
+    const isPasswordValid = await bcrypt.compare(currentPassword, user.passwordHash);
     if (!isPasswordValid) {
       return new Response(JSON.stringify({ success: false, message: 'Invalid current password' }), { status: 401 });
     }
@@ -62,7 +62,7 @@ export async function POST({ request, locals }) {
     // Change password
     if (newPassword && newPassword !== '') {
       const newHashedPassword = await bcrypt.hash(newPassword, 10);
-      updates['password_hash'] = newHashedPassword;
+      updates['passwordHash'] = newHashedPassword;
       emailBody = `Your password has been successfully changed.`; // Send a specific message if password is changed
     }
 

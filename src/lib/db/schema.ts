@@ -4,15 +4,16 @@ import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core';
 // Tabulka uživatelů
 export const usersTable = sqliteTable('users', {
   id: integer('id').primaryKey(),
-  email: text('email').unique().notNull(),
-  nickname: text('nickname').unique().notNull(),
-  password_hash: text('password_hash').notNull(),
-  token: text('token'), // Sloupec pro resetovací token
-  tokenExpires: text('token_expires'), // Sloupec pro expiraci tokenu
+  email: text('email').notNull(),
+  nickname: text('nickname').notNull(),
+  passwordHash: text('password_hash').notNull(),  // camelCase pro ORM
+  token: text('token'),
+  tokenExpires: text('token_expires'),
   isEmailVerified: integer('is_email_verified').default(0).notNull(),
   isOnline: integer('is_online').default(0).notNull(),
-  createdAt: text('created_at').default(sql`(CURRENT_TIMESTAMP)`).notNull(),
-  updatedAt: integer('updated_at', { mode: 'timestamp' }).$onUpdate(() => new Date()),
+  userLevel: integer('user_level').default(1).notNull(),
+  createdAt: text('created_at').default(sql`CURRENT_TIMESTAMP`).notNull(),  // Výchozí hodnota pro createdAt
+  updatedAt: text('updated_at').default(sql`CURRENT_TIMESTAMP`).notNull(),  // Výchozí hodnota pro updatedAt
 });
 
 // Tabulka pro Strength kategorii

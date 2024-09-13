@@ -26,15 +26,17 @@ export async function POST({ request }) {
       return new Response(JSON.stringify({ success: false, message: 'This email already exists, please try another one' }), { status: 409 });
     }
 
-    const password_hash = await bcrypt.hash(password, 10);
+    const passwordHash = await bcrypt.hash(password, 10);
     const token = Math.random().toString(36).substr(2);
 
     await db.insert(usersTable).values({
       email,
       nickname,
-      password_hash,
+      passwordHash,  // Zde také camelCase
       token,
-      isEmailVerified: 0, // Nastavení jako neověřený
+      isEmailVerified: 0, // Neověřený email
+      createdAt: new Date().toISOString(),  // Přidej čas vložení
+      updatedAt: new Date().toISOString(),  // Přidej čas aktualizace
     }).run();
 
     // Odeslání ověřovacího emailu
