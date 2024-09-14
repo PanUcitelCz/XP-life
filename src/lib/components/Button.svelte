@@ -10,8 +10,6 @@
 </a>
 
 <style lang="stylus">
-
-
     a
         padding 10px
         border-radius 10px
@@ -19,7 +17,6 @@
         font-size 23px
         width 100%
         text-align center
-        border 2px white solid
         transition ease .3s
         font-weight 500
 
@@ -29,8 +26,7 @@
 
         &:hover
             color white
-            background #57D131
-            border #57D131 2px solid
+            background #3cab52
 
     .ghost
         color black
@@ -39,7 +35,6 @@
 
         &:hover
             color white
-            background #57D131
-            border #57D131 2px solid
+            background #3cab52
 
 </style>

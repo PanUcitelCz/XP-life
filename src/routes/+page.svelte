@@ -12,7 +12,6 @@
 </div>
 
 <style lang="stylus">
-    
     .Hero
         display flex
         flex-direction column
@@ -20,11 +19,14 @@
         align-items center
         width 100%
         height 100vh
+        color white
 
         h1
             font-size clamp(50px, 10vw, 100px)
-            margin 0
+            margin 0 0 clamp(6px, 1.2vw, 12px)
             text-align center
+            font-weight 600
+            
             
         h2
             font-size clamp(30px, 10vw, 60px)
@@ -34,7 +36,7 @@
         .buttons
             display flex
             gap 10px
-            margin-top 36px
+            margin-top clamp(24px, 4.8vw, 48px)
             justify-content center
             align-items center
             max-width 400px
