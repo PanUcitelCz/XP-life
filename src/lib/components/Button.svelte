@@ -17,7 +17,7 @@
         font-size 23px
         width 100%
         text-align center
-        transition ease .3s
+        transition background $easeOutExpo .6s, color $easeOutExpo .6s
         font-weight 500
 
     .grey
@@ -31,7 +31,6 @@
     .ghost
         color black
         background white
-        border black 2px solid
 
         &:hover
             color white

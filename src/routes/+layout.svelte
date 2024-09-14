@@ -86,7 +86,6 @@
         width 100%  // Zajistí, že main bude vždy 100% široký
         max-width 1800px  // Maximální šířka pro centralizaci obsahu
         margin auto
-        padding 10px 5px
         box-sizing border-box
 
 

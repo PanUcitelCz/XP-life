@@ -1,212 +1,217 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
-  import { goto } from '$app/navigation';
-  import AddActivityModal from '$lib/components/AddActivityModal.svelte';
-  import CategorySection from '$lib/components/CategorySection.svelte';
+	import { onMount } from 'svelte';
+	import { goto } from '$app/navigation';
+	import AddActivityModal from '$lib/components/AddActivityModal.svelte';
+	import CategorySection from '$lib/components/CategorySection.svelte';
 
-  const { data } = $props();
-  const user = data.props?.user;
+	const { data } = $props();
+	const user = data.props?.user;
 
-  let categories = $state<{ 
-    activityName: string, 
-    level: number, 
-    points: number, 
-    category: string, 
-    id: number, 
-    lastXPAdded: string,
-    
-  }[]>([]);
+	let categories = $state<
+		{
+			activityName: string;
+			level: number;
+			points: number;
+			category: string;
+			id: number;
+			lastXPAdded: string;
+		}[]
+	>([]);
 
-  let showActivityModal = $state(false);
-  let selectedCategory = $state<string | null>(null);
+	let showActivityModal = $state(false);
+	let selectedCategory = $state<string | null>(null);
 
-  let strengthTotalPoints = $state(0);
-  let dexterityTotalPoints = $state(0);
-  let constitutionTotalPoints = $state(0);
-  let intelligenceTotalPoints = $state(0);
-  let wisdomTotalPoints = $state(0);
-  let charismaTotalPoints = $state(0);
+	let strengthTotalPoints = $state(0);
+	let dexterityTotalPoints = $state(0);
+	let constitutionTotalPoints = $state(0);
+	let intelligenceTotalPoints = $state(0);
+	let wisdomTotalPoints = $state(0);
+	let charismaTotalPoints = $state(0);
 
-  async function fetchCategories() {
-    const response = await fetch('/api/get-user-categories');
-    if (response.ok) {
-      const categoriesData = await response.json();
-      categories = categoriesData;
+	async function fetchCategories() {
+		const response = await fetch('/api/get-user-categories');
+		if (response.ok) {
+			const categoriesData = await response.json();
+			categories = categoriesData;
 
-      strengthTotalPoints = categories.filter(a => a.category === 'Strength').reduce((total, activity) => total + activity.points, 0);
-      dexterityTotalPoints = categories.filter(a => a.category === 'Dexterity').reduce((total, activity) => total + activity.points, 0);
-      constitutionTotalPoints = categories.filter(a => a.category === 'Constitution').reduce((total, activity) => total + activity.points, 0);
-      intelligenceTotalPoints = categories.filter(a => a.category === 'Intelligence').reduce((total, activity) => total + activity.points, 0);
-      wisdomTotalPoints = categories.filter(a => a.category === 'Wisdom').reduce((total, activity) => total + activity.points, 0);
-      charismaTotalPoints = categories.filter(a => a.category === 'Charisma').reduce((total, activity) => total + activity.points, 0);
-    } else {
-      console.error('Failed to fetch categories');
-    }
-  }
+			strengthTotalPoints = categories.filter((a) => a.category === 'Strength').reduce((total, activity) => total + activity.points, 0);
+			dexterityTotalPoints = categories.filter((a) => a.category === 'Dexterity').reduce((total, activity) => total + activity.points, 0);
+			constitutionTotalPoints = categories.filter((a) => a.category === 'Constitution').reduce((total, activity) => total + activity.points, 0);
+			intelligenceTotalPoints = categories.filter((a) => a.category === 'Intelligence').reduce((total, activity) => total + activity.points, 0);
+			wisdomTotalPoints = categories.filter((a) => a.category === 'Wisdom').reduce((total, activity) => total + activity.points, 0);
+			charismaTotalPoints = categories.filter((a) => a.category === 'Charisma').reduce((total, activity) => total + activity.points, 0);
+		} else {
+			console.error('Failed to fetch categories');
+		}
+	}
 
-  onMount(fetchCategories);
+	onMount(fetchCategories);
 
-  async function logout() {
-    const response = await fetch('/logout', { method: 'POST' });
-    if (response.ok) {
-      setTimeout(() => {
-        goto('/login');
-      }, 1000);
-    } else {
-      alert('Logout failed');
-    }
-  }
+	async function logout() {
+		const response = await fetch('/logout', { method: 'POST' });
+		if (response.ok) {
+			setTimeout(() => {
+				goto('/login');
+			}, 1000);
+		} else {
+			alert('Logout failed');
+		}
+	}
 
-  function showAddActivityModal(category: string) {
-    if (category) {
-      selectedCategory = category;
-      showActivityModal = true;
-    }
-  }
+	function showAddActivityModal(category: string) {
+		if (category) {
+			selectedCategory = category;
+			showActivityModal = true;
+		}
+	}
 
-  function closeModal() {
-    showActivityModal = false;
-    selectedCategory = null;
-    fetchCategories();
-  }
+	function closeModal() {
+		showActivityModal = false;
+		selectedCategory = null;
+		fetchCategories();
+	}
 
-  async function addXP(activityId: number, category: string) {
-    const activity = categories.find(a => a.id === activityId && a.category === category);
-    if (!activity) {
-      console.error('Activity not found');
-      return;
-    }
+	async function addXP(activityId: number, category: string) {
+		const activity = categories.find((a) => a.id === activityId && a.category === category);
+		if (!activity) {
+			console.error('Activity not found');
+			return;
+		}
 
-    const response = await fetch('/api/add-xp', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ activityId, category })
-    });
+		const response = await fetch('/api/add-xp', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ activityId, category })
+		});
 
-    if (response.ok) {
-      fetchCategories();
-    } else {
-      console.error('Failed to add XP');
-    }
-  }
+		if (response.ok) {
+			fetchCategories();
+		} else {
+			console.error('Failed to add XP');
+		}
+	}
 
-  function calculateLevel(points: number) {
-    let level = 1;
-    let threshold = 50;
-    while (points >= threshold) {
-      points -= threshold;
-      level++;
-      threshold += 25;
-    }
-    return { level, remainingXP: points, nextLevelXP: threshold };
-  }
+	function calculateLevel(points: number) {
+		let level = 1;
+		let threshold = 50;
+		while (points >= threshold) {
+			points -= threshold;
+			level++;
+			threshold += 25;
+		}
+		return { level, remainingXP: points, nextLevelXP: threshold };
+	}
 
-  function getTotalPoints(categoryName: String) {
-    return categories.filter(c => c.category === categoryName).reduce((acc, activity) => acc + activity.points, 0);
-  }
+	function getTotalPoints(categoryName: String) {
+		return categories.filter((c) => c.category === categoryName).reduce((acc, activity) => acc + activity.points, 0);
+	}
 
-  function getLevelData(categoryName: String) {
-    const totalPoints = getTotalPoints(categoryName);
-    return calculateLevel(totalPoints);
-  }
-
+	function getLevelData(categoryName: String) {
+		const totalPoints = getTotalPoints(categoryName);
+		return calculateLevel(totalPoints);
+	}
 </script>
 
 <svelte:head>
-  <title>XP Life - Profile</title>
+	<title>XP Life - Profile</title>
 </svelte:head>
 
 {#if user}
-  <div class="hero">
-    <section class="profile-section">
-      <h1>Welcome, {user.nickname}!</h1>
-      <img src="https://preview.redd.it/new-lore-ekko-or-old-lore-ekko-v0-rk1pnlymql5c1.jpg?width=300&format=pjpg&auto=webp&s=769e3a4b5537853cea944cfb4ccf350320975d18" alt="Profile picdture">
-      <div>
-        Level: {user.userLevel}
-      </div>
-      <p>Email: {user.email}</p>
-      <a href="/profile/settings">Profile settings</a>
-      <button onclick={logout}>Logout</button>
-    </section>
-    
-    <!-- Střední část - Kategorie a postup levelů -->
-    <section class="levels">
-      {#each ['Strength', 'Dexterity', 'Constitution', 'Intelligence', 'Wisdom', 'Charisma'] as categoryName}
-        {#key categoryName}
-          <div class="category-tile">
-            <h3>{categoryName} (Level {getLevelData(categoryName).level})</h3>
-            <div class="progress-bar">
-              <div class="progress" style="width: {(getLevelData(categoryName).remainingXP / getLevelData(categoryName).nextLevelXP) * 100}%"></div>
-            </div>
-            <p>{getLevelData(categoryName).remainingXP} / {getLevelData(categoryName).nextLevelXP} XP to next level</p>
-          </div>
-      {/key}
-      {/each}
-    </section>
-  </div>
-    <section class="activities">
-      <CategorySection 
-        categoryName="Strength" 
-        activities={categories.filter(a => a.category === 'Strength')}
-        totalPoints={strengthTotalPoints} 
-        onAddXP={(activityId: number) => addXP(activityId, 'Strength')} 
-      />
-    
-      <CategorySection 
-        categoryName="Dexterity" 
-        activities={categories.filter(a => a.category === 'Dexterity')}
-        totalPoints={dexterityTotalPoints} 
-        onAddXP={(activityId: number) => addXP(activityId, 'Dexterity')}  
-      />
-    
-      <CategorySection 
-        categoryName="Constitution" 
-        activities={categories.filter(a => a.category === 'Constitution')}
-        totalPoints={constitutionTotalPoints} 
-        onAddXP={(activityId: number) => addXP(activityId, 'Constitution')} 
-      />
-    
-      <CategorySection 
-        categoryName="Intelligence" 
-        activities={categories.filter(a => a.category === 'Intelligence')}
-        totalPoints={intelligenceTotalPoints} 
-        onAddXP={(activityId: number) => addXP(activityId, 'Intelligence')} 
-      />
-    
-      <CategorySection 
-        categoryName="Wisdom" 
-        activities={categories.filter(a => a.category === 'Wisdom')}
-        totalPoints={wisdomTotalPoints} 
-        onAddXP={(activityId: number) => addXP(activityId, 'Wisdom')}  
-      />
-    
-      <CategorySection 
-        categoryName="Charisma" 
-        activities={categories.filter(a => a.category === 'Charisma')}
-        totalPoints={charismaTotalPoints} 
-        onAddXP={(activityId: number) => addXP(activityId, 'Charisma')}  
-      />
-    </section>
-    <section class="buttons">
-      <button onclick={() => showAddActivityModal('Strength')}>Add Activity</button>
-      {#if showActivityModal && selectedCategory !== null}
-        <AddActivityModal userId={user.id} category={selectedCategory!} closeModal={closeModal} />
-      {/if}
-    </section>
+	<div class="hero">
+		<section class="profile-section">
+			<h1>Welcome, {user.nickname}!</h1>
+			<img src="https://preview.redd.it/new-lore-ekko-or-old-lore-ekko-v0-rk1pnlymql5c1.jpg?width=300&format=pjpg&auto=webp&s=769e3a4b5537853cea944cfb4ccf350320975d18" alt="Profile picdture" />
+			<div>
+				<b>Level:</b>
+				{user.userLevel}
+			</div>
+			<p><b>Email:</b> {user.email}</p>
+			<a href="/profile/settings">Profile settings</a>
+			<button onclick={logout}>Logout</button>
+		</section>
+
+		<!-- Střední část - Kategorie a postup levelů -->
+		<section class="levels">
+			{#each ['Strength', 'Dexterity', 'Constitution', 'Intelligence', 'Wisdom', 'Charisma'] as categoryName}
+				{#key categoryName}
+					<div class="category-tile">
+						<h3>{categoryName} (Level {getLevelData(categoryName).level})</h3>
+						<div class="progress-bar">
+							<div class="progress" style="width: {(getLevelData(categoryName).remainingXP / getLevelData(categoryName).nextLevelXP) * 100}%"></div>
+						</div>
+						<p>
+							{getLevelData(categoryName).remainingXP} / {getLevelData(categoryName).nextLevelXP} XP to next level
+						</p>
+					</div>
+				{/key}
+			{/each}
+		</section>
+	</div>
+	<section class="activities">
+		<CategorySection
+			categoryName="Strength"
+			activities={categories.filter((a) => a.category === 'Strength')}
+			totalPoints={strengthTotalPoints}
+			onAddXP={(activityId: number) => addXP(activityId, 'Strength')}
+		/>
+
+		<CategorySection
+			categoryName="Dexterity"
+			activities={categories.filter((a) => a.category === 'Dexterity')}
+			totalPoints={dexterityTotalPoints}
+			onAddXP={(activityId: number) => addXP(activityId, 'Dexterity')}
+		/>
+
+		<CategorySection
+			categoryName="Constitution"
+			activities={categories.filter((a) => a.category === 'Constitution')}
+			totalPoints={constitutionTotalPoints}
+			onAddXP={(activityId: number) => addXP(activityId, 'Constitution')}
+		/>
+
+		<CategorySection
+			categoryName="Intelligence"
+			activities={categories.filter((a) => a.category === 'Intelligence')}
+			totalPoints={intelligenceTotalPoints}
+			onAddXP={(activityId: number) => addXP(activityId, 'Intelligence')}
+		/>
+
+		<CategorySection
+			categoryName="Wisdom"
+			activities={categories.filter((a) => a.category === 'Wisdom')}
+			totalPoints={wisdomTotalPoints}
+			onAddXP={(activityId: number) => addXP(activityId, 'Wisdom')}
+		/>
+
+		<CategorySection
+			categoryName="Charisma"
+			activities={categories.filter((a) => a.category === 'Charisma')}
+			totalPoints={charismaTotalPoints}
+			onAddXP={(activityId: number) => addXP(activityId, 'Charisma')}
+		/>
+	</section>
+	<section class="buttons">
+		<button onclick={() => showAddActivityModal('Strength')}>Add Activity</button>
+		{#if showActivityModal && selectedCategory !== null}
+			<AddActivityModal userId={user.id} category={selectedCategory!} {closeModal} />
+		{/if}
+	</section>
 {:else}
-  <p>You are not logged in.</p>
+	<p>You are not logged in.</p>
 {/if}
 
 <style lang="stylus">
   .hero
     display grid
     grid-template-columns 1fr 3fr // První potomek zabere 1fr, zbytek 4fr
-    grid-gap 20px
-    margin-bottom 10px
+    grid-gap 24px
+    margin-bottom 20px
     padding 0 36px
     min-height 400px
     box-sizing border-box
-    gap 10px
+    margin-top 36px
+    margin-bottom 72px
+
 
     @media (max-width: 768px) // Na mobilu bude profil nahoře a ostatní sekce pod sebou
       display flex
@@ -243,7 +248,7 @@
     display grid
     width 100% 
     grid-template-columns repeat(auto-fit, minmax(400px, 1fr))
-    gap 20px
+    gap 24px
 
     @media (max-width: 768px)
         display flex
@@ -261,7 +266,10 @@
       flex-direction column
       justify-content center
       align-items center
-      box-sizing: border-box;
+      box-sizing border-box
+
+      h3
+        margin 0 0 12px
 
       @media (max-width: 768px)
         width 100%
@@ -281,11 +289,13 @@
     display flex
     flex-direction row
     flex-wrap wrap
-    gap 20px
     width 100%
     padding 0 36px
     margin 0
     box-sizing border-box
+    display grid
+    grid-template-columns repeat(auto-fit, minmax(400px, 1fr))
+    gap 24px
 
     @media (max-width: 768px)
       width 100%
@@ -308,6 +318,7 @@
     height 3rem
     transition ease .3s
     cursor pointer
+    margin 48px 0
 
     &:hover
       background #007bff
