@@ -1,23 +1,24 @@
 <script lang="ts">
-    // Použití $props() přímo, bez $state
-    let { type = 'submit', color, children } = $props<{ type: 'button' | 'submit' | 'reset', color: string, children: any }>();
+	// Použití $props() přímo, bez $state
+	let {
+		type = 'submit',
+		color,
+		children
+	} = $props<{ type: 'button' | 'submit' | 'reset'; color: string; children: any }>();
 
-    // Derivace třídy
-    let buttonClass = $derived(`${color} button`);
+	// Derivace třídy
+	let buttonClass = $derived(`${color} button`);
 </script>
 
-<button type={type} class={buttonClass}>
-    {@render children()}
+<button {type} class={buttonClass}>
+	{@render children()}
 </button>
-
-
 
 <style lang="stylus">
     .button
         padding 10px
         border-radius 10px
         text-decoration none
-        font-family "Poppins", sans-serif
         font-size 23px
         width 100%
         text-align center

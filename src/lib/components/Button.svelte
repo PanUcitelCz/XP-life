@@ -1,14 +1,13 @@
 <script lang="ts">
-    // Typové argumenty pro props
-    let { href, color, children } = $props<{ href: string, color: string, children: any }>();
+	// Typové argumenty pro props
+	let { href, color, children } = $props<{ href: string; color: string; children: any }>();
 
-    let buttonClass = $derived(`${color} button`);
+	let buttonClass = $derived(`${color} button`);
 </script>
 
-<a href="{href}" class={buttonClass}>
-    {@render children()}
+<a {href} class={buttonClass}>
+	{@render children()}
 </a>
-
 
 <style lang="stylus">
 
@@ -17,7 +16,6 @@
         padding 10px
         border-radius 10px
         text-decoration none
-        font-family "Poppins", sans-serif
         font-size 23px
         width 100%
         text-align center

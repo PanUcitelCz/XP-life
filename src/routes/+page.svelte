@@ -1,14 +1,14 @@
 <script lang="ts">
-     import Button from '$lib/components/Button.svelte';
+	import Button from '$lib/components/Button.svelte';
 </script>
 
-<div class="Hero">  
-    <h1>XP Life</h1>
-    <h2>Level Up Your Day</h2>
-    <div class="buttons">
-        <Button href="/login" color="grey">Login</Button>
-        <Button href="/register" color="ghost">Register</Button>
-    </div>
+<div class="Hero">
+	<h1>XP Life</h1>
+	<h2>Level Up Your Day</h2>
+	<div class="buttons">
+		<Button href="/login" color="grey">Login</Button>
+		<Button href="/register" color="ghost">Register</Button>
+	</div>
 </div>
 
 <style lang="stylus">
@@ -20,7 +20,6 @@
         align-items center
         width 100%
         height 100vh
-        font-family "Poppins", sans-serif
 
         h1
             font-size clamp(50px, 10vw, 100px)
@@ -41,5 +40,5 @@
             max-width 400px
             width 100%
             flex-direction row
-            
+
 </style>
