@@ -1,13 +1,12 @@
 :root {
 --icon-arrow-right: "\f200";
 --icon-arrow-left: "\f201";
---icon-send-mail: "\f202";
 }
 @font-face {
     font-family: "fantasticon";
-    src: url("./fantasticon.woff?15d47ffbf0a73ac74ed7f62df0e6f52a") format("woff"),
-url("./fantasticon.woff2?15d47ffbf0a73ac74ed7f62df0e6f52a") format("woff2"),
-url("./fantasticon.svg?15d47ffbf0a73ac74ed7f62df0e6f52a#fantasticon") format("svg");
+    src: url("./fantasticon.woff?c2d127f02ac70de63865c854ff1dd20c") format("woff"),
+url("./fantasticon.woff2?c2d127f02ac70de63865c854ff1dd20c") format("woff2"),
+url("./fantasticon.svg?c2d127f02ac70de63865c854ff1dd20c#fantasticon") format("svg");
 }
 
 i[class^="icon-"]:before, i[class*=" icon-"]:before {
@@ -23,25 +22,27 @@ i[class^="icon-"]:before, i[class*=" icon-"]:before {
 
 .icon-arrow-right:before { content: var(--icon-arrow-right); }
 .icon-arrow-left:before { content: var(--icon-arrow-left); }
-.icon-send-mail:before { content: var(--icon-send-mail); }
 .icon-x-mark:before {
     content: "\f101";
 }
-.icon-school:before {
+.icon-send-mail:before {
     content: "\f102";
 }
-.icon-mail:before {
+.icon-school:before {
     content: "\f103";
 }
-.icon-chevron-down:before {
+.icon-mail:before {
     content: "\f104";
 }
-.icon-beaker:before {
+.icon-chevron-down:before {
     content: "\f105";
 }
-.icon-arrow-path:before {
+.icon-beaker:before {
     content: "\f106";
 }
-.icon-arrow-down:before {
+.icon-arrow-path:before {
     content: "\f107";
+}
+.icon-arrow-down:before {
+    content: "\f108";
 }

@@ -5,15 +5,13 @@ import fantasticonPlugin from './plugins/fantasticonPlugin';
 
 const customCodepoints = {
 	'arrow-right': 0xf200,
-	'arrow-left': 0xf201,
-	'send-mail': 0xf202
+	'arrow-left': 0xf201
 };
 
 export default defineConfig({
 	css: {
 		preprocessorOptions: {
 			stylus: {
-				// Make sure the paths to your Stylus files are correct
 				additionalData: `@import '${path.resolve(__dirname, 'src/lib/css/global.styl')}'\n`
 			}
 		}
