@@ -11,8 +11,6 @@ const customCodepoints = {
 	school: 0xf204
 };
 
-console.log('Cesta je taková: ', path.resolve(__dirname, 'src/lib/icons'));
-
 export default defineConfig({
 	css: {
 		preprocessorOptions: {
@@ -34,5 +32,14 @@ export default defineConfig({
 		alias: {
 			$lib: path.resolve('src/lib') // Správná cesta k aliasu $lib
 		}
-	}
+	},
+    server: {
+        watch: {
+          usePolling: false
+        },
+        hmr: {
+          overlay: false
+        }
+
+      }
 });

@@ -127,7 +127,8 @@
 			</div>
 			<address><i class="icon icon-mail"></i> {user.email}</address>
 			<a href="/profile/settings">Profile settings</a>
-			<button onclick={logout}>Logout</button>
+            <button onclick={() => showAddActivityModal('Strength')}>Add Activity</button>
+			<button onclick={logout} class="logout"><i class="icon icon-arrow-up-right"></i>Logout</button>
 		</section>
 
 		<!-- Střední část - Kategorie a postup levelů -->
@@ -191,7 +192,7 @@
 		/>
 	</section>
 	<section class="buttons">
-		<button onclick={() => showAddActivityModal('Strength')}>Add Activity</button>
+
 		{#if showActivityModal && selectedCategory !== null}
 			<AddActivityModal userId={user.id} category={selectedCategory!} {closeModal} />
 		{/if}
@@ -212,13 +213,6 @@
     margin-top 36px
     margin-bottom 72px
 
-    +icon-after()
-        content var(--icon-mail)
-
-    +icon-before()
-        content var(--icon-mail)
-
-
     @media (max-width: 768px) // Na mobilu bude profil nahoře a ostatní sekce pod sebou
       display flex
       justify-content center
@@ -231,13 +225,16 @@
     flex-direction column
     justify-content center
     align-items center
-    background-color white
+    background-color rgba(0, 0, 0, 0.35)
     padding 20px
     border-radius 10px
     box-shadow rgba(17, 12, 46, 0.15) 0px 48px 100px 0px
     width 100%
     text-align center
     box-sizing border-box
+    backdrop-filter: blur(10px)
+    color white
+
 
     & > div
         display flex
@@ -254,7 +251,7 @@
             gap 8px
 
     button
-        background black
+        background #007bff
         border none
         color white
         border-radius 10px
@@ -267,13 +264,28 @@
         margin-top 24px
         font-size 18px
 
-        // +hover()
-        //     &:hover
-        //         background #007bff
+        +hover()
+            &:hover
+                text-decoration-color transparent
+                background #2a40ae
+
+    .logout
+        background #495464
+        transition background .6s $easeOutExpo, color .6s $easeOutExpo
+        display flex
+        justify-content center
+        align-items center
+        gap 8px
+
+        +hover()
+            &:hover
+                text-decoration-color transparent
+                background white
+                color black
 
     a
         font-weight bold
-        color: black
+        color: white
         text-transform uppercase
         font-size 15px
         text-underline-offset 4px
@@ -320,7 +332,7 @@
         flex-direction column
 
     .category-tile
-      background white
+      background rgba(0, 0, 0, 0.35)
       padding 20px
       border-radius 10px
       box-shadow rgba(17, 12, 46, 0.15) 0px 48px 100px 0px
@@ -330,9 +342,15 @@
       justify-content center
       align-items center
       box-sizing border-box
+      backdrop-filter blur(10px)
+      color white
 
       h3
         margin 0 0 12px
+        color white
+
+      p
+        color #b4b4b8
 
       @media (max-width: 768px)
         width 100%
@@ -345,7 +363,7 @@
         overflow hidden
         .progress
           height 100%
-          background-color #007bff
+          background-color #ff8113
           transition width 0.3s
 
   .activities
@@ -359,31 +377,14 @@
     display grid
     grid-template-columns repeat(auto-fit, minmax(400px, 1fr))
     gap 24px
+    margin-bottom 36px
 
     @media (max-width: 768px)
       width 100%
+      display flex
+      justify-content center
+      align-items center
+      flex-direction column
 
-.buttons
-  display flex
-  justify-content center
-  gap 10px
-  align-items center
-  box-sizing border-box
 
-  button
-    background blue
-    color white
-    border 0px solid blue
-    border-radius 10px
-    padding 10px
-    max-width 300px
-    width 100%
-    height 3rem
-    transition ease .3s
-    cursor pointer
-    margin 48px 0
-
-    +hover()
-        &:hover
-            background #007bff
 </style>

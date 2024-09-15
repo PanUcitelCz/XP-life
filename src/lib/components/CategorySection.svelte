@@ -39,17 +39,18 @@
 </div>
 
 <style lang="stylus">
-  h3
-    text-align center
-    color #333
+    h3
+        color white
 
 	.category-section
-		background-color #f8f9fa
-		padding 20px
-		border-radius 10px
-		box-shadow rgba(17, 12, 46, 0.15) 0px 48px 100px 0px
-		width 100%
-		box-sizing border-box
+        background rgba(0, 0, 0, 0.35)
+        backdrop-filter blur(10px)
+        -webkit-backdrop-filter blur(10px)
+        padding 20px
+        border-radius 10px
+        box-shadow rgba(17, 12, 46, 0.15) 0px 48px 100px 0px
+        width 100%
+        box-sizing border-box
 
 	.activity-list
 		display flex
@@ -61,7 +62,7 @@
 	.activity-row
 		display flex
 		flex-direction column
-		background-color #fff
+		background-color rgba(85, 92, 108, 0.5)
 		padding 15px
 		border-radius 8px
 		box-shadow rgba(0, 0, 0, 0.1) 0px 4px 12px
@@ -79,20 +80,20 @@
 
 
 	.activity-name
-		font-weight bold
-		color #007bff
-
+        font-weight: bold
+        text-align: left
+        color: #ff8113
 
 	.activity-level,
 	.activity-xp
 		font-size 1rem
-		color #555
+		color #B4B4B8
 
 
 	.activity-xp
 		margin-bottom 10px
 		font-size 1.1rem
-		color #333
+		color #B4B4B8
 		text-align center
 
 
