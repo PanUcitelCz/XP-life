@@ -1,0 +1,30 @@
+:root {
+--icon-arrow-right: "\f200";
+--icon-arrow-left: "\f201";
+--icon-arrow-up: "\f202";
+--icon-mail: "\f203";
+--icon-school: "\f204";
+}
+@font-face {
+    font-family: "fantasticon";
+    src: url("./fantasticon.woff?707d5259d6ef46910dfec75d7d6acce3") format("woff"),
+url("./fantasticon.woff2?707d5259d6ef46910dfec75d7d6acce3") format("woff2"),
+url("./fantasticon.svg?707d5259d6ef46910dfec75d7d6acce3#fantasticon") format("svg");
+}
+
+i[class^="icon-"]:before, i[class*=" icon-"]:before {
+    font-family: fantasticon !important;
+    font-style: normal;
+    font-weight: normal !important;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-arrow-right:before { content: var(--icon-arrow-right); }
+.icon-arrow-left:before { content: var(--icon-arrow-left); }
+.icon-arrow-up:before { content: var(--icon-arrow-up); }
+.icon-mail:before { content: var(--icon-mail); }
+.icon-school:before { content: var(--icon-school); }

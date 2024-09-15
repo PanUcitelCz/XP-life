@@ -34,24 +34,12 @@
 			const categoriesData = await response.json();
 			categories = categoriesData;
 
-			strengthTotalPoints = categories
-				.filter((a) => a.category === 'Strength')
-				.reduce((total, activity) => total + activity.points, 0);
-			dexterityTotalPoints = categories
-				.filter((a) => a.category === 'Dexterity')
-				.reduce((total, activity) => total + activity.points, 0);
-			constitutionTotalPoints = categories
-				.filter((a) => a.category === 'Constitution')
-				.reduce((total, activity) => total + activity.points, 0);
-			intelligenceTotalPoints = categories
-				.filter((a) => a.category === 'Intelligence')
-				.reduce((total, activity) => total + activity.points, 0);
-			wisdomTotalPoints = categories
-				.filter((a) => a.category === 'Wisdom')
-				.reduce((total, activity) => total + activity.points, 0);
-			charismaTotalPoints = categories
-				.filter((a) => a.category === 'Charisma')
-				.reduce((total, activity) => total + activity.points, 0);
+			strengthTotalPoints = categories.filter((a) => a.category === 'Strength').reduce((total, activity) => total + activity.points, 0);
+			dexterityTotalPoints = categories.filter((a) => a.category === 'Dexterity').reduce((total, activity) => total + activity.points, 0);
+			constitutionTotalPoints = categories.filter((a) => a.category === 'Constitution').reduce((total, activity) => total + activity.points, 0);
+			intelligenceTotalPoints = categories.filter((a) => a.category === 'Intelligence').reduce((total, activity) => total + activity.points, 0);
+			wisdomTotalPoints = categories.filter((a) => a.category === 'Wisdom').reduce((total, activity) => total + activity.points, 0);
+			charismaTotalPoints = categories.filter((a) => a.category === 'Charisma').reduce((total, activity) => total + activity.points, 0);
 		} else {
 			console.error('Failed to fetch categories');
 		}
@@ -115,9 +103,7 @@
 	}
 
 	function getTotalPoints(categoryName: String) {
-		return categories
-			.filter((c) => c.category === categoryName)
-			.reduce((acc, activity) => acc + activity.points, 0);
+		return categories.filter((c) => c.category === categoryName).reduce((acc, activity) => acc + activity.points, 0);
 	}
 
 	function getLevelData(categoryName: String) {
@@ -134,10 +120,7 @@
 	<div class="hero">
 		<section class="profile-section">
 			<h1>Welcome, {user.nickname}!</h1>
-			<img
-				src="https://preview.redd.it/new-lore-ekko-or-old-lore-ekko-v0-rk1pnlymql5c1.jpg?width=300&format=pjpg&auto=webp&s=769e3a4b5537853cea944cfb4ccf350320975d18"
-				alt="Profile picdture"
-			/>
+			<img src="https://preview.redd.it/new-lore-ekko-or-old-lore-ekko-v0-rk1pnlymql5c1.jpg?width=300&format=pjpg&auto=webp&s=769e3a4b5537853cea944cfb4ccf350320975d18" alt="Profile picdture" />
 			<div>
 				<div><i class="icon icon-school"></i><span>Level:</span></div>
 				<div>{user.userLevel}</div>
@@ -154,16 +137,10 @@
 					<div class="category-tile">
 						<h3>{categoryName} (Level {getLevelData(categoryName).level})</h3>
 						<div class="progress-bar">
-							<div
-								class="progress"
-								style="width: {(getLevelData(categoryName).remainingXP /
-									getLevelData(categoryName).nextLevelXP) *
-									100}%"
-							></div>
+							<div class="progress" style="width: {(getLevelData(categoryName).remainingXP / getLevelData(categoryName).nextLevelXP) * 100}%"></div>
 						</div>
 						<p>
-							{getLevelData(categoryName).remainingXP} / {getLevelData(categoryName).nextLevelXP} XP
-							to next level
+							{getLevelData(categoryName).remainingXP} / {getLevelData(categoryName).nextLevelXP} XP to next level
 						</p>
 					</div>
 				{/key}
@@ -234,6 +211,12 @@
     box-sizing border-box
     margin-top 36px
     margin-bottom 72px
+
+    +icon-after()
+        content var(--icon-mail)
+
+    +icon-before()
+        content var(--icon-mail)
 
 
     @media (max-width: 768px) // Na mobilu bude profil nahoře a ostatní sekce pod sebou

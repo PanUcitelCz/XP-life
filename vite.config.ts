@@ -2,13 +2,16 @@ import { sveltekit } from '@sveltejs/kit/vite';
 import path from 'path';
 import { defineConfig } from 'vite';
 import fantasticonPlugin from './plugins/fantasticonPlugin';
-/*
+
 const customCodepoints = {
 	'arrow-right': 0xf200,
-	'arrow-left': 0xf201
-};*/
+	'arrow-left': 0xf201,
+	'arrow-up': 0xf202,
+	mail: 0xf203,
+	school: 0xf204
+};
 
-console.log("Cesta je taková: ", path.resolve(__dirname, 'src/lib/icons'));
+console.log('Cesta je taková: ', path.resolve(__dirname, 'src/lib/icons'));
 
 export default defineConfig({
 	css: {
@@ -21,6 +24,7 @@ export default defineConfig({
 	plugins: [
 		sveltekit(),
 		fantasticonPlugin({
+			codepoints: customCodepoints,
 			normalize: true,
 			inputDir: path.resolve(__dirname, 'src/lib/icons'),
 			outputDir: path.resolve(__dirname, 'src/lib/css/fantasticon')
