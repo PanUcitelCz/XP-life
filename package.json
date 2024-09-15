@@ -21,6 +21,7 @@
 		"@sveltejs/vite-plugin-svelte": "^4.0.0-next.6",
 		"@types/bcryptjs": "^2.4.6",
 		"@types/eslint": "^8.56.12",
+		"@types/fs-extra": "^11.0.4",
 		"@types/node": "^20.16.5",
 		"@types/three": "^0.134.0",
 		"chokidar": "^4.0.0",
@@ -58,6 +59,10 @@
 		"dotenv": "^16.4.5",
 		"drizzle-orm": "^0.33.0",
 		"generate": "^0.14.0",
+		"sf": "^0.2.0",
 		"svelte": "5.0.0-next.246"
+	},
+	"resolutions": {
+		"uri-js": "npm:uri-js-replace"
 	}
 }
