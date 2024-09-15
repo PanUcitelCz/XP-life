@@ -1,4 +1,5 @@
 <script lang="ts">
+	import '$lib/css/fantasticon/fantasticon.css';
 	import type { Snippet } from 'svelte';
 	import { fly } from 'svelte/transition';
 	import type { LayoutData } from './$types';
@@ -88,7 +89,12 @@
         margin auto
         box-sizing border-box
 
-
     :global(body.page-transitioning)
         overflow hidden
+
+    :global(i[class^='icon-']:before)
+        display grid
+
+    :global(i[class*='icon-']:before)
+        display grid
 </style>

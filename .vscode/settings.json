@@ -1,0 +1,12 @@
+{
+	"editor.tabSize": 4,  // Set the number of spaces for indentation
+	"editor.insertSpaces": true,  // Use spaces instead of tabs
+	"editor.detectIndentation": false,  // Prevent auto-detection of indentation
+	"editor.formatOnSave": true,
+	"[svelte]": {
+	  "editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+	"files.eol": "\n",
+	"files.trimTrailingWhitespace": true,
+	"files.insertFinalNewline": true
+  }

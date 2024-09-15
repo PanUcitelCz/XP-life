@@ -24,9 +24,10 @@
         color white
         background #495464
 
-        &:hover
-            color white
-            background #3cab52
+        +hover()
+            &:hover
+                color white
+                background #3cab52
 
     .ghost
         color black
@@ -35,5 +36,4 @@
         &:hover
             color white
             background #3cab52
-
 </style>

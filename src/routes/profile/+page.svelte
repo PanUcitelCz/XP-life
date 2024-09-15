@@ -34,12 +34,24 @@
 			const categoriesData = await response.json();
 			categories = categoriesData;
 
-			strengthTotalPoints = categories.filter((a) => a.category === 'Strength').reduce((total, activity) => total + activity.points, 0);
-			dexterityTotalPoints = categories.filter((a) => a.category === 'Dexterity').reduce((total, activity) => total + activity.points, 0);
-			constitutionTotalPoints = categories.filter((a) => a.category === 'Constitution').reduce((total, activity) => total + activity.points, 0);
-			intelligenceTotalPoints = categories.filter((a) => a.category === 'Intelligence').reduce((total, activity) => total + activity.points, 0);
-			wisdomTotalPoints = categories.filter((a) => a.category === 'Wisdom').reduce((total, activity) => total + activity.points, 0);
-			charismaTotalPoints = categories.filter((a) => a.category === 'Charisma').reduce((total, activity) => total + activity.points, 0);
+			strengthTotalPoints = categories
+				.filter((a) => a.category === 'Strength')
+				.reduce((total, activity) => total + activity.points, 0);
+			dexterityTotalPoints = categories
+				.filter((a) => a.category === 'Dexterity')
+				.reduce((total, activity) => total + activity.points, 0);
+			constitutionTotalPoints = categories
+				.filter((a) => a.category === 'Constitution')
+				.reduce((total, activity) => total + activity.points, 0);
+			intelligenceTotalPoints = categories
+				.filter((a) => a.category === 'Intelligence')
+				.reduce((total, activity) => total + activity.points, 0);
+			wisdomTotalPoints = categories
+				.filter((a) => a.category === 'Wisdom')
+				.reduce((total, activity) => total + activity.points, 0);
+			charismaTotalPoints = categories
+				.filter((a) => a.category === 'Charisma')
+				.reduce((total, activity) => total + activity.points, 0);
 		} else {
 			console.error('Failed to fetch categories');
 		}
@@ -103,7 +115,9 @@
 	}
 
 	function getTotalPoints(categoryName: String) {
-		return categories.filter((c) => c.category === categoryName).reduce((acc, activity) => acc + activity.points, 0);
+		return categories
+			.filter((c) => c.category === categoryName)
+			.reduce((acc, activity) => acc + activity.points, 0);
 	}
 
 	function getLevelData(categoryName: String) {
@@ -120,12 +134,15 @@
 	<div class="hero">
 		<section class="profile-section">
 			<h1>Welcome, {user.nickname}!</h1>
-			<img src="https://preview.redd.it/new-lore-ekko-or-old-lore-ekko-v0-rk1pnlymql5c1.jpg?width=300&format=pjpg&auto=webp&s=769e3a4b5537853cea944cfb4ccf350320975d18" alt="Profile picdture" />
+			<img
+				src="https://preview.redd.it/new-lore-ekko-or-old-lore-ekko-v0-rk1pnlymql5c1.jpg?width=300&format=pjpg&auto=webp&s=769e3a4b5537853cea944cfb4ccf350320975d18"
+				alt="Profile picdture"
+			/>
 			<div>
-				<b>Level:</b>
-				{user.userLevel}
+				<div><i class="icon icon-school"></i><span>Level:</span></div>
+				<div>{user.userLevel}</div>
 			</div>
-			<p><b>Email:</b> {user.email}</p>
+			<address><i class="icon icon-mail"></i> {user.email}</address>
 			<a href="/profile/settings">Profile settings</a>
 			<button onclick={logout}>Logout</button>
 		</section>
@@ -137,10 +154,16 @@
 					<div class="category-tile">
 						<h3>{categoryName} (Level {getLevelData(categoryName).level})</h3>
 						<div class="progress-bar">
-							<div class="progress" style="width: {(getLevelData(categoryName).remainingXP / getLevelData(categoryName).nextLevelXP) * 100}%"></div>
+							<div
+								class="progress"
+								style="width: {(getLevelData(categoryName).remainingXP /
+									getLevelData(categoryName).nextLevelXP) *
+									100}%"
+							></div>
 						</div>
 						<p>
-							{getLevelData(categoryName).remainingXP} / {getLevelData(categoryName).nextLevelXP} XP to next level
+							{getLevelData(categoryName).remainingXP} / {getLevelData(categoryName).nextLevelXP} XP
+							to next level
 						</p>
 					</div>
 				{/key}
@@ -218,10 +241,10 @@
       justify-content center
       align-items center
       flex-direction column
-      
 
   .profile-section
     display flex
+    gap 8px
     flex-direction column
     justify-content center
     align-items center
@@ -233,10 +256,67 @@
     text-align center
     box-sizing border-box
 
+    & > div
+        display flex
+        align-items center
+        gap 8px
+
+        i
+            font-size 24px
+
+        & > div
+            display flex
+            align-items center
+            font-weight 500
+            gap 8px
+
+    button
+        background black
+        border none
+        color white
+        border-radius 10px
+        padding 10px
+        max-width 300px
+        width 100%
+        height 3rem
+        transition background .6s $easeOutExpo
+        cursor pointer
+        margin-top 24px
+        font-size 18px
+
+        // +hover()
+        //     &:hover
+        //         background #007bff
+
+    a
+        font-weight bold
+        color: black
+        text-transform uppercase
+        font-size 15px
+        text-underline-offset 4px
+        margin-top 12px
+        text-decoration underline
+        text-decoration-color inherit
+        transition text-decoration .6s $easeOutExpo
+
+        +hover()
+            &:hover
+                text-decoration-color transparent
+
+    address
+        display flex
+        gap 6px
+        align-items center
+        font-style normal
+        font-weight 500
+
+        i
+            font-size 24px
+
     @media (max-width: 768px)
       width 100%
       max-width 100%
-    
+
     img
       width 150px
       height 150px
@@ -246,7 +326,7 @@
 
   .levels
     display grid
-    width 100% 
+    width 100%
     grid-template-columns repeat(auto-fit, minmax(400px, 1fr))
     gap 24px
 
@@ -320,6 +400,7 @@
     cursor pointer
     margin 48px 0
 
-    &:hover
-      background #007bff
+    +hover()
+        &:hover
+            background #007bff
 </style>
