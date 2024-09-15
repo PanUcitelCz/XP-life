@@ -25,7 +25,6 @@
 		"@types/node": "^20.16.5",
 		"@types/three": "^0.134.0",
 		"chokidar": "^4.0.0",
-		"crypto": "^1.0.1",
 		"drizzle-kit": "^0.24.2",
 		"eslint": "^9.10.0",
 		"eslint-config-prettier": "^9.1.0",
@@ -59,7 +58,6 @@
 		"dotenv": "^16.4.5",
 		"drizzle-orm": "^0.33.0",
 		"generate": "^0.14.0",
-		"sf": "^0.2.0",
 		"svelte": "5.0.0-next.246"
 	},
 	"resolutions": {

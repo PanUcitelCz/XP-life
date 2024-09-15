@@ -4,7 +4,7 @@ import { generateFonts } from 'fantasticon'
 import fs from 'fs-extra'
 import path from 'path'
 
-//@ts-nocheck
+
 const generateFileHash = (filePath) => {
 	const fileBuffer = fs.readFileSync(filePath)
 	const hashSum = crypto.createHash('md5')
