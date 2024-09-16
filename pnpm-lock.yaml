@@ -32,6 +32,9 @@ importers:
       generate:
         specifier: ^0.14.0
         version: 0.14.0
+      node-fetch:
+        specifier: ^3.3.2
+        version: 3.3.2
       prebuild-install:
         specifier: ^7.1.2
         version: 7.1.2
