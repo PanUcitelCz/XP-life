@@ -1,54 +1,29 @@
 import { db } from '$lib/db';
-import { strengthTable, dexterityTable, constitutionTable, intelligenceTable, wisdomTable, charismaTable } from '$lib/db/schema';
+import { dexterityTable } from '$lib/db/schema';
 import { eq } from 'drizzle-orm';
 import { json } from '@sveltejs/kit';
 
 export const POST = async ({ request, locals }) => {
-    const { activityId, category } = await request.json();
+    const { activityId } = await request.json();
 
     // Zkontrolovat, zda je uživatel přihlášen
     if (!locals.user) {
         return json({ error: 'Not authenticated' }, { status: 401 });
     }
 
-    // Vyber správnou tabulku podle kategorie
-    let table;
-    switch (category) {
-        case 'Strength':
-            table = strengthTable;
-            break;
-        case 'Dexterity':
-            table = dexterityTable;
-            break;
-        case 'Constitution':
-            table = constitutionTable;
-            break;
-        case 'Intelligence':
-            table = intelligenceTable;
-            break;
-        case 'Wisdom':
-            table = wisdomTable;
-            break;
-        case 'Charisma':
-            table = charismaTable;
-            break;
-        default:
-            return json({ error: 'Invalid category' }, { status: 400 });
-    }
-
     // Načíst aktivitu podle ID
     const activity = await db
         .select()
-        .from(table)
-        .where(eq(table.id, activityId))
+        .from(dexterityTable)
+        .where(eq(dexterityTable.id, activityId))
         .get();
 
     if (!activity) {
         return json({ error: 'Activity not found' }, { status: 404 });
     }
 
-    // Zkontrolovat, jestli XP byly přidány dnes (jen kontrola na základě dne)
-    const today = new Date().toISOString().split('T')[0]; // Dnešní datum v ISO formátu (YYYY-MM-DD)
+    // Zkontrolovat, jestli XP byly přidány dnes
+    const today = new Date().toISOString().split('T')[0];
     if (activity.lastXPAdded && activity.lastXPAdded.split('T')[0] === today) {
         return json({ error: 'XP already added today' }, { status: 400 });
     }
@@ -65,8 +40,6 @@ export const POST = async ({ request, locals }) => {
         case 'hard':
             xpToAdd = 15;
             break;
-        default:
-            xpToAdd = 0;
     }
 
     const updatedPoints = activity.points + xpToAdd;
@@ -74,13 +47,13 @@ export const POST = async ({ request, locals }) => {
 
     // Aktualizovat aktivitu v databázi
     await db
-        .update(table)
+        .update(dexterityTable)
         .set({
             points: updatedPoints,
             level: updatedLevel,
-            lastXPAdded: new Date().toISOString(), // Aktualizace lastXPAdded na současný čas
+            lastXPAdded: new Date().toISOString(),
         })
-        .where(eq(table.id, activityId))
+        .where(eq(dexterityTable.id, activityId))
         .run();
 
     return json({ success: true, updatedPoints, updatedLevel });

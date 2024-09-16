@@ -19,15 +19,16 @@ export const load: PageServerLoad = async ({ locals }) => {
   }
 
   // Načtení aktivit z jednotlivých kategorií
-  const strengthPoints = await db.select({ points: strengthTable.points }).from(strengthTable).where(eq(strengthTable.userId, userId)).all();
-  const dexterityPoints = await db.select({ points: dexterityTable.points }).from(dexterityTable).where(eq(dexterityTable.userId, userId)).all();
-  const constitutionPoints = await db.select({ points: constitutionTable.points }).from(constitutionTable).where(eq(constitutionTable.userId, userId)).all();
-  const intelligencePoints = await db.select({ points: intelligenceTable.points }).from(intelligenceTable).where(eq(intelligenceTable.userId, userId)).all();
-  const wisdomPoints = await db.select({ points: wisdomTable.points }).from(wisdomTable).where(eq(wisdomTable.userId, userId)).all();
-  const charismaPoints = await db.select({ points: charismaTable.points }).from(charismaTable).where(eq(charismaTable.userId, userId)).all();
+  const strengthPoints = await db.select({ points: strengthTable.points, level: strengthTable.level }).from(strengthTable).where(eq(strengthTable.userId, userId)).all();
+  const dexterityPoints = await db.select({ points: dexterityTable.points, level: dexterityTable.level }).from(dexterityTable).where(eq(dexterityTable.userId, userId)).all();
+  const constitutionPoints = await db.select({ points: constitutionTable.points, level: constitutionTable.level }).from(constitutionTable).where(eq(constitutionTable.userId, userId)).all();
+  const intelligencePoints = await db.select({ points: intelligenceTable.points, level: intelligenceTable.level }).from(intelligenceTable).where(eq(intelligenceTable.userId, userId)).all();
+  const wisdomPoints = await db.select({ points: wisdomTable.points, level: wisdomTable.level }).from(wisdomTable).where(eq(wisdomTable.userId, userId)).all();
+  const charismaPoints = await db.select({ points: charismaTable.points, level: charismaTable.level }).from(charismaTable).where(eq(charismaTable.userId, userId)).all();
 
   // Výpočet celkových bodů pro každou kategorii
-  const getTotalPoints = (pointsArray: Array<{ points: number }>) => pointsArray.reduce((total, activity) => total + activity.points, 0);
+  const getTotalPoints = (pointsArray: Array<{ points: number, level: number }>) => pointsArray.reduce((total, activity) => total + activity.points, 0);
+  const getMaxLevel = (pointsArray: Array<{ points: number, level: number }>) => Math.max(...pointsArray.map(activity => activity.level), 1); // Výpočet max. levelu z aktivit
 
   const strengthTotalPoints = getTotalPoints(strengthPoints);
   const dexterityTotalPoints = getTotalPoints(dexterityPoints);
@@ -56,6 +57,14 @@ export const load: PageServerLoad = async ({ locals }) => {
   const wisdomLevel = calculateLevel(wisdomTotalPoints);
   const charismaLevel = calculateLevel(charismaTotalPoints);
 
+  // Přidání logiky pro jednotlivé aktivity
+  const strengthMaxLevel = getMaxLevel(strengthPoints);
+  const dexterityMaxLevel = getMaxLevel(dexterityPoints);
+  const constitutionMaxLevel = getMaxLevel(constitutionPoints);
+  const intelligenceMaxLevel = getMaxLevel(intelligencePoints);
+  const wisdomMaxLevel = getMaxLevel(wisdomPoints);
+  const charismaMaxLevel = getMaxLevel(charismaPoints);
+
   // Aktualizace uživatelského levelu v DB (nejmenší level ze všech kategorií)
   const overallLevel = Math.min(strengthLevel, dexterityLevel, constitutionLevel, intelligenceLevel, wisdomLevel, charismaLevel);
   await db.update(usersTable).set({ userLevel: overallLevel }).where(eq(usersTable.id, userId)).run();
@@ -74,7 +83,13 @@ export const load: PageServerLoad = async ({ locals }) => {
         constitutionLevel,
         intelligenceLevel,
         wisdomLevel,
-        charismaLevel
+        charismaLevel,
+        strengthMaxLevel, // Přidání maximálního levelu z aktivit
+        dexterityMaxLevel,
+        constitutionMaxLevel,
+        intelligenceMaxLevel,
+        wisdomMaxLevel,
+        charismaMaxLevel
       }
     }
   };

@@ -71,25 +71,51 @@
 		fetchCategories();
 	}
 
-	async function addXP(activityId: number, category: string) {
-		const activity = categories.find((a) => a.id === activityId && a.category === category);
-		if (!activity) {
-			console.error('Activity not found');
-			return;
-		}
+    async function addXP(activityId: number, category: string) {
+    const activity = categories.find((a) => a.id === activityId && a.category === category);
+    if (!activity) {
+        console.error('Activity not found');
+        return;
+    }
 
-		const response = await fetch('/api/add-xp', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ activityId, category })
-		});
+    let apiUrl = '';
+    switch (category) {
+        case 'Strength':
+            apiUrl = '/api/add-xp-strength';
+            break;
+        case 'Dexterity':
+            apiUrl = '/api/add-xp-dexterity';
+            break;
+        case 'Constitution':
+            apiUrl = '/api/add-xp-constitution';
+            break;
+        case 'Intelligence':
+            apiUrl = '/api/add-xp-intelligence';
+            break;
+        case 'Wisdom':
+            apiUrl = '/api/add-xp-wisdom';
+            break;
+        case 'Charisma':
+            apiUrl = '/api/add-xp-charisma';
+            break;
+        default:
+            console.error('Invalid category');
+            return;
+    }
 
-		if (response.ok) {
-			fetchCategories();
-		} else {
-			console.error('Failed to add XP');
-		}
-	}
+    const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ activityId, category })
+    });
+
+    if (response.ok) {
+        fetchCategories(); // Aktualizuj kategorie po úspěšném přidání XP
+    } else {
+        console.error('Failed to add XP');
+    }
+}
+
 
 	function calculateLevel(points: number) {
 		let level = 1;
