@@ -7,9 +7,9 @@
 }
 @font-face {
     font-family: "fantasticon";
-    src: url("./fantasticon.woff?707d5259d6ef46910dfec75d7d6acce3") format("woff"),
-url("./fantasticon.woff2?707d5259d6ef46910dfec75d7d6acce3") format("woff2"),
-url("./fantasticon.svg?707d5259d6ef46910dfec75d7d6acce3#fantasticon") format("svg");
+    src: url("./fantasticon.woff?5f0a30c81261af2ac5ecd404c9d6172a") format("woff"),
+url("./fantasticon.woff2?5f0a30c81261af2ac5ecd404c9d6172a") format("woff2"),
+url("./fantasticon.svg?5f0a30c81261af2ac5ecd404c9d6172a#fantasticon") format("svg");
 }
 
 i[class^="icon-"]:before, i[class*=" icon-"]:before {
@@ -28,3 +28,6 @@ i[class^="icon-"]:before, i[class*=" icon-"]:before {
 .icon-arrow-up:before { content: var(--icon-arrow-up); }
 .icon-mail:before { content: var(--icon-mail); }
 .icon-school:before { content: var(--icon-school); }
+.icon-arrow-up-right:before {
+    content: "\f101";
+}
