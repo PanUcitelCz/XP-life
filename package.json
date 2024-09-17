@@ -59,6 +59,7 @@
 		"generate": "^0.14.0",
 		"node-fetch": "^3.3.2",
 		"prebuild-install": "^7.1.2",
+		"snapgrab": "^1.4.12",
 		"svelte": "5.0.0-next.246"
 	},
 	"resolutions": {
