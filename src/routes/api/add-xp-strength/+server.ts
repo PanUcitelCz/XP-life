@@ -1,9 +1,9 @@
 import { db } from '$lib/db';
-import { dexterityTable } from '$lib/db/schema';
+import { strengthTable } from '$lib/db/schema';
 import { eq } from 'drizzle-orm';
-import { json } from '@sveltejs/kit';
+import { json, type RequestHandler  } from '@sveltejs/kit';
 
-export const POST = async ({ request, locals }) => {
+export const POST: RequestHandler = async ({ request, locals }) => {
     const { activityId } = await request.json();
 
     // Zkontrolovat, zda je uživatel přihlášen
@@ -14,8 +14,8 @@ export const POST = async ({ request, locals }) => {
     // Načíst aktivitu podle ID
     const activity = await db
         .select()
-        .from(dexterityTable)
-        .where(eq(dexterityTable.id, activityId))
+        .from(strengthTable)
+        .where(eq(strengthTable.id, activityId))
         .get();
 
     if (!activity) {
@@ -47,13 +47,13 @@ export const POST = async ({ request, locals }) => {
 
     // Aktualizovat aktivitu v databázi
     await db
-        .update(dexterityTable)
+        .update(strengthTable)
         .set({
             points: updatedPoints,
             level: updatedLevel,
             lastXPAdded: new Date().toISOString(),
         })
-        .where(eq(dexterityTable.id, activityId))
+        .where(eq(strengthTable.id, activityId))
         .run();
 
     return json({ success: true, updatedPoints, updatedLevel });
