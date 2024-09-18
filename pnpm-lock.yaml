@@ -38,6 +38,9 @@ importers:
       prebuild-install:
         specifier: ^7.1.2
         version: 7.1.2
+      snapgrab:
+        specifier: ^1.4.12
+        version: 1.4.12
       svelte:
         specifier: 5.0.0-next.246
         version: 5.0.0-next.246
@@ -4617,6 +4620,9 @@ packages:
   snapdragon@0.8.2:
     resolution: {integrity: sha512-FtyOnWN/wCHTVXOMwvSv26d+ko5vWlIDD6zoUJ7LW8vh+ZBC8QdljveRP+crNrtBwioEUWy/4dMtbBjA4ioNlg==}
     engines: {node: '>=0.10.0'}
+
+  snapgrab@1.4.12:
+    resolution: {integrity: sha512-g8NLbT77cNpChUijuDUuIt0OeiyqRxg8mHakU4MSptDDMY25/5k8pT6lTvVcg1nFHpoCOaOnaDDcp36+pxjnMA==}
 
   socks-proxy-agent@7.0.0:
     resolution: {integrity: sha512-Fgl0YPZ902wEsAyiQ+idGd1A7rSFx/ayC1CQVMw5P+EQx2V0SgpGtf6OKFhVjPflPUl9YMmEOnmfjCdMUsygww==}
@@ -10739,6 +10745,8 @@ snapshots:
       use: 3.1.1
     transitivePeerDependencies:
       - supports-color
+
+  snapgrab@1.4.12: {}
 
   socks-proxy-agent@7.0.0:
     dependencies:
