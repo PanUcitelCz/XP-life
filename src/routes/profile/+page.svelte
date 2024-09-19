@@ -71,51 +71,50 @@
 		fetchCategories();
 	}
 
-    async function addXP(activityId: number, category: string) {
-    const activity = categories.find((a) => a.id === activityId && a.category === category);
-    if (!activity) {
-        console.error('Activity not found');
-        return;
-    }
+	async function addXP(activityId: number, category: string) {
+		const activity = categories.find((a) => a.id === activityId && a.category === category);
+		if (!activity) {
+			console.error('Activity not found');
+			return;
+		}
 
-    let apiUrl = '';
-    switch (category) {
-        case 'Strength':
-            apiUrl = '/api/add-xp-strength';
-            break;
-        case 'Dexterity':
-            apiUrl = '/api/add-xp-dexterity';
-            break;
-        case 'Constitution':
-            apiUrl = '/api/add-xp-constitution';
-            break;
-        case 'Intelligence':
-            apiUrl = '/api/add-xp-intelligence';
-            break;
-        case 'Wisdom':
-            apiUrl = '/api/add-xp-wisdom';
-            break;
-        case 'Charisma':
-            apiUrl = '/api/add-xp-charisma';
-            break;
-        default:
-            console.error('Invalid category');
-            return;
-    }
+		let apiUrl = '';
+		switch (category) {
+			case 'Strength':
+				apiUrl = '/api/add-xp-strength';
+				break;
+			case 'Dexterity':
+				apiUrl = '/api/add-xp-dexterity';
+				break;
+			case 'Constitution':
+				apiUrl = '/api/add-xp-constitution';
+				break;
+			case 'Intelligence':
+				apiUrl = '/api/add-xp-intelligence';
+				break;
+			case 'Wisdom':
+				apiUrl = '/api/add-xp-wisdom';
+				break;
+			case 'Charisma':
+				apiUrl = '/api/add-xp-charisma';
+				break;
+			default:
+				console.error('Invalid category');
+				return;
+		}
 
-    const response = await fetch(apiUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ activityId, category })
-    });
+		const response = await fetch(apiUrl, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ activityId, category })
+		});
 
-    if (response.ok) {
-        fetchCategories(); // Aktualizuj kategorie po úspěšném přidání XP
-    } else {
-        console.error('Failed to add XP');
-    }
-}
-
+		if (response.ok) {
+			fetchCategories(); // Aktualizuj kategorie po úspěšném přidání XP
+		} else {
+			console.error('Failed to add XP');
+		}
+	}
 
 	function calculateLevel(points: number) {
 		let level = 1;
@@ -153,8 +152,8 @@
 			</div>
 			<address><i class="icon icon-mail"></i> {user.email}</address>
 			<a href="/profile/settings">Profile settings</a>
-            <button onclick={() => showAddActivityModal('Strength')}>Add Activity</button>
-			<button onclick={logout} class="logout"><i class="icon icon-arrow-up-right"></i>Logout</button>
+			<button onclick={() => showAddActivityModal('Strength')}>Add Activity</button>
+			<button onclick={logout} class="logout"><i class="icon icon-logout"></i>Logout</button>
 		</section>
 
 		<!-- Střední část - Kategorie a postup levelů -->
@@ -218,7 +217,6 @@
 		/>
 	</section>
 	<section class="buttons">
-
 		{#if showActivityModal && selectedCategory !== null}
 			<AddActivityModal userId={user.id} category={selectedCategory!} {closeModal} />
 		{/if}

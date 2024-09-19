@@ -7,9 +7,9 @@
 }
 @font-face {
     font-family: "fantasticon";
-    src: url("./fantasticon.woff?5f0a30c81261af2ac5ecd404c9d6172a") format("woff"),
-url("./fantasticon.woff2?5f0a30c81261af2ac5ecd404c9d6172a") format("woff2"),
-url("./fantasticon.svg?5f0a30c81261af2ac5ecd404c9d6172a#fantasticon") format("svg");
+    src: url("./fantasticon.woff?99b7cb95a6c01787ecdd05a9d796af94") format("woff"),
+url("./fantasticon.woff2?99b7cb95a6c01787ecdd05a9d796af94") format("woff2"),
+url("./fantasticon.svg?99b7cb95a6c01787ecdd05a9d796af94#fantasticon") format("svg");
 }
 
 i[class^="icon-"]:before, i[class*=" icon-"]:before {
@@ -30,4 +30,7 @@ i[class^="icon-"]:before, i[class*=" icon-"]:before {
 .icon-school:before { content: var(--icon-school); }
 .icon-arrow-up-right:before {
     content: "\f101";
+}
+.icon-logout:before {
+    content: "\f102";
 }
