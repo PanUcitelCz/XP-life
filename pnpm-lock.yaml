@@ -38,9 +38,6 @@ importers:
       prebuild-install:
         specifier: ^7.1.2
         version: 7.1.2
-      rollup:
-        specifier: 3.x.x
-        version: 3.29.4
       snapgrab:
         specifier: ^1.5.2
         version: 1.5.2
@@ -4467,11 +4464,6 @@ packages:
   rimraf@3.0.2:
     resolution: {integrity: sha512-JZkJMZkAGFFPP2YqXZXPbMlMBgsxzE8ILs4lMIX/2o0L9UBw9O/Y3o6wFw/i9YLapcUJWwqbi3kdxIPdC62TIA==}
     deprecated: Rimraf versions prior to v4 are no longer supported
-    hasBin: true
-
-  rollup@3.29.4:
-    resolution: {integrity: sha512-oWzmBZwvYrU0iJHtDmhsm662rC15FRXmcjCk1xD771dFDx5jJ02ufAQQTn0etB2emNk4J9EZg/yWKpsn9BWGRw==}
-    engines: {node: '>=14.18.0', npm: '>=8.0.0'}
     hasBin: true
 
   rollup@4.22.0:
@@ -10564,10 +10556,6 @@ snapshots:
   rimraf@3.0.2:
     dependencies:
       glob: 7.2.0
-
-  rollup@3.29.4:
-    optionalDependencies:
-      fsevents: 2.3.3
 
   rollup@4.22.0:
     dependencies:
