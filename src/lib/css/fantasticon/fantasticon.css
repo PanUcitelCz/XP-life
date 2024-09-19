@@ -7,9 +7,9 @@
 }
 @font-face {
     font-family: "fantasticon";
-    src: url("./fantasticon.woff?99b7cb95a6c01787ecdd05a9d796af94") format("woff"),
-url("./fantasticon.woff2?99b7cb95a6c01787ecdd05a9d796af94") format("woff2"),
-url("./fantasticon.svg?99b7cb95a6c01787ecdd05a9d796af94#fantasticon") format("svg");
+    src: url("./fantasticon.woff?6720e9f19e863ffbca9e1707f40f44fc") format("woff"),
+url("./fantasticon.woff2?6720e9f19e863ffbca9e1707f40f44fc") format("woff2"),
+url("./fantasticon.svg?6720e9f19e863ffbca9e1707f40f44fc#fantasticon") format("svg");
 }
 
 i[class^="icon-"]:before, i[class*=" icon-"]:before {
