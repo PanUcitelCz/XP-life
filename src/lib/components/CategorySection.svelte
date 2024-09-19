@@ -35,7 +35,7 @@
 			autoheight: false
 		});
 
-		console.log(snapgrab);
+		//console.log(snapgrab);
 
 		// Inicializace až po vykreslení wrapperu
 		snapgrab.init();
