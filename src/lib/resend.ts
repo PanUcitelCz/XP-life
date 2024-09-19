@@ -1,6 +1,6 @@
 import fetch from 'node-fetch';
 import { SECRET_RESEND_API_KEY } from '$env/static/private';
-import { BASE_URL } from '$env/static/private';
+//import { BASE_URL } from '$env/static/private';
 
 export async function sendVerificationEmail(to: string, nickname: string, token: string) {
 	const subject = 'Verify Your Email';
