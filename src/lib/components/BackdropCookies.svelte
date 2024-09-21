@@ -1,13 +1,16 @@
 <script lang="ts">
-	let showCookieBanner = $state(true); // Stav pro zobrazení banneru
+    let showCookieBanner = $state(false); // Stav pro zobrazení banneru
 
-	$effect(() => {
-		// Kontrola, zda uživatel již souhlasil s cookies nebo je odmítl
-		const consent = document.cookie.split('; ').find(row => row.startsWith('cookie_consent='));
-		if (consent && consent.includes('accepted')) {
-			showCookieBanner = false; // Pokud existuje cookie a je 'accepted', banner nezobrazujeme
-		}
-	});
+    $effect(() => {
+        // Zpoždění kontroly cookies o 500ms
+        setTimeout(() => {
+            // Kontrola, zda uživatel již souhlasil s cookies nebo je odmítl
+            const consent = document.cookie.split('; ').find(row => row.startsWith('cookie_consent='));
+            if (!consent || consent.includes('rejected')) {
+                showCookieBanner = true; // Zobrazíme banner, pokud cookie neexistuje nebo byla odmítnuta
+            }
+        }, 500); // Zpoždění o 500ms
+    });
 
 	function acceptCookies() {
 		// Nastavení cookie pro souhlas

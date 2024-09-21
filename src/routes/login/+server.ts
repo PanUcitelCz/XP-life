@@ -8,6 +8,7 @@ export async function POST({ request }) {
   const formData = await request.formData();
   const nickname = formData.get('nickname') as string;
   const password = formData.get('password') as string;
+  const rememberMe = formData.get('rememberMe') === 'true'; // Získání hodnoty pro "Zapamatovat si mě"
 
   if (!nickname || !password) {
     return new Response(JSON.stringify({ success: false, message: 'Invalid input' }), { status: 400 });
@@ -34,18 +35,20 @@ export async function POST({ request }) {
       .where(eq(usersTable.id, user.id))
       .run();
 
+    const maxAge = rememberMe ? 60 * 60 * 24 * 30 : 0; // 30 dní pro "Zapamatovat si mě", 0 pro session cookie
     const cookie = serialize('session', user.id.toString(), {
       httpOnly: true,
-      maxAge: 60 * 60 * 24 * 7,
+      maxAge,
       sameSite: 'strict',
-      secure: true
+      secure: true,
+      path: '/'
     });
 
     return new Response(JSON.stringify({ success: true, message: 'Login successful' }), {
       status: 200,
       headers: {
         'Set-Cookie': cookie,
-        'Location': '/profile' // Přesměrování na profil pouze při úspěšném přihlášení
+        'Location': '/profile'
       }
     });
   } catch (error) {

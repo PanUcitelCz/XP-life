@@ -1,22 +1,24 @@
 <script lang="ts">
 	import FormButton from '../../lib/components/FormButton.svelte';
 	import Button from '../../lib/components/Button.svelte';
-	import { goto } from '$app/navigation'; // Importování goto z SvelteKit
-	import { fade } from 'svelte/transition'; // Importování fade pro přechod
+	import { goto } from '$app/navigation';
+	import { fade } from 'svelte/transition';
 
 	// Reaktivní proměnné
 	let loginSuccess = $state(false);
 	let notification = $state('');
 	let nickname = $state('');
 	let password = $state('');
+	let rememberMe = $state(false); // Přidání stavu pro "Zapamatovat si mě"
 
 	async function login(event: Event) {
-		event.preventDefault(); // Zamezíme přirozenému odeslání formuláře
+		event.preventDefault();
 		notification = '';
 
 		const formData = new FormData();
 		formData.append('nickname', nickname);
 		formData.append('password', password);
+		formData.append('rememberMe', rememberMe ? 'true' : 'false'); // Přidáme hodnotu pro "Zapamatovat si mě"
 
 		const response = await fetch('/login', {
 			method: 'POST',
@@ -29,7 +31,7 @@
 				loginSuccess = true;
 				setTimeout(() => {
 					goto('/profile');
-				}, 1000); // Přesměrování s 1 sekundovým zpožděním
+				}, 1000);
 			} else if (result.message === 'Please verify your email before logging in.') {
 				notification = 'The email has not been verified yet. Please verify it before logging in.';
 			} else {
@@ -45,10 +47,12 @@
 <div class="Main">
 	<div class="form">
 		<h1>Login</h1>
-		<!-- Zde už není `|preventDefault`, používáme pouze `onsubmit` -->
 		<form onsubmit={login}>
 			<input type="text" bind:value={nickname} placeholder="Nickname" required />
 			<input type="password" bind:value={password} placeholder="Password" required />
+			<label>
+				<input type="checkbox" bind:checked={rememberMe} /> Remember me
+			</label>
 			<FormButton type="submit" color="green">Login</FormButton>
 		</form>
 		<a href="/login/forgot-password">Forgot password?</a>
