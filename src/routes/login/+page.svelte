@@ -50,9 +50,10 @@
 		<form onsubmit={login}>
 			<input type="text" bind:value={nickname} placeholder="Nickname" required />
 			<input type="password" bind:value={password} placeholder="Password" required />
-			<label>
-				<input type="checkbox" bind:checked={rememberMe} /> Remember me
-			</label>
+            <div class="checkbox">
+                <input type="checkbox" bind:checked={rememberMe} />
+                <span>Remember me</span>
+            </div>
 			<FormButton type="submit" color="green">Login</FormButton>
 		</form>
 		<a href="/login/forgot-password">Forgot password?</a>
@@ -75,15 +76,28 @@
 
 <style lang="stylus">
   @import '../../lib/css/form.styl'
-  a
-    text-decoration none
-    color #334257
-    transition ease .3s
-    padding 10px
-    border-radius 10px
+    a
+        text-decoration none
+        color #334257
+        transition ease .3s
+        padding 10px
+        border-radius 10px
 
-    &:hover
-      color black
-      background #F5F5F5
+        &:hover
+            color black
+            background #F5F5F5
+
+    .checkbox
+        display flex
+        align-items center
+        margin-bottom 20px
+        width 100%
+        gap 8px
+        margin 0
+
+        input[type="checkbox"]
+            width 15px
+            height 15px
+            cursor pointer
 
 </style>
