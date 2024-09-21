@@ -1,26 +1,11 @@
 <script lang="ts">
 	import Button from '$lib/components/Button.svelte';
-	import { goto } from '$app/navigation';
     import BackdropCookies from '$lib/components/BackdropCookies.svelte';
 
-	let isLoggedIn = $state(false); // Stav pro kontrolu, zda je uživatel přihlášen
+	// Props pro přijetí uživatele ze serveru
+	const { data } = $props();
+	const user = data.props?.user;
 
-	// Použití runy $effect pro kontrolu cookies
-	$effect(() => {
-		// Výpis všech cookies do konzole
-		console.log("Cookies:", document.cookie);
-
-		const cookies = document.cookie.split('; ').find(row => row.startsWith('session='));
-		const session = cookies ? cookies.split('=')[1] : null;
-
-		console.log("Session cookie value:", session); // Výpis hodnoty session cookie
-
-		if (session) {
-			isLoggedIn = true; // Pokud existuje session cookie, nastavíme stav na true
-		} else {
-			isLoggedIn = false; // Jinak zůstává stav false
-		}
-	});
 </script>
 
 <BackdropCookies />
@@ -29,14 +14,17 @@
 	<h1>XP Life</h1>
 	<h2>Level Up Your Day</h2>
 	<div class="buttons">
-		{#if isLoggedIn}
+		{#if user}
+			<!-- Pokud je uživatel přihlášen, zobrazíme tlačítko pro přístup na profil -->
 			<Button href="/profile" color="grey">Profile</Button>
 		{:else}
+			<!-- Pokud není přihlášen, zobrazíme tlačítka pro login a registraci -->
 			<Button href="/login" color="grey">Login</Button>
 		{/if}
 		<Button href="/register" color="ghost">Register</Button>
 	</div>
 </div>
+
 
 <style lang="stylus">
 	.Hero
