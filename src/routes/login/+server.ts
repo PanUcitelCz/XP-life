@@ -35,14 +35,23 @@ export async function POST({ request }) {
       .where(eq(usersTable.id, user.id))
       .run();
 
-    const maxAge = rememberMe ? 60 * 60 * 24 * 30 : 0; // 30 dní pro "Zapamatovat si mě", 0 pro session cookie
-    const cookie = serialize('session', user.id.toString(), {
-      httpOnly: true,
-      maxAge,
-      sameSite: 'strict',
-      secure: true,
-      path: '/'
-    });
+    // Pokud je zvoleno "Remember Me", nastavíme maxAge na 30 dní, jinak necháme session cookie
+    const cookieOptions = rememberMe
+      ? {
+          httpOnly: true,
+          maxAge: 60 * 60 * 24 * 365, // 30 dní
+          sameSite: 'strict' as const, // Nastavíme správný typ
+          secure: true,
+          path: '/'
+        }
+      : {
+          httpOnly: true,
+          sameSite: 'strict' as const, // Session cookie bez maxAge
+          secure: true,
+          path: '/'
+        };
+
+    const cookie = serialize('session', user.id.toString(), cookieOptions);
 
     return new Response(JSON.stringify({ success: true, message: 'Login successful' }), {
       status: 200,
