@@ -16,11 +16,19 @@
 
 	const { categoryName, activities = [], totalPoints, onAddXP, ...restProps }: Props = $props();
 
+    let loadingActivityId = $state<number | null>(null);
 
-	// Funkce pro přidání XP k určité aktivitě
+
+    const handleAddXP = async (activityId: number) => {
+        loadingActivityId = activityId;  // Nastaví ID aktivity do stavu "loading"
+        await onAddXP(activityId);       // Volání funkce pro přidání XP
+        loadingActivityId = null;        // Resetuje stav, až se XP přidají
+    };
+
+	/*// Funkce pro přidání XP k určité aktivitě
 	const handleAddXP = (activityId: number) => {
 		onAddXP(activityId);
-	};
+	};*/
 
 </script>
 
@@ -38,11 +46,16 @@
 						</div>
 						<p class="activity-xp">XP: {activities[index].points}</p>
 						<div class="activity-actions">
-							{#if activities[index].lastXPAdded && new Date(activities[index].lastXPAdded).toDateString() === new Date().toDateString()}
-								<button disabled>XP already added today</button>
-							{:else}
-								<button onclick={() => handleAddXP(activities[index].id)}>Add XP</button>
-							{/if}
+                            {#if activities[index].lastXPAdded && new Date(activities[index].lastXPAdded).toDateString() === new Date().toDateString()}
+                                <button disabled>XP already added today</button>
+                            {:else if loadingActivityId === activities[index].id}
+                                <button disabled>
+                                    Adding XP
+                                </button>
+                            {:else}
+                                <button onclick={() => handleAddXP(activities[index].id)}>Add XP</button>
+                            {/if}
+
 						</div>
 					</div>
 				</div>
@@ -148,4 +161,5 @@
         border-radius 5px
         box-shadow rgba(0, 0, 0, 0.05) 0px 4px 12px
         text-align center
+
 </style>

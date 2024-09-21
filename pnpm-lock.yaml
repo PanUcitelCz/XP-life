@@ -54,6 +54,9 @@ importers:
       '@types/bcryptjs':
         specifier: ^2.4.6
         version: 2.4.6
+      '@types/cookie':
+        specifier: ^0.6.0
+        version: 0.6.0
       '@types/eslint':
         specifier: ^8.56.12
         version: 8.56.12
