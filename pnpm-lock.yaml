@@ -38,9 +38,6 @@ importers:
       prebuild-install:
         specifier: ^7.1.2
         version: 7.1.2
-      snapgrab:
-        specifier: ^1.5.2
-        version: 1.5.2
       svelte:
         specifier: 5.0.0-next.246
         version: 5.0.0-next.246
@@ -3435,7 +3432,6 @@ packages:
 
   libsql@0.4.5:
     resolution: {integrity: sha512-sorTJV6PNt94Wap27Sai5gtVLIea4Otb2LUiAUyr3p6BPOScGMKGt5F1b5X/XgkNtcsDKeX5qfeBDj+PdShclQ==}
-    cpu: [x64, arm64, wasm32]
     os: [darwin, linux, win32]
 
   liftoff@2.5.0:
@@ -4624,9 +4620,6 @@ packages:
   snapdragon@0.8.2:
     resolution: {integrity: sha512-FtyOnWN/wCHTVXOMwvSv26d+ko5vWlIDD6zoUJ7LW8vh+ZBC8QdljveRP+crNrtBwioEUWy/4dMtbBjA4ioNlg==}
     engines: {node: '>=0.10.0'}
-
-  snapgrab@1.5.2:
-    resolution: {integrity: sha512-QrBDnG35I7Jxl+YYMMz0fJAOQe5LM3I3MGu73n+90csZ6h2GKnSt5vvx1nsC0KsXtPR+iqvu8wS5kjXoDnZZEA==}
 
   socks-proxy-agent@7.0.0:
     resolution: {integrity: sha512-Fgl0YPZ902wEsAyiQ+idGd1A7rSFx/ayC1CQVMw5P+EQx2V0SgpGtf6OKFhVjPflPUl9YMmEOnmfjCdMUsygww==}
@@ -10751,8 +10744,6 @@ snapshots:
       use: 3.1.1
     transitivePeerDependencies:
       - supports-color
-
-  snapgrab@1.5.2: {}
 
   socks-proxy-agent@7.0.0:
     dependencies:
