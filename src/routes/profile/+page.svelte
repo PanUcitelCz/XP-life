@@ -14,6 +14,7 @@
 			points: number;
 			category: string;
 			id: number;
+			isActive: number; // Přidán sloupec pro kontrolu aktivního stavu
 			lastXPAdded: string;
 		}[]
 	>([]);
@@ -34,6 +35,7 @@
 			const categoriesData = await response.json();
 			categories = categoriesData;
 
+			// Zahrnout všechny aktivity do počtu XP, ale zobrazit pouze aktivní
 			strengthTotalPoints = categories.filter((a) => a.category === 'Strength').reduce((total, activity) => total + activity.points, 0);
 			dexterityTotalPoints = categories.filter((a) => a.category === 'Dexterity').reduce((total, activity) => total + activity.points, 0);
 			constitutionTotalPoints = categories.filter((a) => a.category === 'Constitution').reduce((total, activity) => total + activity.points, 0);
@@ -145,7 +147,7 @@
 	<div class="hero">
 		<section class="profile-section">
 			<h1>Welcome, {user.nickname}!</h1>
-			<img src="https://preview.redd.it/new-lore-ekko-or-old-lore-ekko-v0-rk1pnlymql5c1.jpg?width=300&format=pjpg&auto=webp&s=769e3a4b5537853cea944cfb4ccf350320975d18" alt="Profile picdture" />
+			<img src="https://preview.redd.it/new-lore-ekko-or-old-lore-ekko-v0-rk1pnlymql5c1.jpg?width=300&format=pjpg&auto=webp&s=769e3a4b5537853cea944cfb4ccf350320975d18" alt="Profilcture" />
 			<div>
 				<div><i class="icon icon-school"></i><span>Level:</span></div>
 				<div>{user.userLevel}</div>
@@ -176,42 +178,42 @@
 	<section class="activities">
 		<CategorySection
 			categoryName="Strength"
-			activities={categories.filter((a) => a.category === 'Strength')}
+			activities={categories.filter((a) => a.category === 'Strength' && a.isActive === 1)}
 			totalPoints={strengthTotalPoints}
 			onAddXP={(activityId: number) => addXP(activityId, 'Strength')}
 		/>
 
 		<CategorySection
 			categoryName="Dexterity"
-			activities={categories.filter((a) => a.category === 'Dexterity')}
+			activities={categories.filter((a) => a.category === 'Dexterity' && a.isActive === 1)}
 			totalPoints={dexterityTotalPoints}
 			onAddXP={(activityId: number) => addXP(activityId, 'Dexterity')}
 		/>
 
 		<CategorySection
 			categoryName="Constitution"
-			activities={categories.filter((a) => a.category === 'Constitution')}
+			activities={categories.filter((a) => a.category === 'Constitution' && a.isActive === 1)}
 			totalPoints={constitutionTotalPoints}
 			onAddXP={(activityId: number) => addXP(activityId, 'Constitution')}
 		/>
 
 		<CategorySection
 			categoryName="Intelligence"
-			activities={categories.filter((a) => a.category === 'Intelligence')}
+			activities={categories.filter((a) => a.category === 'Intelligence' && a.isActive === 1)}
 			totalPoints={intelligenceTotalPoints}
 			onAddXP={(activityId: number) => addXP(activityId, 'Intelligence')}
 		/>
 
 		<CategorySection
 			categoryName="Wisdom"
-			activities={categories.filter((a) => a.category === 'Wisdom')}
+			activities={categories.filter((a) => a.category === 'Wisdom' && a.isActive === 1)}
 			totalPoints={wisdomTotalPoints}
 			onAddXP={(activityId: number) => addXP(activityId, 'Wisdom')}
 		/>
 
 		<CategorySection
 			categoryName="Charisma"
-			activities={categories.filter((a) => a.category === 'Charisma')}
+			activities={categories.filter((a) => a.category === 'Charisma' && a.isActive === 1)}
 			totalPoints={charismaTotalPoints}
 			onAddXP={(activityId: number) => addXP(activityId, 'Charisma')}
 		/>
