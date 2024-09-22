@@ -1,12 +1,65 @@
 <script lang="ts">
-	export let userId: number;
-	export let category: string;
-	export let closeModal: () => void;
+	let { userId, category, closeModal } = $props<{ userId: number; category: string; closeModal: () => void }>();
 
-	let activityName = '';
-	let description = '';
-	let difficulty = 'easy';
-	let errorMessage = '';
+	// Reaktivní proměnné
+	let activityName = $state('');
+	let description = $state('');
+	let difficulty = $state('easy');
+	let selectedCategory = $state(category); // Interní proměnná pro výběr kategorie, výchozí hodnota podle props
+	let selectedActivity = $state('');
+	let selectedActivityId = $state<number | null>(null);
+	let confirmDelete = $state('');
+	let errorMessage = $state('');
+	let showAddActivity = $state(true);
+
+	let allActivities = $state<{ activityName: string; id: number; category: string }[]>([]);
+	let filteredActivities = $state<{ activityName: string; id: number }[]>([]);
+
+	// Načtení aktivit
+    async function loadActivities() {
+        console.log('Načítám aktivity...'); // Debugging
+        const response = await fetch(`/api/get-user-activities`);
+
+        if (response.ok) {
+            const data = await response.json();
+            console.log('Data z API:', data);  // Kontrola API odpovědi
+
+            // Uložíme všechny aktivity z API
+            allActivities = [];
+            for (const cat in data) {
+                if (data.hasOwnProperty(cat)) {
+                    data[cat].forEach((activity: any) => {
+                        allActivities.push({
+                            activityName: activity.activityName,
+                            id: activity.id,
+                            category: cat,
+                        });
+                    });
+                }
+            }
+
+            console.log('Všechny aktivity:', allActivities);
+
+            // Zkontrolujeme filtrované aktivity pro výchozí kategorii
+            if (selectedCategory) {
+                handleCategoryChange();
+            }
+        } else {
+            console.error('Failed to load activities');
+        }
+    }
+
+	// Filtruj aktivity na základě zvolené kategorie
+	function handleCategoryChange() {
+		console.log('Zvolená kategorie:', selectedCategory);  // Kontrola zvolené kategorie
+
+		if (selectedCategory) {
+			filteredActivities = allActivities.filter(activity => activity.category === selectedCategory.toLowerCase());
+			console.log('Filtrované aktivity pro kategorii:', filteredActivities);  // Kontrola filtrovaných dat
+		} else {
+			filteredActivities = [];
+		}
+	}
 
 	// Funkce pro přidání aktivity
 	async function addActivity() {
@@ -15,75 +68,219 @@
 			return;
 		}
 
-		if (!category) {
+		if (!selectedCategory) {
 			errorMessage = 'You must select a category.';
 			return;
 		}
 
 		const response = await fetch('/api/add-activity', {
 			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
+			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({
 				userId,
-				category,
+				category: selectedCategory,
 				activityName,
 				description,
-				difficulty,
+				difficulty
 			}),
 		});
 
 		if (response.ok) {
-			closeModal(); // Zavři modál po úspěšném přidání
+			closeModal();
 		} else {
 			const errorData = await response.json();
 			errorMessage = errorData.error || 'Failed to add activity';
 		}
 	}
+
+	// Funkce pro deaktivaci aktivity
+	async function disableActivity() {
+		if (selectedActivityId === null) {
+			errorMessage = 'Please select an activity to disable.';
+			return;
+		}
+
+		const response = await fetch(`/api/disable-activity`, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({
+				activityId: selectedActivityId,
+				category: selectedCategory,
+			}),
+		});
+
+		if (response.ok) {
+			closeModal();
+		} else {
+			const errorData = await response.json();
+			errorMessage = errorData.error || 'Failed to disable activity';
+		}
+	}
+
+	// Funkce pro opětovnou aktivaci deaktivované aktivity
+	async function enableActivity() {
+		if (selectedActivityId === null) {
+			errorMessage = 'Please select an activity to enable.';
+			return;
+		}
+
+		const response = await fetch(`/api/enable-activity`, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({
+				activityId: selectedActivityId,
+				category: selectedCategory,
+			}),
+		});
+
+		if (response.ok) {
+			closeModal();
+		} else {
+			const errorData = await response.json();
+			errorMessage = errorData.error || 'Failed to enable activity';
+		}
+	}
+
+	// Funkce pro odstranění aktivity
+	async function deleteActivity() {
+		if (confirmDelete !== `DELETE MY ${selectedActivity}`) {
+			errorMessage = `You must type 'DELETE MY ${selectedActivity}' to delete this activity.`;
+			return;
+		}
+
+		const response = await fetch(`/api/delete-activity`, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({
+				userId,
+				category: selectedCategory,
+				activityName: selectedActivity,
+			}),
+		});
+
+		if (response.ok) {
+			closeModal();
+		} else {
+			const errorData = await response.json();
+			errorMessage = errorData.error || 'Failed to delete activity';
+		}
+	}
+
+	// Funkce pro přepínání mezi Add a Remove/Disable Activity
+	function toggleActivityMode() {
+		showAddActivity = !showAddActivity;
+		if (!showAddActivity) {
+			loadActivities();
+		}
+	}
+
+	// Funkce pro výběr aktivity
+	function handleActivitySelection(event: Event) {
+		const selectedActivityIdValue = parseInt((event.target as HTMLSelectElement).value, 10);
+
+		// Najdeme aktivitu podle ID v `filteredActivities`
+		const selectedActivityObj = filteredActivities.find(activity => activity.id === selectedActivityIdValue);
+
+		if (selectedActivityObj) {
+			selectedActivityId = selectedActivityObj.id;
+			selectedActivity = selectedActivityObj.activityName;
+		} else {
+			selectedActivityId = null;
+			selectedActivity = '';
+		}
+
+		console.log(`Selected activity: ${selectedActivity}, ID: ${selectedActivityId}`);  // Debugging
+	}
+
 </script>
 
+<!-- Modál pro přidání nebo úpravu aktivity -->
 <button class="modal-backdrop" onclick={closeModal} aria-label="Close modal"></button>
 
-<div class="modal">
-	<h2>Add Activity</h2>
+{#if showAddActivity}
+	<div class="modal fade-in">
+		<h2>Add Activity</h2>
+        <div class="toggle-buttons">
+            <button class:active={showAddActivity} class="switch-btn" onclick={toggleActivityMode}>Add Activity</button>
+            <button class:active={!showAddActivity} class="switch-btn" onclick={toggleActivityMode}>Remove/Disable Activity</button>
+        </div>
+		<label for="category">Category</label>
+		<select id="category" bind:value={selectedCategory} onchange={handleCategoryChange}>
+			<option value="" disabled selected>Select a category</option>
+			<option value="Strength">Strength</option>
+			<option value="Dexterity">Dexterity</option>
+			<option value="Constitution">Constitution</option>
+			<option value="Intelligence">Intelligence</option>
+			<option value="Wisdom">Wisdom</option>
+			<option value="Charisma">Charisma</option>
+		</select>
 
-	{#if errorMessage}
-		<p class="error-message">{errorMessage}</p>
-	{/if}
+		<label for="name">Activity Name</label>
+		<input id="name" bind:value={activityName} placeholder="Enter activity name" />
 
-	<label for="name">Activity Name</label>
-	<input id="name" bind:value={activityName} placeholder="Enter activity name" />
+		<label for="description">Description</label>
+		<textarea id="description" bind:value={description} placeholder="Enter description"></textarea>
 
-	<label for="category">Category</label>
-	<select id="category" bind:value={category}>
-		<option value="" disabled selected>Select a category</option>
-		<option value="Strength">Strength</option>
-		<option value="Dexterity">Dexterity</option>
-		<option value="Constitution">Constitution</option>
-		<option value="Intelligence">Intelligence</option>
-		<option value="Wisdom">Wisdom</option>
-		<option value="Charisma">Charisma</option>
-	</select>
+		<label for="difficulty">Difficulty</label>
+		<select id="difficulty" bind:value={difficulty}>
+			<option value="easy">Easy (5 XP)</option>
+			<option value="normal">Normal (10 XP)</option>
+			<option value="hard">Hard (15 XP)</option>
+		</select>
 
-	<label for="description">Description</label>
-	<textarea id="description" bind:value={description} placeholder="Enter description"></textarea>
-
-	<label for="difficulty">Difficulty</label>
-	<select id="difficulty" bind:value={difficulty}>
-		<option value="easy">Easy (5 XP)</option>
-		<option value="normal">Normal (10 XP)</option>
-		<option value="hard">Hard (15 XP)</option>
-	</select>
-
-	<div class="modal-buttons">
-		<button class="add" onclick={addActivity}>Add Activity</button>
-		<button class="cancel" onclick={closeModal}>Cancel</button>
+		<div class="modal-buttons">
+			<button class="add" onclick={addActivity}>Add Activity</button>
+			<button class="cancel" onclick={closeModal}>Cancel</button>
+		</div>
 	</div>
-</div>
+{:else}
+	<!-- Sekce pro deaktivaci nebo smazání/aktivaci aktivity -->
+	<div class="modal fade-in">
+		<h2>Remove/Disable Activity</h2>
+		<div class="toggle-buttons">
+			<button class:active={showAddActivity} class="switch-btn" onclick={toggleActivityMode}>Add Activity</button>
+			<button class:active={!showAddActivity} class="switch-btn" onclick={toggleActivityMode}>Remove/Disable Activity</button>
+		</div>
+
+        <label for="category">Category</label>
+        <select id="category" bind:value={selectedCategory} onchange={handleCategoryChange}>
+            <option value="" disabled selected>Select a category</option>
+            <option value="Strength">Strength</option>
+            <option value="Dexterity">Dexterity</option>
+            <option value="Constitution">Constitution</option>
+            <option value="Intelligence">Intelligence</option>
+            <option value="Wisdom">Wisdom</option>
+            <option value="Charisma">Charisma</option>
+        </select>
+
+		<label for="activity-select">Select Activity</label>
+        <!-- Výběr aktivity pro deaktivaci -->
+        <select id="activity-select" onchange={handleActivitySelection}>
+            <option value="" disabled selected>Select activity</option>
+            {#each filteredActivities as activity}
+                <option value={activity.id}>{activity.activityName}</option>
+            {/each}
+        </select>
+
+		{#if selectedActivity}
+            <label for="input">If you want delete activity, you must wrote 'DELETE MY {selectedActivity}'</label>
+			<input type="text" bind:value={confirmDelete} placeholder="Type 'DELETE MY {selectedActivity}'" />
+		{/if}
+
+		<div class="modal-buttons">
+            <button class="delete" onclick={deleteActivity}>Delete</button>
+			<button class="disable" onclick={disableActivity}>Disable</button>
+			<button class="enable" onclick={enableActivity}>Enable</button>
+			<button class="cancel" onclick={closeModal}>Cancel</button>
+		</div>
+
+		{#if errorMessage}
+			<p class="error-message">{errorMessage}</p>
+		{/if}
+	</div>
+{/if}
 
 <style>
-	/* Styl modálu a pozadí */
 	.modal-backdrop {
 		position: fixed;
 		top: 0;
@@ -107,6 +304,31 @@
 		width: 90%;
 		max-width: 400px;
 		box-sizing: border-box;
+	}
+
+	.fade-in {
+		animation: fadeIn 0.5s ease-in-out;
+	}
+
+	@keyframes fadeIn {
+		from {
+			opacity: 0;
+		}
+		to {
+			opacity: 1;
+		}
+	}
+
+	.switch-btn {
+		padding: 10px 20px;
+		border-radius: 5px;
+		cursor: pointer;
+		transition: background-color 0.3s;
+	}
+
+	.switch-btn:active {
+		background-color: #28a745;
+		color: white;
 	}
 
 	h2 {
@@ -158,6 +380,40 @@
 
 	.cancel:hover {
 		background-color: #999;
+	}
+
+	.delete {
+		background-color: #ff4c4c;
+		color: white;
+	}
+
+	.disable {
+		background-color: #f0ad4e;
+		color: white;
+	}
+
+	.enable {
+		background-color: #28a745;
+		color: white;
+	}
+
+	.error-message {
+		color: red;
+		margin-top: 10px;
+	}
+
+	.toggle-buttons {
+		display: flex;
+		justify-content: space-between;
+		margin-bottom: 10px;
+	}
+    .toggle-buttons button{
+        border: none;
+    }
+
+	.toggle-buttons button.active {
+		background-color: #28a745;
+		color: white;
 	}
 
 	.error-message {

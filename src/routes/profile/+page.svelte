@@ -218,7 +218,7 @@
 	</section>
 	<section class="buttons">
 		{#if showActivityModal && selectedCategory !== null}
-			<AddActivityModal userId={user.id} category={selectedCategory!} {closeModal} />
+        <AddActivityModal userId={user.id} category={selectedCategory} {closeModal} />
 		{/if}
 	</section>
 {:else}

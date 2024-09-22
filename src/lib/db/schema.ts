@@ -27,6 +27,7 @@ export const strengthTable = sqliteTable('strength', {
   points: integer('points').default(0).notNull(),
   lastXPAdded: text('last_xp_added'),
   createdAt: text('created_at').default(sql`CURRENT_TIMESTAMP`).notNull(),
+  isActive: integer('isActive').default(1).notNull(),
 });
 
 // Tabulka pro Dexterity kategorii
@@ -40,6 +41,7 @@ export const dexterityTable = sqliteTable('dexterity', {
   points: integer('points').default(0).notNull(),
   lastXPAdded: text('last_xp_added'),
   createdAt: text('created_at').default(sql`CURRENT_TIMESTAMP`).notNull(),
+  isActive: integer('isActive').default(1).notNull(),
 });
 
 // Tabulka pro Constitution kategorii
@@ -53,6 +55,7 @@ export const constitutionTable = sqliteTable('constitution', {
   points: integer('points').default(0).notNull(),
   lastXPAdded: text('last_xp_added'),
   createdAt: text('created_at').default(sql`CURRENT_TIMESTAMP`).notNull(),
+  isActive: integer('isActive').default(1).notNull(),
 });
 
 // Tabulka pro Intelligence kategorii
@@ -66,6 +69,7 @@ export const intelligenceTable = sqliteTable('intelligence', {
   points: integer('points').default(0).notNull(),
   lastXPAdded: text('last_xp_added'),
   createdAt: text('created_at').default(sql`CURRENT_TIMESTAMP`).notNull(),
+  isActive: integer('isActive').default(1).notNull(),
 });
 
 // Tabulka pro Wisdom kategorii
@@ -79,6 +83,7 @@ export const wisdomTable = sqliteTable('wisdom', {
   points: integer('points').default(0).notNull(),
   lastXPAdded: text('last_xp_added'),
   createdAt: text('created_at').default(sql`CURRENT_TIMESTAMP`).notNull(),
+  isActive: integer('isActive').default(1).notNull(),
 });
 
 // Tabulka pro Charisma kategorii
@@ -92,4 +97,5 @@ export const charismaTable = sqliteTable('charisma', {
   points: integer('points').default(0).notNull(),
   lastXPAdded: text('last_xp_added'),
   createdAt: text('created_at').default(sql`CURRENT_TIMESTAMP`).notNull(),
+  isActive: integer('isActive').default(1).notNull(),
 });

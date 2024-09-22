@@ -20,6 +20,7 @@
         justify-content: center
         align-items: center
         height: 100vh
+        padding 10px
 
     .verify-box
         background-color: white
