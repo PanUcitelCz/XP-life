@@ -21,10 +21,10 @@ export async function GET({ url }) {
       .where(eq(usersTable.id, user.id))
       .run();
 
-    return new Response('Email verification successful', {
-      status: 200,
+    return new Response(null, {
+      status: 302,
       headers: {
-        'Location': '/login'
+        'Location': '/verify/success'
       }
     });
   } catch (error) {

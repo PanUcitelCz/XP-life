@@ -41,6 +41,7 @@
 			margin 0 0 clamp(6px, 1.2vw, 12px)
 			text-align center
 			font-weight 600
+			color #ff8113
 
 		h2
 			font-size clamp(28px, 3.6vw, 36px)
