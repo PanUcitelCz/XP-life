@@ -11,58 +11,13 @@
 	let confirmDelete = $state('');
 	let errorMessage = $state('');
 	let showAddActivity = $state(true);
+	let selectedAction = $state('Enable'); // Výchozí akce pro správu
 
 	let allActivities = $state<{ activityName: string; id: number; category: string }[]>([]);
 	let filteredActivities = $state<{ activityName: string; id: number }[]>([]);
 
-	// Načtení aktivit
-    async function loadActivities() {
-        console.log('Načítám aktivity...'); // Debugging
-        const response = await fetch(`/api/get-user-activities`);
 
-        if (response.ok) {
-            const data = await response.json();
-            console.log('Data z API:', data);  // Kontrola API odpovědi
-
-            // Uložíme všechny aktivity z API
-            allActivities = [];
-            for (const cat in data) {
-                if (data.hasOwnProperty(cat)) {
-                    data[cat].forEach((activity: any) => {
-                        allActivities.push({
-                            activityName: activity.activityName,
-                            id: activity.id,
-                            category: cat,
-                        });
-                    });
-                }
-            }
-
-            console.log('Všechny aktivity:', allActivities);
-
-            // Zkontrolujeme filtrované aktivity pro výchozí kategorii
-            if (selectedCategory) {
-                handleCategoryChange();
-            }
-        } else {
-            console.error('Failed to load activities');
-        }
-    }
-
-	// Filtruj aktivity na základě zvolené kategorie
-	function handleCategoryChange() {
-		console.log('Zvolená kategorie:', selectedCategory);  // Kontrola zvolené kategorie
-
-		if (selectedCategory) {
-			filteredActivities = allActivities.filter(activity => activity.category === selectedCategory.toLowerCase());
-			console.log('Filtrované aktivity pro kategorii:', filteredActivities);  // Kontrola filtrovaných dat
-		} else {
-			filteredActivities = [];
-		}
-	}
-
-	// Funkce pro přidání aktivity
-	async function addActivity() {
+    async function addActivity() {
 		if (!activityName) {
 			errorMessage = 'Activity name cannot be empty.';
 			return;
@@ -93,13 +48,83 @@
 		}
 	}
 
-	// Funkce pro deaktivaci aktivity
-	async function disableActivity() {
-		if (selectedActivityId === null) {
-			errorMessage = 'Please select an activity to disable.';
+    // Funkce pro přepínání mezi Add a Remove/Disable Activity
+    function toggleActivityMode() {
+        showAddActivity = !showAddActivity;
+        if (!showAddActivity) {
+            loadActivities();
+        }
+    }
+
+
+	// Načtení aktivit
+    async function loadActivities() {
+        console.log('Načítám aktivity...');
+        const response = await fetch(`/api/get-user-activities`);
+
+        if (response.ok) {
+            const data = await response.json();
+            console.log('Data z API:', data);
+
+            // Uložíme všechny aktivity z API
+            allActivities = [];
+            for (const cat in data) {
+                if (data.hasOwnProperty(cat)) {
+                    data[cat].forEach((activity: any) => {
+                        allActivities.push({
+                            activityName: activity.activityName,
+                            id: activity.id,
+                            category: cat,
+                        });
+                    });
+                }
+            }
+
+            console.log('Všechny aktivity:', allActivities);
+
+            // Zkontrolujeme filtrované aktivity pro výchozí kategorii
+            if (selectedCategory) {
+                handleCategoryChange();
+            }
+        } else {
+            console.error('Failed to load activities');
+        }
+    }
+
+	// Filtruj aktivity na základě zvolené kategorie
+	function handleCategoryChange() {
+		console.log('Zvolená kategorie:', selectedCategory);
+
+		if (selectedCategory) {
+			filteredActivities = allActivities.filter(activity => activity.category === selectedCategory.toLowerCase());
+			console.log('Filtrované aktivity pro kategorii:', filteredActivities);
+		} else {
+			filteredActivities = [];
+		}
+	}
+
+	// Funkce pro zpracování zvolené akce
+	async function processAction() {
+		if (!selectedActivityId) {
+			errorMessage = 'Please select an activity.';
 			return;
 		}
 
+		if (selectedAction === 'Delete') {
+			if (confirmDelete !== `DELETE MY ${selectedActivity}`) {
+				errorMessage = `You must type 'DELETE MY ${selectedActivity}' to delete this activity.`;
+				return;
+			}
+			await deleteActivity();
+		} else if (selectedAction === 'Disable') {
+			await disableActivity();
+		} else if (selectedAction === 'Enable') {
+			await enableActivity();
+		}
+	}
+
+	// Funkce pro deaktivaci aktivity
+	async function disableActivity() {
 		const response = await fetch(`/api/disable-activity`, {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
@@ -119,11 +144,6 @@
 
 	// Funkce pro opětovnou aktivaci deaktivované aktivity
 	async function enableActivity() {
-		if (selectedActivityId === null) {
-			errorMessage = 'Please select an activity to enable.';
-			return;
-		}
-
 		const response = await fetch(`/api/enable-activity`, {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
@@ -143,11 +163,6 @@
 
 	// Funkce pro odstranění aktivity
 	async function deleteActivity() {
-		if (confirmDelete !== `DELETE MY ${selectedActivity}`) {
-			errorMessage = `You must type 'DELETE MY ${selectedActivity}' to delete this activity.`;
-			return;
-		}
-
 		const response = await fetch(`/api/delete-activity`, {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
@@ -166,14 +181,6 @@
 		}
 	}
 
-	// Funkce pro přepínání mezi Add a Remove/Disable Activity
-	function toggleActivityMode() {
-		showAddActivity = !showAddActivity;
-		if (!showAddActivity) {
-			loadActivities();
-		}
-	}
-
 	// Funkce pro výběr aktivity
 	function handleActivitySelection(event: Event) {
 		const selectedActivityIdValue = parseInt((event.target as HTMLSelectElement).value, 10);
@@ -189,7 +196,7 @@
 			selectedActivity = '';
 		}
 
-		console.log(`Selected activity: ${selectedActivity}, ID: ${selectedActivityId}`);  // Debugging
+		console.log(`Selected activity: ${selectedActivity}, ID: ${selectedActivityId}`);
 	}
 
 </script>
@@ -236,7 +243,7 @@
 {:else}
 	<!-- Sekce pro deaktivaci nebo smazání/aktivaci aktivity -->
 	<div class="modal fade-in">
-		<h2>Remove/Disable Activity</h2>
+		<h2>Manage Activity</h2>
 		<div class="toggle-buttons">
 			<button class:active={showAddActivity} class="switch-btn" onclick={toggleActivityMode}>Add Activity</button>
 			<button class:active={!showAddActivity} class="switch-btn" onclick={toggleActivityMode}>Remove/Disable Activity</button>
@@ -262,17 +269,24 @@
             {/each}
         </select>
 
-		{#if selectedActivity}
-            <label for="input">If you want delete activity, you must wrote 'DELETE MY {selectedActivity}'</label>
+		{#if selectedActivity && selectedAction === 'Delete'}
+            <label for="input">If you want delete activity, you must type 'DELETE MY {selectedActivity}'</label>
 			<input type="text" bind:value={confirmDelete} placeholder="Type 'DELETE MY {selectedActivity}'" />
 		{/if}
 
-		<div class="modal-buttons">
-            <button class="delete" onclick={deleteActivity}>Delete</button>
-			<button class="disable" onclick={disableActivity}>Disable</button>
-			<button class="enable" onclick={enableActivity}>Enable</button>
-			<button class="cancel" onclick={closeModal}>Cancel</button>
-		</div>
+        <div class="category">
+            <label for="action">Choose Action</label>
+            <select name="action" id="action" bind:value={selectedAction}>
+                <option value="Enable">Enable</option>
+                <option value="Disable">Disabled</option>
+                <option value="Delete">Delete</option>
+            </select>
+        </div>
+
+        <div class="modal-buttons">
+            <button class="cancel" onclick={closeModal}>Cancel</button>
+            <button class="accept" onclick={processAction}>Accept change</button>
+        </div>
 
 		{#if errorMessage}
 			<p class="error-message">{errorMessage}</p>
@@ -382,17 +396,7 @@
 		background-color: #999;
 	}
 
-	.delete {
-		background-color: #ff4c4c;
-		color: white;
-	}
-
-	.disable {
-		background-color: #f0ad4e;
-		color: white;
-	}
-
-	.enable {
+	.accept {
 		background-color: #28a745;
 		color: white;
 	}
@@ -407,17 +411,14 @@
 		justify-content: space-between;
 		margin-bottom: 10px;
 	}
-    .toggle-buttons button{
-        border: none;
-    }
+
+	.toggle-buttons button {
+		border: none;
+	}
 
 	.toggle-buttons button.active {
 		background-color: #28a745;
 		color: white;
 	}
-
-	.error-message {
-		color: red;
-		margin-top: 10px;
-	}
 </style>
+

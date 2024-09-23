@@ -152,9 +152,9 @@
 				<div><i class="icon icon-school"></i><span>Level:</span></div>
 				<div>{user.userLevel}</div>
 			</div>
-			<address><i class="icon icon-mail"></i> {user.email}</address>
+			<address><i class="icon icon-mail"></i>{user.email}</address>
 			<a href="/profile/settings">Profile settings</a>
-			<button onclick={() => showAddActivityModal('Strength')}>Add Activity</button>
+			<button onclick={() => showAddActivityModal('Strength')}>Edit activity</button>
 			<button onclick={logout} class="logout"><i class="icon icon-logout"></i>Logout</button>
 		</section>
 
