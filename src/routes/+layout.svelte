@@ -65,7 +65,7 @@
     .background
         position fixed
         z-index -1
-        height 100svh
+        height 100%
         width 100vw
         inset 0
 
