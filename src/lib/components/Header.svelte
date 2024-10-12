@@ -62,6 +62,11 @@
         };
       }
     });
+
+    $effect(() => {
+        window.addEventListener("resize", handleResize);
+    })
+
 </script>
 
 <header>
