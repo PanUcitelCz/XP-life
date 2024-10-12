@@ -150,14 +150,18 @@
 	<div class="hero">
 		<section class="profile-section">
             <div class="profile-section-header">
+                <a href="/profile/settings" class="small_button"><i class="icon icon-settings"></i></a>
+                <h1>{user.nickname}</h1>
                 <button onclick={logout} class="logout"><i class="icon icon-logout"></i></button>
-                <a href="/profile/settings">O</a>
-                <h1>{user.nickname}!</h1>
-
             </div>
 			<div class="profile-section-img">
                 <img src="https://preview.redd.it/new-lore-ekko-or-old-lore-ekko-v0-rk1pnlymql5c1.jpg?width=300&format=pjpg&auto=webp&s=769e3a4b5537853cea944cfb4ccf350320975d18" alt="Profilcture" />
-				<div>{user.userLevel}</div>
+				<div>
+                    <i class="icon icon-level"></i>
+                    <div>
+                        {user.userLevel}
+                    </div>
+                </div>
 			</div>
 			<button onclick={() => showAddActivityModal('Strength')}>Edit activity</button>
 		</section>
@@ -243,7 +247,7 @@
     margin-top 36px
     margin-bottom 72px
 
-    @media (max-width: 768px) // Na mobilu bude profil nahoře a ostatní sekce pod sebou
+    @media (max-width: 1200px) // Na mobilu bude profil nahoře a ostatní sekce pod sebou
       display flex
       justify-content center
       align-items center
@@ -253,7 +257,7 @@
     display flex
     gap 8px
     flex-direction column
-    justify-content center
+    justify-content space-between
     align-items center
     background-color rgba(0, 0, 0, 0.35)
     padding 20px
@@ -304,13 +308,18 @@
                 text-decoration-color transparent
                 background #2a40ae
 
-    .logout
+    a
+        width 48px
         background #495464
         transition background .6s $easeOutExpo, color .6s $easeOutExpo
+        color white
+        text-decoration none
         display flex
         justify-content center
         align-items center
         gap 8px
+        height 48px
+        border-radius 8px
 
         +hover()
             &:hover
@@ -318,31 +327,60 @@
                 background white
                 color black
 
-    a
-        font-weight bold
-        color: white
-        text-transform uppercase
-        font-size 15px
-        text-underline-offset 4px
-        margin-top 12px
-        text-decoration underline
-        text-decoration-color inherit
-        transition text-decoration .6s $easeOutExpo
+    .logout
+        background #495464
+        transition background .6s $easeOutExpo, color .6s $easeOutExpo
+        display flex
+        justify-content center
+        align-items center
+        gap 8px
+        width 48px
+        margin 0
 
         +hover()
             &:hover
                 text-decoration-color transparent
+                background white
+                color black
+
 
     @media (max-width: 768px)
       width 100%
       max-width 100%
 
-    img
-      width 150px
-      height 150px
-      border-radius 50%
-      object-fit cover
-      margin-bottom 20px
+
+    &-img
+        position relative
+
+        img
+            width 150px
+            height 150px
+            border-radius 50%
+            object-fit cover
+            margin-bottom 20px
+
+        div
+            position absolute
+            right 0
+            bottom 24px
+            width 47px
+            height 46px
+
+            i
+                font-size 50px
+                color #007bff
+                position absolute
+                text-align center
+
+            div
+                z-index 10
+                display flex
+                justify-content center
+                align-items center
+                width 48px
+                height 48px
+                position absolute
+                bottom 0
 
   .levels
     display grid

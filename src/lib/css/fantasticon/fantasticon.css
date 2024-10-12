@@ -7,9 +7,9 @@
 }
 @font-face {
     font-family: "fantasticon";
-    src: url("./fantasticon.woff?6720e9f19e863ffbca9e1707f40f44fc") format("woff"),
-url("./fantasticon.woff2?6720e9f19e863ffbca9e1707f40f44fc") format("woff2"),
-url("./fantasticon.svg?6720e9f19e863ffbca9e1707f40f44fc#fantasticon") format("svg");
+    src: url("./fantasticon.woff?384f3fcd986a9efa049cc0c6650b4650") format("woff"),
+url("./fantasticon.woff2?384f3fcd986a9efa049cc0c6650b4650") format("woff2"),
+url("./fantasticon.svg?384f3fcd986a9efa049cc0c6650b4650#fantasticon") format("svg");
 }
 
 i[class^="icon-"]:before, i[class*=" icon-"]:before {
@@ -31,6 +31,15 @@ i[class^="icon-"]:before, i[class*=" icon-"]:before {
 .icon-arrow-up-right:before {
     content: "\f101";
 }
-.icon-logout:before {
+.icon-level-border:before {
     content: "\f102";
+}
+.icon-level:before {
+    content: "\f103";
+}
+.icon-logout:before {
+    content: "\f104";
+}
+.icon-settings:before {
+    content: "\f105";
 }
