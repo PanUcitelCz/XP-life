@@ -3,6 +3,7 @@
 	import { goto } from '$app/navigation';
 	import AddActivityModal from '$lib/components/AddActivityModal.svelte';
 	import CategorySection from '$lib/components/CategorySection.svelte';
+    import Header from '$lib/components/Header.svelte';
 
 	const { data } = $props();
 	const user = data.props?.user;
@@ -143,19 +144,22 @@
 	<title>XP Life - Profile</title>
 </svelte:head>
 
+<Header />
+
 {#if user}
 	<div class="hero">
 		<section class="profile-section">
-			<h1>Welcome, {user.nickname}!</h1>
-			<img src="https://preview.redd.it/new-lore-ekko-or-old-lore-ekko-v0-rk1pnlymql5c1.jpg?width=300&format=pjpg&auto=webp&s=769e3a4b5537853cea944cfb4ccf350320975d18" alt="Profilcture" />
-			<div>
-				<div><i class="icon icon-school"></i><span>Level:</span></div>
+            <div class="profile-section-header">
+                <button onclick={logout} class="logout"><i class="icon icon-logout"></i></button>
+                <a href="/profile/settings">O</a>
+                <h1>{user.nickname}!</h1>
+
+            </div>
+			<div class="profile-section-img">
+                <img src="https://preview.redd.it/new-lore-ekko-or-old-lore-ekko-v0-rk1pnlymql5c1.jpg?width=300&format=pjpg&auto=webp&s=769e3a4b5537853cea944cfb4ccf350320975d18" alt="Profilcture" />
 				<div>{user.userLevel}</div>
 			</div>
-			<address><i class="icon icon-mail"></i>{user.email}</address>
-			<a href="/profile/settings">Profile settings</a>
 			<button onclick={() => showAddActivityModal('Strength')}>Edit activity</button>
-			<button onclick={logout} class="logout"><i class="icon icon-logout"></i>Logout</button>
 		</section>
 
 		<!-- Střední část - Kategorie a postup levelů -->
@@ -261,6 +265,11 @@
     backdrop-filter: blur(10px)
     color white
 
+    &-header
+        display flex
+        justify-content space-between
+        width 100%
+
 
     & > div
         display flex
@@ -323,16 +332,6 @@
         +hover()
             &:hover
                 text-decoration-color transparent
-
-    address
-        display flex
-        gap 6px
-        align-items center
-        font-style normal
-        font-weight 500
-
-        i
-            font-size 24px
 
     @media (max-width: 768px)
       width 100%

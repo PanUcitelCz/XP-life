@@ -45,8 +45,10 @@
 	});
 </script>
 
+
+
 {#key data.url}
-	<main
+	<main class="main"
 		in:fly={{ x: -200, duration: 300, delay: 300 }}
 		out:fly={{ x: 200, duration: 300 }}
 		onintrostart={startTransition}
@@ -97,4 +99,32 @@
 
     :global(i[class*='icon-']:before)
         display grid
+
+    /* Styl scrollbaru */
+    :global(::-webkit-scrollbar)
+        width 5px
+        //background rgba(0,0,0,0)
+
+    :global(html::-webkit-scrollbar)
+        background transparent
+
+    :global(html::-webkit-scrollbar-track)
+        background transparent
+
+    :global(::-webkit-scrollbar-track)
+        background transparent
+
+    :global(::-webkit-scrollbar-thumb)
+        background-color grey
+        border-radius 10px
+        border: 1px solid transparent;
+
+    :global(::-webkit-scrollbar-thumb:hover)
+        background-color blue
+        width 1px
+
+    *  // Firefox scrollbar
+        scrollbar-width thin
+        scrollbar-color transparent
+
 </style>

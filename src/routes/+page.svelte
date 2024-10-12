@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Button from '$lib/components/Button.svelte';
     import BackdropCookies from '$lib/components/BackdropCookies.svelte';
+    import Header from '$lib/components/Header.svelte';
 
 	// Props pro přijetí uživatele ze serveru
 	const { data } = $props();
@@ -9,6 +10,10 @@
 </script>
 
 <BackdropCookies />
+
+{#if user}
+    <Header />
+{/if}
 
 <div class="Hero">
 	<h1>XP Life</h1>
