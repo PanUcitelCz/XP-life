@@ -201,7 +201,7 @@
                 height 3px
                 background-color #007bff
                 bottom 35%
-                left -1px
+                left 0
                 transition transform 0.4s ease, width 0.4s ease
                 will-change: transform, width
 
