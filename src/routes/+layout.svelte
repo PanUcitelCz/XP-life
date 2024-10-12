@@ -45,8 +45,6 @@
 	});
 </script>
 
-
-
 {#key data.url}
 	<main class="main"
 		in:fly={{ x: -200, duration: 300, delay: 300 }}
@@ -81,7 +79,7 @@
         min-height 100vh
         margin 0
         padding 0
-        overflow visible
+        overflow-X hidden // Musí se opravit
         font-family Geist, sans-serif
 
     :global(main)

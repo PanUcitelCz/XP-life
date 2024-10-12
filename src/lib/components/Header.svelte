@@ -1,93 +1,211 @@
 <script lang="ts">
+    import { page } from '$app/stores'; // Import pro sledování URL změn
+    let navElement: HTMLElement | null = null;
+    let hamburgerElement: HTMLElement | null = null;
+    let activeLink: HTMLElement | null = null;
+    let state = $state(0);
 
+    const isActive = () => {
+      if (state === 0) {
+        navElement?.classList.add("isActive");
+        hamburgerElement?.classList.add("isActive");
+        state = 1;
+      } else {
+        navElement?.classList.remove("isActive");
+        hamburgerElement?.classList.remove("isActive");
+        state = 0;
+      }
+    };
+
+    const handleResize = () => {
+      if (window.innerWidth > 744) {
+        navElement?.classList.remove("isActive");
+        hamburgerElement?.classList.remove("isActive");
+        state = 0;
+      }
+    };
+
+    const moveActiveIndicator = () => {
+      const currentPath = $page.url.pathname;
+      const links = navElement?.querySelectorAll('a');
+
+      links?.forEach(link => {
+        if (link.getAttribute('href') === currentPath) {
+          const linkRect = link.getBoundingClientRect();
+          const navRect = navElement?.getBoundingClientRect();
+
+          if (activeLink && navRect) {
+            activeLink.style.width = `${linkRect.width}px`;
+            activeLink.style.transform = `translateX(${linkRect.left - navRect.left}px)`;
+          }
+        }
+      });
+    };
+
+    $effect(() => {
+      // Přidání event listeneru pro přesun indikátoru aktivní stránky
+      moveActiveIndicator();
+
+      window.addEventListener('resize', moveActiveIndicator);
+
+      return () => {
+        window.removeEventListener('resize', moveActiveIndicator);
+      };
+    });
+
+    $effect(() => {
+      if (hamburgerElement) {
+        hamburgerElement.addEventListener('click', isActive);
+
+        return () => {
+          hamburgerElement?.removeEventListener('click', isActive);
+        };
+      }
+    });
 </script>
 
 <header>
-    <nav>
-        <a href="/profile">Quest</a>
-        <a href="/">Home page</a>
-        <a href="/profile">Profile</a>
-    </nav>
-    <div class="hamburger">
-        <span></span>
-        <span></span>
+  <div class="logo">
+    <h1><a href="/">XP LIFE</a></h1>
+    <div class="hamburger" bind:this={hamburgerElement} class:isActive={state == 1}>
+      <span></span>
+      <span></span>
     </div>
+  </div>
+  <nav bind:this={navElement} class:isActive={state == 1}>
+    <div class="active-indicator" bind:this={activeLink}></div>
+    <a href="/profile">Profile</a>
+    <a href="/">Quests</a>
+    <a href="/login">Stats</a>
+  </nav>
 </header>
 
 <style lang="stylus">
     header
         margin 0
-        position fixed
-        top 0
         z-index 10
         width 100%
-
-        .hamburger
-            display flex
-            flex-direction column
-            gap 8px
-            //justify-content center
-            align-items center
-            width 35px
-            position absolute
-            top 15px
-            right 5px
-            transform rotate(0.62turn)
-            cursor pointer
-
-            span
-                border 1.5px solid white
-                transition $easeOutExpo .6s
-
-                &:nth-child(1)
-                    width 35px
-
-                &:nth-child(2)
-                    width 10px
-
-
-
-            &:hover
-                span
-                    border-color #ff8113
-                    width 36px
-
-        nav
-            positon absolute
-            display flex
-            flex-direction column
-            justify-content flex-end
-            transform translate(-100%)
-
-            a
-                color white
-    /*header
-        width calc(100% - 72px)
         height 100px
-        background rgba(0, 0, 0, 0.6)
-        backdrop-filter blur(15px)
+        max-width 1900px
+        box-sizing border-box
         margin auto
-        border-radius 10px
-        position fixed
-        z-index 10
-        width 100%
-        bottom 0
+        margin-top 36px
+        margin-bottom 24px
+        padding 0 40px
+        //position relative
 
-        nav
+        @media $medium-up
+            display grid
+            grid-template-columns 1fr 3fr // První potomek zabere 1fr, zbytek 4fr
+            grid-gap 24px
+
+        .logo
+            color white
+            background-color rgba(0, 0, 0, 0.35)
+            //padding 20px
+            border-radius 10px
+            box-shadow rgba(17, 12, 46, 0.15) 0px 48px 100px 0px
+            width 100%
+            text-align center
+            box-sizing border-box
+            backdrop-filter: blur(10px)
+            color white
+            //cursor pointer
+            text-decoration none
             display flex
-            justify-content center
-            gap 36px
-            height 100%
+            justify-content space-between
+            padding 0 36px
             align-items center
+            height 100%
+            position relative
+            z-index 100
 
-            a
+            @media $medium-up
+                width 100%
+                justify-content center
+
+            h1
+                margin 0
+
+                a
+                    text-decoration none
+                    color white
+
+            .isActive
+                transform translate(0)
+
+                span:nth-child(1) // První čára (horní)
+                    transform translateY(10px) rotate(45deg)
+
+                span:nth-child(2)
+                    transform translateY(0) rotate(-45deg)
+
+            .hamburger
+                display inset
+                //position absolute
                 display flex
                 justify-content center
-                color white
-                text-decoration none
-                font-weight 500
-                transition ease .3s
+                align-items center
+                flex-direction column
+                gap 8px
+                cursor pointer
+                z-index 10
+                position relative
 
-                &:hover
-                    color #ff8113*/
+                @media $medium-up
+                    display none
+
+                span
+                    border 1px solid white
+                    width 36px
+                    transition transform ease .3s
+
+        nav
+            background-color rgba(0, 0, 0, 0.35)
+            border-radius 10px
+            box-shadow rgba(17, 12, 46, 0.15) 0px 48px 100px 0px
+            width 100%
+            text-align center
+            box-sizing border-box
+            backdrop-filter: blur(10px)
+            color white
+            display flex
+            justify-content center
+            align-items center
+            flex-direction column
+            gap 36px
+            position absolute
+            right -100%
+            top 0
+            transition transform 0.3s ease-in-out
+            height 100%
+            z-index 8
+
+            @media $medium-up
+                right 0
+                position relative
+                height 100%
+                transform translateX(0)
+                justify-content center
+                align-items center
+                flex-direction row
+
+            a
+                color white
+                font-weight 500
+                font-size 21px
+                text-decoration none
+
+            .active-indicator
+                position absolute
+                height 3px
+                background-color #007bff
+                bottom 35%
+                left -1px
+                transition transform 0.4s ease, width 0.4s ease
+                will-change: transform, width
+
+        .isActive
+            transform translate(-100%, 0)
+
 </style>

@@ -171,7 +171,14 @@
 			{#each ['Strength', 'Dexterity', 'Constitution', 'Intelligence', 'Wisdom', 'Charisma'] as categoryName}
 				{#key categoryName}
 					<div class="category-tile">
-						<h3>{categoryName} (Level {getLevelData(categoryName).level})</h3>
+						<h3>{categoryName}
+                            <div>
+                                <i class="icon icon-level-border"></i>
+                                <div>
+                                    {getLevelData(categoryName).level}
+                                </div>
+                            </div>
+                        </h3>
 						<div class="progress-bar">
 							<div class="progress" style="width: {(getLevelData(categoryName).remainingXP / getLevelData(categoryName).nextLevelXP) * 100}%"></div>
 						</div>
@@ -244,7 +251,7 @@
     padding 0 36px
     min-height 400px
     box-sizing border-box
-    margin-top 36px
+    //margin-top 36px
     margin-bottom 72px
 
     @media (max-width: 1200px) // Na mobilu bude profil nahoře a ostatní sekce pod sebou
@@ -411,6 +418,30 @@
       h3
         margin 0 0 12px
         color white
+        display flex
+        justify-content center
+        align-items center
+        gap 10px
+
+        div
+            position relative
+            width 40px
+            height 40px
+
+            i
+                font-size 40px
+                position absolute
+                color #007bff
+                left 0
+
+            div
+                position absolute
+                left -2px
+                height 100%
+                display flex
+                justify-content center
+                align-items center
+                font-weight 500
 
       p
         color #b4b4b8
