@@ -387,7 +387,7 @@
                 width 48px
                 height 48px
                 position absolute
-                bottom 0
+                bottom 6px
 
   .levels
     display grid
