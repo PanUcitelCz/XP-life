@@ -3,6 +3,7 @@ import { db } from '$lib/db';
 import { usersTable, strengthTable, dexterityTable, constitutionTable, intelligenceTable, wisdomTable, charismaTable } from '$lib/db/schema';
 import { eq } from 'drizzle-orm';
 import { error } from '@sveltejs/kit';
+import { sql } from 'drizzle-orm';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals }) => {
@@ -18,24 +19,53 @@ export const load: PageServerLoad = async ({ locals }) => {
     throw error(404, 'User not found');
   }
 
-  // Načtení aktivit z jednotlivých kategorií
-  const strengthPoints = await db.select({ points: strengthTable.points, level: strengthTable.level }).from(strengthTable).where(eq(strengthTable.userId, userId)).all();
-  const dexterityPoints = await db.select({ points: dexterityTable.points, level: dexterityTable.level }).from(dexterityTable).where(eq(dexterityTable.userId, userId)).all();
-  const constitutionPoints = await db.select({ points: constitutionTable.points, level: constitutionTable.level }).from(constitutionTable).where(eq(constitutionTable.userId, userId)).all();
-  const intelligencePoints = await db.select({ points: intelligenceTable.points, level: intelligenceTable.level }).from(intelligenceTable).where(eq(intelligenceTable.userId, userId)).all();
-  const wisdomPoints = await db.select({ points: wisdomTable.points, level: wisdomTable.level }).from(wisdomTable).where(eq(wisdomTable.userId, userId)).all();
-  const charismaPoints = await db.select({ points: charismaTable.points, level: charismaTable.level }).from(charismaTable).where(eq(charismaTable.userId, userId)).all();
-
-  // Výpočet celkových bodů pro každou kategorii
-  const getTotalPoints = (pointsArray: Array<{ points: number, level: number }>) => pointsArray.reduce((total, activity) => total + activity.points, 0);
-  const getMaxLevel = (pointsArray: Array<{ points: number, level: number }>) => Math.max(...pointsArray.map(activity => activity.level), 1); // Výpočet max. levelu z aktivit
-
-  const strengthTotalPoints = getTotalPoints(strengthPoints);
-  const dexterityTotalPoints = getTotalPoints(dexterityPoints);
-  const constitutionTotalPoints = getTotalPoints(constitutionPoints);
-  const intelligenceTotalPoints = getTotalPoints(intelligencePoints);
-  const wisdomTotalPoints = getTotalPoints(wisdomPoints);
-  const charismaTotalPoints = getTotalPoints(charismaPoints);
+  // Načtení všech aktivit a jejich bodů z různých kategorií v jednom dotazu
+  const allPoints = await db
+    .select({
+      category: sql`'Strength'`.as('category'),
+      totalPoints: sql`SUM(${strengthTable.points})`.as('totalPoints'),
+      maxLevel: sql`MAX(${strengthTable.level})`.as('maxLevel')
+    })
+    .from(strengthTable)
+    .where(eq(strengthTable.userId, userId))
+    .unionAll(
+      db.select({
+        category: sql`'Dexterity'`.as('category'),
+        totalPoints: sql`SUM(${dexterityTable.points})`.as('totalPoints'),
+        maxLevel: sql`MAX(${dexterityTable.level})`.as('maxLevel')
+      })
+      .from(dexterityTable)
+      .where(eq(dexterityTable.userId, userId)),
+      db.select({
+        category: sql`'Constitution'`.as('category'),
+        totalPoints: sql`SUM(${constitutionTable.points})`.as('totalPoints'),
+        maxLevel: sql`MAX(${constitutionTable.level})`.as('maxLevel')
+      })
+      .from(constitutionTable)
+      .where(eq(constitutionTable.userId, userId)),
+      db.select({
+        category: sql`'Intelligence'`.as('category'),
+        totalPoints: sql`SUM(${intelligenceTable.points})`.as('totalPoints'),
+        maxLevel: sql`MAX(${intelligenceTable.level})`.as('maxLevel')
+      })
+      .from(intelligenceTable)
+      .where(eq(intelligenceTable.userId, userId)),
+      db.select({
+        category: sql`'Wisdom'`.as('category'),
+        totalPoints: sql`SUM(${wisdomTable.points})`.as('totalPoints'),
+        maxLevel: sql`MAX(${wisdomTable.level})`.as('maxLevel')
+      })
+      .from(wisdomTable)
+      .where(eq(wisdomTable.userId, userId)),
+      db.select({
+        category: sql`'Charisma'`.as('category'),
+        totalPoints: sql`SUM(${charismaTable.points})`.as('totalPoints'),
+        maxLevel: sql`MAX(${charismaTable.level})`.as('maxLevel')
+      })
+      .from(charismaTable)
+      .where(eq(charismaTable.userId, userId))
+    )
+    .all();
 
   // Funkce pro výpočet levelu na základě bodů
   const calculateLevel = (points: number) => {
@@ -49,24 +79,27 @@ export const load: PageServerLoad = async ({ locals }) => {
     return level;
   };
 
-  // Výpočet levelů
-  const strengthLevel = calculateLevel(strengthTotalPoints);
-  const dexterityLevel = calculateLevel(dexterityTotalPoints);
-  const constitutionLevel = calculateLevel(constitutionTotalPoints);
-  const intelligenceLevel = calculateLevel(intelligenceTotalPoints);
-  const wisdomLevel = calculateLevel(wisdomTotalPoints);
-  const charismaLevel = calculateLevel(charismaTotalPoints);
+  // Výpočet levelů pro každou kategorii
+  const levels = allPoints.reduce((acc, categoryData) => {
+    acc[categoryData.category] = {
+      totalPoints: categoryData.totalPoints,
+      level: calculateLevel(categoryData.totalPoints),
+      maxLevel: categoryData.maxLevel
+    };
+    return acc;
+  }, {} as Record<string, { totalPoints: number; level: number; maxLevel: number }>);
 
-  // Přidání logiky pro jednotlivé aktivity
-  const strengthMaxLevel = getMaxLevel(strengthPoints);
-  const dexterityMaxLevel = getMaxLevel(dexterityPoints);
-  const constitutionMaxLevel = getMaxLevel(constitutionPoints);
-  const intelligenceMaxLevel = getMaxLevel(intelligencePoints);
-  const wisdomMaxLevel = getMaxLevel(wisdomPoints);
-  const charismaMaxLevel = getMaxLevel(charismaPoints);
+  // Výpočet celkového levelu jako nejmenšího z levelů všech kategorií
+  const overallLevel = Math.min(
+    levels.Strength?.level ?? 1,
+    levels.Dexterity?.level ?? 1,
+    levels.Constitution?.level ?? 1,
+    levels.Intelligence?.level ?? 1,
+    levels.Wisdom?.level ?? 1,
+    levels.Charisma?.level ?? 1
+  );
 
-  // Aktualizace uživatelského levelu v DB (nejmenší level ze všech kategorií)
-  const overallLevel = Math.min(strengthLevel, dexterityLevel, constitutionLevel, intelligenceLevel, wisdomLevel, charismaLevel);
+  // Aktualizace uživatelského levelu v DB
   await db.update(usersTable).set({ userLevel: overallLevel }).where(eq(usersTable.id, userId)).run();
 
   return {
@@ -77,20 +110,7 @@ export const load: PageServerLoad = async ({ locals }) => {
         nickname: user.nickname,
         userLevel: overallLevel // Zasíláme celkový level uživatele
       },
-      levels: {
-        strengthLevel,
-        dexterityLevel,
-        constitutionLevel,
-        intelligenceLevel,
-        wisdomLevel,
-        charismaLevel,
-        strengthMaxLevel, // Přidání maximálního levelu z aktivit
-        dexterityMaxLevel,
-        constitutionMaxLevel,
-        intelligenceMaxLevel,
-        wisdomMaxLevel,
-        charismaMaxLevel
-      }
+      levels
     }
   };
 };
