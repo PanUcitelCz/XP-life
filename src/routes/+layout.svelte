@@ -26,7 +26,7 @@
 	let background = $state();
 
 	$effect(() => {
-		WAVES({
+		const vantaEffect = WAVES({
 			el: background,
 			THREE: THREE,
 			mouseControls: true,
@@ -35,13 +35,17 @@
 			minHeight: 200.0,
 			minWidth: 200.0,
 			scale: 1.0,
-			scaleMobile: 1.2,
+			scaleMobile: 1.0, // Zmenšení pro mobilní zařízení
 			color: 0x1b1b1b,
-			shininess: 11.0,
-			waveHeight: 21.0,
-			waveSpeed: 1.45,
-			zoom: 0.65
+			shininess: 10.0, // Snížení lesku pro lepší výkon
+			waveHeight: 15.0, // Mírnější vlna
+			waveSpeed: 1.0,  // Snížení rychlosti
+			zoom: 0.5 // Optimalizace zoomu
 		});
+
+		return () => {
+			if (vantaEffect) vantaEffect.destroy();
+		};
 	});
 </script>
 
@@ -62,67 +66,54 @@
 
 <style lang="stylus">
 
-    .background
-        position fixed
-        z-index -1
-        height 100%
-        width 100vw
-        inset 0
+	.background
+		position fixed
+		z-index -1
+		height 100%
+		width 100vw
+		inset 0
+		overflow hidden // Přidáno skrytí přetečení, aby se zabránilo bílé čáře na mobilu
 
-    :global(body)
-        /*background-image url('../lib/static/imgs/Home.svg')
-        background-size cover
-        background-position center
-        background-size: cover; /* Zajistí, že se obrázek roztáhne tak, aby pokryl celé okno */
-        //background-attachment: fixed;
-        width 100%
-        min-height 100vh
-        margin 0
-        padding 0
-        overflow-X hidden // Musí se opravit
-        font-family Geist, sans-serif
+	:global(body)
+		width 100%
+		min-height 100vh
+		margin 0
+		padding 0
+		overflow-x hidden // Zakázat horizontální přetékání
+		overflow-y scroll // Nastavení scrollování pro vertikální osu
+		font-family Geist, sans-serif
+		background-color #121212 // Fallback barva, pokud se VANTA.js nenačte správně
 
-    :global(main)
-        min-height 100vh
-        width 100%  // Zajistí, že main bude vždy 100% široký
-        max-width 1800px  // Maximální šířka pro centralizaci obsahu
-        margin auto
-        box-sizing border-box
+	:global(main)
+		min-height 100vh
+		width 100%
+		max-width 1800px
+		margin auto
+		box-sizing border-box
+		padding-bottom 2rem // Přidán prostor dole pro lepší scrollování
 
-    :global(body.page-transitioning)
-        overflow hidden
+	:global(body.page-transitioning)
+		overflow hidden // Skrytí scrollování během přechodů
 
-    :global(i[class^='icon-']:before)
-        display grid
+	:global(i[class^='icon-']:before),
+	:global(i[class*='icon-']:before)
+		display inline-block // Optimalizace pro ikonky
 
-    :global(i[class*='icon-']:before)
-        display grid
+	/* Styl scrollbaru */
+	:global(::-webkit-scrollbar)
+		width 5px
 
-    /* Styl scrollbaru */
-    :global(::-webkit-scrollbar)
-        width 5px
-        //background rgba(0,0,0,0)
+	:global(::-webkit-scrollbar-thumb)
+		background-color grey
+		border-radius 10px
+		border: 1px solid transparent
 
-    :global(html::-webkit-scrollbar)
-        background transparent
+	:global(::-webkit-scrollbar-thumb:hover)
+		background-color blue
 
-    :global(html::-webkit-scrollbar-track)
-        background transparent
-
-    :global(::-webkit-scrollbar-track)
-        background transparent
-
-    :global(::-webkit-scrollbar-thumb)
-        background-color grey
-        border-radius 10px
-        border: 1px solid transparent;
-
-    :global(::-webkit-scrollbar-thumb:hover)
-        background-color blue
-        width 1px
-
-    *  // Firefox scrollbar
-        scrollbar-width thin
-        scrollbar-color transparent
+	/* Optimalizace scrollbaru pro Firefox */
+	*
+		scrollbar-width thin
+		scrollbar-color transparent
 
 </style>

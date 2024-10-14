@@ -61,14 +61,14 @@
 		}
 	}
 
-	function showAddActivityModal(category: string) {
+	async function showAddActivityModal(category: string) {
 		if (category) {
 			selectedCategory = category;
 			showActivityModal = true;
 		}
 	}
 
-	function closeModal() {
+	async function closeModal() {
 		showActivityModal = false;
 		selectedCategory = null;
 		fetchCategories();
