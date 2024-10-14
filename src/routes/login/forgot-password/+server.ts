@@ -3,6 +3,7 @@ import { usersTable } from '$lib/db/schema';
 import { sendEmail } from '$lib/resend'; // Import funkce pro odesílání e-mailů
 import { eq } from 'drizzle-orm';
 import crypto from 'crypto'; // Pro generování bezpečného tokenu
+import { BASE_URL } from '$env/static/private';
 
 export async function POST({ request }) {
 	const formData = await request.formData();
@@ -34,7 +35,7 @@ export async function POST({ request }) {
 		.run();
 
 	// Odeslání e-mailu s odkazem na reset hesla
-	const resetLink = `http://localhost:5173/login/reset-password?token=${resetToken}`;
+	const resetLink = `${BASE_URL}/login/reset-password?token=${resetToken}`;
 	const emailBody = `
   <p>Click on the following link to reset your password:</p>
   <a href="${resetLink}" target="_blank">Reset your password</a>
