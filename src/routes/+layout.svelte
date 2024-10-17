@@ -40,7 +40,7 @@
 			shininess: 10.0, // Snížení lesku pro lepší výkon
 			waveHeight: 15.0, // Mírnější vlna
 			waveSpeed: 1.0,  // Snížení rychlosti
-			zoom: 0.5 // Optimalizace zoomu
+			zoom: 1 // Optimalizace zoomu
 		});
 
 		return () => {

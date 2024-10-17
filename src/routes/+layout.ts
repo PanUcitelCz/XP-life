@@ -3,4 +3,3 @@ export function load({ url }) {
       url: url.pathname,
     }
   }
-  

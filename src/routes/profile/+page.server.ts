@@ -1,4 +1,3 @@
-// src/routes/profile/+page.server.ts
 import { db } from '$lib/db';
 import { usersTable, strengthTable, dexterityTable, constitutionTable, intelligenceTable, wisdomTable, charismaTable } from '$lib/db/schema';
 import { eq } from 'drizzle-orm';
@@ -117,7 +116,8 @@ export const load: PageServerLoad = async ({ locals }) => {
         id: user.id,
         email: user.email,
         nickname: user.nickname,
-        userLevel: overallLevel // Zasíláme celkový level uživatele
+        userLevel: overallLevel,
+        profileImage: user.profileImage // Zajištění vrácení profileImage
       },
       levels
     }

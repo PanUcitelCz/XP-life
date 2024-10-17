@@ -4,6 +4,7 @@
 	import AddActivityModal from '$lib/components/AddActivityModal.svelte';
 	import CategorySection from '$lib/components/CategorySection.svelte';
     import Header from '$lib/components/Header.svelte';
+    import Modalimg from '$lib/components/Modalimg.svelte'; // Přidáno pro modální okno pro změnu profilového obrázku
 
 	const { data } = $props();
 	const user = data.props?.user;
@@ -22,6 +23,7 @@
 
 	let showActivityModal = $state(false);
 	let selectedCategory = $state<string | null>(null);
+	let showImageModal = $state(false); // Přidáno pro zobrazení modálu s obrázkem
 
 	let strengthTotalPoints = $state(0);
 	let dexterityTotalPoints = $state(0);
@@ -138,6 +140,14 @@
 		const totalPoints = getTotalPoints(categoryName);
 		return calculateLevel(totalPoints);
 	}
+
+	function openImageModal() {
+		showImageModal = true; // Otevření modálu s obrázkem
+	}
+
+	function closeImageModal() {
+		showImageModal = false; // Zavření modálu s obrázkem
+	}
 </script>
 
 <svelte:head>
@@ -155,14 +165,16 @@
                 <button onclick={logout} class="logout"><i class="icon icon-logout"></i></button>
             </div>
 			<div class="profile-section-img">
-                <img src="https://preview.redd.it/new-lore-ekko-or-old-lore-ekko-v0-rk1pnlymql5c1.jpg?width=300&format=pjpg&auto=webp&s=769e3a4b5537853cea944cfb4ccf350320975d18" alt="Profilcture" />
-				<div>
+                <button class="clickable" onclick={openImageModal} aria-label="Change profile picture" id="profile_img">
+                    <img src={user.profileImage} alt="" />
+                </button>
+                <div>
                     <i class="icon icon-level"></i>
                     <div>
                         {user.userLevel}
                     </div>
                 </div>
-			</div>
+            </div>
 			<button onclick={() => showAddActivityModal('Strength')}>Edit activity</button>
 		</section>
 
@@ -235,9 +247,20 @@
 	</section>
 	<section class="buttons">
 		{#if showActivityModal && selectedCategory !== null}
-        <AddActivityModal userId={user.id} category={selectedCategory} {closeModal} />
+        	<AddActivityModal userId={user.id} category={selectedCategory} {closeModal} />
 		{/if}
 	</section>
+	<!-- Modální okno pro změnu profilového obrázku -->
+    {#if showImageModal}
+        <Modalimg
+            on:confirm={() => {
+                closeImageModal(); // Zavřít modal
+                location.reload(); // Obnovit stránku po potvrzení
+            }}
+            on:cancel={closeImageModal}
+        />
+    {/if}
+
 {:else}
 	<p>You are not logged in.</p>
 {/if}
@@ -245,16 +268,15 @@
 <style lang="stylus">
   .hero
     display grid
-    grid-template-columns 1fr 3fr // První potomek zabere 1fr, zbytek 4fr
+    grid-template-columns 1fr 3fr
     grid-gap 24px
     margin-bottom 20px
     padding 0 36px
     min-height 400px
     box-sizing border-box
-    //margin-top 36px
     margin-bottom 72px
 
-    @media (max-width: 1200px) // Na mobilu bude profil nahoře a ostatní sekce pod sebou
+    @media (max-width: 1200px)
       display flex
       justify-content center
       align-items center
@@ -280,7 +302,6 @@
         display flex
         justify-content space-between
         width 100%
-
 
     & > div
         display flex
@@ -350,14 +371,18 @@
                 background white
                 color black
 
-
     @media (max-width: 768px)
       width 100%
       max-width 100%
 
-
     &-img
         position relative
+
+        #profile_img
+            background none
+            width inset
+            height 100%
+            margin 0
 
         img
             width 150px
@@ -365,6 +390,7 @@
             border-radius 50%
             object-fit cover
             margin-bottom 20px
+            cursor pointer
 
         div
             position absolute
@@ -480,5 +506,12 @@
       align-items center
       flex-direction column
 
+  .clickable {
+    cursor: pointer;
+    transition: filter 0.3s ease;
+  }
 
+  .clickable:hover {
+    filter: blur(10px);
+  }
 </style>
