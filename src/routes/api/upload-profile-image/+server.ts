@@ -1,8 +1,9 @@
 // +server.ts (pro SvelteKit 5)
 import { usersTable } from '$lib/db/schema';
 import { db } from '$lib/db'; // Připojení k databázi
-import { writeFileSync } from 'fs';
+import { writeFileSync, mkdirSync } from 'fs';
 import { eq } from 'drizzle-orm/expressions'; // Import eq funkce pro porovnání sloupců
+import { resolve } from 'path'; // Pro dynamické generování cest
 
 export const POST = async ({ request }) => {
   const data = await request.formData();
@@ -15,7 +16,13 @@ export const POST = async ({ request }) => {
   // Vygenerování náhodného názvu souboru pomocí timestampu a náhodného čísla
   const randomString = Date.now().toString() + Math.floor(Math.random() * 10000).toString();
   const filename = `${randomString}.jpg`;
-  const filepath = `static/uploads/${filename}`;
+
+  // Dynamická cesta k ukládání souboru mimo složku static
+  const uploadDir = resolve('uploads');
+  const filepath = resolve(uploadDir, filename);
+
+  // Vytvoření složky uploads, pokud neexistuje
+  mkdirSync(uploadDir, { recursive: true });
 
   // Uložení souboru
   const arrayBuffer = await profileImage.arrayBuffer();
