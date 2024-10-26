@@ -8,6 +8,13 @@
       "when": 1729193457949,
       "tag": "0000_secret_lake",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1729446129066,
+      "tag": "0001_cute_chimera",
+      "breakpoints": true
     }
   ]
 }

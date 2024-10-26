@@ -1,6 +1,7 @@
+// src/routes/profile/+page.server.ts
 import { db } from '$lib/db';
-import { usersTable, strengthTable, dexterityTable, constitutionTable, intelligenceTable, wisdomTable, charismaTable } from '$lib/db/schema';
-import { eq } from 'drizzle-orm';
+import { usersTable, strengthTable, dexterityTable, constitutionTable, intelligenceTable, wisdomTable, charismaTable, questsTable } from '$lib/db/schema';
+import { eq, sql, and } from 'drizzle-orm';
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 
@@ -18,37 +19,44 @@ export const load: PageServerLoad = async ({ locals }) => {
   }
 
   // Načtení bodů a levelů z jednotlivých kategorií samostatně
-  const strengthPoints = await db.select({
-    totalPoints: strengthTable.points,
-    maxLevel: strengthTable.level
-  }).from(strengthTable).where(eq(strengthTable.userId, userId)).all();
+  const categoryPoints = {
+    Strength: 0,
+    Dexterity: 0,
+    Constitution: 0,
+    Intelligence: 0,
+    Wisdom: 0,
+    Charisma: 0,
+  };
 
-  const dexterityPoints = await db.select({
-    totalPoints: dexterityTable.points,
-    maxLevel: dexterityTable.level
-  }).from(dexterityTable).where(eq(dexterityTable.userId, userId)).all();
+  // Načtení bodů z aktivity tabulek
+  const strengthPoints = (await db.select({ totalPoints: sql<number>`COALESCE(SUM(points), 0)` }).from(strengthTable).where(eq(strengthTable.userId, userId)).get())?.totalPoints ?? 0;
+  const dexterityPoints = (await db.select({ totalPoints: sql<number>`COALESCE(SUM(points), 0)` }).from(dexterityTable).where(eq(dexterityTable.userId, userId)).get())?.totalPoints ?? 0;
+  const constitutionPoints = (await db.select({ totalPoints: sql<number>`COALESCE(SUM(points), 0)` }).from(constitutionTable).where(eq(constitutionTable.userId, userId)).get())?.totalPoints ?? 0;
+  const intelligencePoints = (await db.select({ totalPoints: sql<number>`COALESCE(SUM(points), 0)` }).from(intelligenceTable).where(eq(intelligenceTable.userId, userId)).get())?.totalPoints ?? 0;
+  const wisdomPoints = (await db.select({ totalPoints: sql<number>`COALESCE(SUM(points), 0)` }).from(wisdomTable).where(eq(wisdomTable.userId, userId)).get())?.totalPoints ?? 0;
+  const charismaPoints = (await db.select({ totalPoints: sql<number>`COALESCE(SUM(points), 0)` }).from(charismaTable).where(eq(charismaTable.userId, userId)).get())?.totalPoints ?? 0;
 
-  const constitutionPoints = await db.select({
-    totalPoints: constitutionTable.points,
-    maxLevel: constitutionTable.level
-  }).from(constitutionTable).where(eq(constitutionTable.userId, userId)).all();
+  // Načtení splněných questů a přičtení XP bodů k odpovídajícím kategoriím
+  const completedQuests = await db.select({
+    category: questsTable.category,
+    xpValue: questsTable.xp_value
+  }).from(questsTable).where(and(eq(questsTable.userId, userId), eq(questsTable.isCompleted, 1))).all() ?? [];
 
-  const intelligencePoints = await db.select({
-    totalPoints: intelligenceTable.points,
-    maxLevel: intelligenceTable.level
-  }).from(intelligenceTable).where(eq(intelligenceTable.userId, userId)).all();
+  completedQuests.forEach((quest) => {
+    const questCategory = quest.category as keyof typeof categoryPoints;
+    if (questCategory in categoryPoints && quest.xpValue !== null) {
+      categoryPoints[questCategory] += quest.xpValue;
+    }
+  });
 
-  const wisdomPoints = await db.select({
-    totalPoints: wisdomTable.points,
-    maxLevel: wisdomTable.level
-  }).from(wisdomTable).where(eq(wisdomTable.userId, userId)).all();
+  // Celkové body kategorií včetně XP z questů
+  const totalStrength = strengthPoints + categoryPoints.Strength;
+  const totalDexterity = dexterityPoints + categoryPoints.Dexterity;
+  const totalConstitution = constitutionPoints + categoryPoints.Constitution;
+  const totalIntelligence = intelligencePoints + categoryPoints.Intelligence;
+  const totalWisdom = wisdomPoints + categoryPoints.Wisdom;
+  const totalCharisma = charismaPoints + categoryPoints.Charisma;
 
-  const charismaPoints = await db.select({
-    totalPoints: charismaTable.points,
-    maxLevel: charismaTable.level
-  }).from(charismaTable).where(eq(charismaTable.userId, userId)).all();
-
-  // Funkce pro výpočet levelu na základě bodů
   const calculateLevel = (points: number) => {
     let level = 1;
     let threshold = 50;
@@ -60,54 +68,42 @@ export const load: PageServerLoad = async ({ locals }) => {
     return level;
   };
 
-  // Výpočet celkových bodů a levelů
-  const strengthTotal = strengthPoints.reduce((acc, { totalPoints }) => acc + totalPoints, 0);
-  const dexterityTotal = dexterityPoints.reduce((acc, { totalPoints }) => acc + totalPoints, 0);
-  const constitutionTotal = constitutionPoints.reduce((acc, { totalPoints }) => acc + totalPoints, 0);
-  const intelligenceTotal = intelligencePoints.reduce((acc, { totalPoints }) => acc + totalPoints, 0);
-  const wisdomTotal = wisdomPoints.reduce((acc, { totalPoints }) => acc + totalPoints, 0);
-  const charismaTotal = charismaPoints.reduce((acc, { totalPoints }) => acc + totalPoints, 0);
-
   const levels = {
     Strength: {
-      totalPoints: strengthTotal,
-      level: calculateLevel(strengthTotal)
+      totalPoints: totalStrength,
+      level: calculateLevel(totalStrength)
     },
     Dexterity: {
-      totalPoints: dexterityTotal,
-      level: calculateLevel(dexterityTotal)
+      totalPoints: totalDexterity,
+      level: calculateLevel(totalDexterity)
     },
     Constitution: {
-      totalPoints: constitutionTotal,
-      level: calculateLevel(constitutionTotal)
+      totalPoints: totalConstitution,
+      level: calculateLevel(totalConstitution)
     },
     Intelligence: {
-      totalPoints: intelligenceTotal,
-      level: calculateLevel(intelligenceTotal)
+      totalPoints: totalIntelligence,
+      level: calculateLevel(totalIntelligence)
     },
     Wisdom: {
-      totalPoints: wisdomTotal,
-      level: calculateLevel(wisdomTotal)
+      totalPoints: totalWisdom,
+      level: calculateLevel(totalWisdom)
     },
     Charisma: {
-      totalPoints: charismaTotal,
-      level: calculateLevel(charismaTotal)
+      totalPoints: totalCharisma,
+      level: calculateLevel(totalCharisma)
     }
   };
 
-  // Výpočet celkového levelu
-  const categoryLevels = [
+  const overallLevel = Math.min(
     levels.Strength.level,
     levels.Dexterity.level,
     levels.Constitution.level,
     levels.Intelligence.level,
     levels.Wisdom.level,
     levels.Charisma.level
-  ];
+  );
 
-  const overallLevel = Math.min(...categoryLevels);
-
-  // Aktualizace uživatelského levelu v DB
   await db.update(usersTable).set({ userLevel: overallLevel }).where(eq(usersTable.id, userId)).run();
 
   return {
@@ -117,9 +113,10 @@ export const load: PageServerLoad = async ({ locals }) => {
         email: user.email,
         nickname: user.nickname,
         userLevel: overallLevel,
-        profileImage: user.profileImage // Zajištění vrácení profileImage
+        profileImage: user.profileImage
       },
-      levels
+      levels,
+      completedQuests // Ujistíme se, že completedQuests je pole přímo přístupné ve frontendu
     }
   };
 };

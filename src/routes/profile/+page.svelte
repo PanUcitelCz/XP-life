@@ -3,11 +3,24 @@
 	import { goto } from '$app/navigation';
 	import AddActivityModal from '$lib/components/AddActivityModal.svelte';
 	import CategorySection from '$lib/components/CategorySection.svelte';
-    import Header from '$lib/components/Header.svelte';
-    import Modalimg from '$lib/components/Modalimg.svelte'; // Přidáno pro modální okno pro změnu profilového obrázku
+	import Header from '$lib/components/Header.svelte';
+	import Modalimg from '$lib/components/Modalimg.svelte';
 
 	const { data } = $props();
 	const user = data.props?.user;
+    const completedQuests = data.props?.completedQuests ?? [];
+
+    if (Array.isArray(completedQuests)) {
+        console.log("Loaded completed quests:", completedQuests);
+    } else {
+        console.error("Completed quests is not an array:", completedQuests);
+    }
+
+	// Definuj typ pro dokončený quest
+	type CompletedQuest = {
+		category: string;
+		xp_value: number;
+	};
 
 	let categories = $state<
 		{
@@ -16,14 +29,14 @@
 			points: number;
 			category: string;
 			id: number;
-			isActive: number; // Přidán sloupec pro kontrolu aktivního stavu
+			isActive: number;
 			lastXPAdded: string;
 		}[]
 	>([]);
 
 	let showActivityModal = $state(false);
 	let selectedCategory = $state<string | null>(null);
-	let showImageModal = $state(false); // Přidáno pro zobrazení modálu s obrázkem
+	let showImageModal = $state(false);
 
 	let strengthTotalPoints = $state(0);
 	let dexterityTotalPoints = $state(0);
@@ -32,26 +45,62 @@
 	let wisdomTotalPoints = $state(0);
 	let charismaTotalPoints = $state(0);
 
-	async function fetchCategories() {
-		const response = await fetch('/api/get-user-categories');
-		if (response.ok) {
-			const categoriesData = await response.json();
-			categories = categoriesData;
+    let questXPByCategory = {
+  Strength: 0,
+  Dexterity: 0,
+  Constitution: 0,
+  Intelligence: 0,
+  Wisdom: 0,
+  Charisma: 0
+};
 
-			// Zahrnout všechny aktivity do počtu XP, ale zobrazit pouze aktivní
-			strengthTotalPoints = categories.filter((a) => a.category === 'Strength').reduce((total, activity) => total + activity.points, 0);
-			dexterityTotalPoints = categories.filter((a) => a.category === 'Dexterity').reduce((total, activity) => total + activity.points, 0);
-			constitutionTotalPoints = categories.filter((a) => a.category === 'Constitution').reduce((total, activity) => total + activity.points, 0);
-			intelligenceTotalPoints = categories.filter((a) => a.category === 'Intelligence').reduce((total, activity) => total + activity.points, 0);
-			wisdomTotalPoints = categories.filter((a) => a.category === 'Wisdom').reduce((total, activity) => total + activity.points, 0);
-			charismaTotalPoints = categories.filter((a) => a.category === 'Charisma').reduce((total, activity) => total + activity.points, 0);
+async function fetchCategories() {
+	const response = await fetch('/api/get-user-categories');
+	const completedQuestsResponse = await fetch('/api/get-completed-quests');
+
+	if (response.ok && completedQuestsResponse.ok) {
+		const categoriesData = await response.json();
+		const { completedQuests } = await completedQuestsResponse.json();
+
+		categories = categoriesData;
+
+		// Uložíme XP z questů do proměnné questXPByCategory
+		if (Array.isArray(completedQuests)) {
+			console.log("Loaded completed quests:", completedQuests);
+			questXPByCategory = completedQuests.reduce((acc, quest) => {
+				if (quest.category && quest.xpValue) {
+					acc[quest.category] = (acc[quest.category] || 0) + quest.xpValue;
+				}
+				return acc;
+			}, {
+				Strength: 0,
+				Dexterity: 0,
+				Constitution: 0,
+				Intelligence: 0,
+				Wisdom: 0,
+				Charisma: 0
+			});
+
+			console.log("XP from completed quests by category:", questXPByCategory);
 		} else {
-			console.error('Failed to fetch categories');
+			console.error("Completed quests is not an array:", completedQuests);
 		}
+
+		// Zahrnutí aktivit do celkového počtu XP (s připočítáním quest XP)
+		strengthTotalPoints = categories.filter((a) => a.category === 'Strength').reduce((total, activity) => total + activity.points, questXPByCategory.Strength);
+		dexterityTotalPoints = categories.filter((a) => a.category === 'Dexterity').reduce((total, activity) => total + activity.points, questXPByCategory.Dexterity);
+		constitutionTotalPoints = categories.filter((a) => a.category === 'Constitution').reduce((total, activity) => total + activity.points, questXPByCategory.Constitution);
+		intelligenceTotalPoints = categories.filter((a) => a.category === 'Intelligence').reduce((total, activity) => total + activity.points, questXPByCategory.Intelligence);
+		wisdomTotalPoints = categories.filter((a) => a.category === 'Wisdom').reduce((total, activity) => total + activity.points, questXPByCategory.Wisdom);
+		charismaTotalPoints = categories.filter((a) => a.category === 'Charisma').reduce((total, activity) => total + activity.points, questXPByCategory.Charisma);
+	} else {
+		console.error('Failed to fetch categories or completed quests');
 	}
+}
 
 	onMount(fetchCategories);
 
+	// Zbytek kódu beze změn
 	async function logout() {
 		const response = await fetch('/logout', { method: 'POST' });
 		if (response.ok) {
@@ -115,7 +164,7 @@
 		});
 
 		if (response.ok) {
-			fetchCategories(); // Aktualizuj kategorie po úspěšném přidání XP
+			fetchCategories();
 		} else {
 			console.error('Failed to add XP');
 		}
@@ -136,17 +185,18 @@
 		return categories.filter((c) => c.category === categoryName).reduce((acc, activity) => acc + activity.points, 0);
 	}
 
-	function getLevelData(categoryName: String) {
-		const totalPoints = getTotalPoints(categoryName);
-		return calculateLevel(totalPoints);
-	}
+    function getLevelData(categoryName: string) {
+        let totalPoints = getTotalPoints(categoryName) + (questXPByCategory[categoryName as keyof typeof questXPByCategory] || 0);
+        return calculateLevel(totalPoints);
+    }
+
 
 	function openImageModal() {
-		showImageModal = true; // Otevření modálu s obrázkem
+		showImageModal = true;
 	}
 
 	function closeImageModal() {
-		showImageModal = false; // Zavření modálu s obrázkem
+		showImageModal = false;
 	}
 </script>
 

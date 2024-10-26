@@ -100,3 +100,14 @@ export const charismaTable = sqliteTable('charisma', {
   createdAt: text('created_at').default(sql`CURRENT_TIMESTAMP`).notNull(),
   isActive: integer('isActive').default(1).notNull(),
 });
+
+export const questsTable = sqliteTable('quests', {
+    id: integer('id').primaryKey(),
+    userId: integer('user_id').references(() => usersTable.id).notNull(), // Odkaz na uživatele
+    title: text('title').notNull(), // Název questu
+    description: text('description').notNull(),
+    category: text('category').notNull(), // Kategorie
+    xp_value: integer('xp_value').default(100),
+    createdAt: text('created_at').default(sql`CURRENT_TIMESTAMP`).notNull(), // Datum vytvoření
+    isCompleted: integer('is_completed').default(0).notNull() // Příznak, zda byl quest dokončen
+});

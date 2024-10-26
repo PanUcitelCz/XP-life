@@ -80,7 +80,7 @@
   <nav bind:this={navElement} class:isActive={state == 1}>
     <div class="active-indicator" bind:this={activeLink}></div>
     <a href="/profile">Profile</a>
-    <a href="/">Quests</a>
+    <a href="/profile/quest">Quests</a>
     <a href="/login">Stats</a>
   </nav>
 </header>
