@@ -3,7 +3,6 @@
 	import { goto } from '$app/navigation';
 	import AddActivityModal from '$lib/components/AddActivityModal.svelte';
 	import CategorySection from '$lib/components/CategorySection.svelte';
-	import Header from '$lib/components/Header.svelte';
 	import Modalimg from '$lib/components/Modalimg.svelte';
 
 	const { data } = $props();
@@ -203,8 +202,6 @@ async function fetchCategories() {
 <svelte:head>
 	<title>XP Life - Profile</title>
 </svelte:head>
-
-<Header />
 
 {#if user}
 	<div class="hero">

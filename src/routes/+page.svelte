@@ -17,11 +17,12 @@
 		{#if user}
 			<!-- Pokud je uživatel přihlášen, zobrazíme tlačítko pro přístup na profil -->
 			<Button href="/profile" color="grey">Profile</Button>
+            <Button href="/register" color="ghost">Information</Button>
 		{:else}
 			<!-- Pokud není přihlášen, zobrazíme tlačítka pro login a registraci -->
 			<Button href="/login" color="grey">Login</Button>
+            <Button href="/register" color="ghost">Register</Button>
 		{/if}
-		<Button href="/register" color="ghost">Register</Button>
 	</div>
 </div>
 

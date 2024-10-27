@@ -6,6 +6,7 @@
 	import * as THREE from 'three';
 	// @ts-ignore
 	import WAVES from 'vanta/dist/vanta.waves.min.js';
+	import Header from '$lib/components/Header.svelte';
 
 	type Props = {
 		children: Snippet;
@@ -35,12 +36,12 @@
 			minHeight: 200.0,
 			minWidth: 200.0,
 			scale: 1.0,
-			scaleMobile: 1.0, // Zmenšení pro mobilní zařízení
+			scaleMobile: 1.0,
 			color: 0x1b1b1b,
-			shininess: 10.0, // Snížení lesku pro lepší výkon
-			waveHeight: 15.0, // Mírnější vlna
-			waveSpeed: 1.0,  // Snížení rychlosti
-			zoom: 1 // Optimalizace zoomu
+			shininess: 10.0,
+			waveHeight: 6.0,
+			waveSpeed: 1.0,
+			zoom: 1
 		});
 
 		return () => {
@@ -48,6 +49,10 @@
 		};
 	});
 </script>
+
+{#if data.url.startsWith('/profile')}
+	<Header />
+{/if}
 
 {#key data.url}
 	<main class="main"
