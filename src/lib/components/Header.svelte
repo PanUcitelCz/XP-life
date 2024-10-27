@@ -179,7 +179,7 @@
             align-items center
             flex-direction column
             gap 36px
-            position absolute
+            position fixed
             right -100%
             top 0
             transition transform 0.3s ease-in-out
