@@ -26,21 +26,24 @@
     };
 
     const moveActiveIndicator = () => {
-      const currentPath = $page.url.pathname;
-      const links = navElement?.querySelectorAll('a');
+        const currentPath = $page.url.pathname;
+        const links = navElement?.querySelectorAll('a');
 
-      links?.forEach(link => {
-        if (link.getAttribute('href') === currentPath) {
-          const linkRect = link.getBoundingClientRect();
-          const navRect = navElement?.getBoundingClientRect();
+        links?.forEach(link => {
+            if (link.getAttribute('href') === currentPath) {
+                const linkRect = link.getBoundingClientRect();
+                const navRect = navElement?.getBoundingClientRect();
 
-          if (activeLink && navRect) {
-            activeLink.style.width = `${linkRect.width}px`;
-            activeLink.style.transform = `translateX(${linkRect.left - navRect.left}px)`;
-          }
-        }
-      });
+                if (window.innerWidth > 744 && activeLink && navRect) {
+                    activeLink.style.width = `${linkRect.width + 20}px`;
+                    activeLink.style.transform = `translateX(${linkRect.left - navRect.left - 10}px)`;
+                } else if (activeLink) {
+                    activeLink.style.width = "0";
+                }
+            }
+        });
     };
+
 
     const addLinkClickListener = () => {
         const links = navElement?.querySelectorAll('a');
@@ -87,7 +90,7 @@
             window.removeEventListener('resize', moveActiveIndicator);
         };
     });
-    
+
 </script>
 
 <header>
@@ -102,7 +105,7 @@
     <div class="active-indicator" bind:this={activeLink}></div>
     <a href="/profile">Profile</a>
     <a href="/profile/quest">Quests</a>
-    <a href="/login">Stats</a>
+    <a href="/login">Information</a>
   </nav>
 </header>
 
@@ -217,12 +220,15 @@
             a
                 color white
                 font-weight 500
-                font-size 21px
+                font-size 18px
                 text-decoration none
+                z-index 11
 
             .active-indicator
                 position absolute
-                height 3px
+                height 30px
+                border-radius 10px
+                z-index 10
                 background-color #007bff
                 bottom 35%
                 left 0

@@ -23,7 +23,6 @@
       <p>{category}</p>
     </div>
     <div class="completed-quest-card-content">
-      <h4>Popis</h4>
       <p>{description}</p>
     </div>
     <div class="completed-quest-card-footer">
@@ -60,11 +59,9 @@
           color #b4b4b8
 
       &-content
-        h4
-          margin 0
-          font-weight 500
         p
           color white
+          text-align left
 
       &-footer
         display flex
