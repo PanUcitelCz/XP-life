@@ -357,6 +357,7 @@ async function fetchCategories() {
 
         i
             font-size 24px
+            display flex
 
         & > div
             display flex
@@ -460,7 +461,7 @@ async function fetchCategories() {
                 width 48px
                 height 48px
                 position absolute
-                bottom 6px
+                bottom 0
 
   .levels
     display grid

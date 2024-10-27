@@ -49,48 +49,109 @@
 </script>
 
 {#if showDeleteQuestModal}
-    <div class="modal-overlay">
-        <div class="modal">
-            <h2>Delete Quest</h2>
-            <label for="quest-select">Vyberte quest k odstranění:</label>
-            <select id="quest-select" bind:value={selectedQuestId}>
-                {#each userQuests as quest}
-                    <option value={quest.id}>{quest.title}</option>
-                {/each}
-            </select>
+    <div class="modal-backdrop" onclick={closeModal} role="button" tabindex="0" aria-label="Close modal" onkeydown={(e) => e.key === 'Enter' && closeModal()}></div>
 
-            <p>Type "DELETE {selectedQuestName}" to confirm deletion:</p>
-            <input bind:value={deleteConfirmation} placeholder="DELETE {selectedQuestName}" />
-            <div class="modal-actions">
-                <button onclick={confirmDeleteQuest}>Delete</button>
-                <button onclick={closeModal}>Cancel</button>
-            </div>
+    <div class="modal fade-in">
+        <h2>Delete Quest</h2>
+
+        <label for="quest-select" class="label">Select Quest to Delete</label>
+        <select id="quest-select" bind:value={selectedQuestId}>
+            {#each userQuests as quest}
+                <option value={quest.id}>{quest.title}</option>
+            {/each}
+        </select>
+
+        <p>Type "DELETE {selectedQuestName}" to confirm deletion:</p>
+        <input bind:value={deleteConfirmation} placeholder="DELETE {selectedQuestName}" />
+
+        <div class="modal-buttons">
+            <button class="confirm-button" onclick={confirmDeleteQuest}>Delete</button>
+            <button class="cancel-button" onclick={closeModal}>Cancel</button>
         </div>
     </div>
 {/if}
 
 <style lang="stylus">
-.modal-overlay
-    position: fixed
-    top: 0
-    left: 0
-    width: 100%
-    height: 100%
-    background-color: rgba(0, 0, 0, 0.5)
-    display: flex
-    justify-content: center
-    align-items: center
+    .modal-backdrop
+        position fixed
+        top 0
+        left 0
+        width 100vw
+        height 100vh
+        background-color rgba(0, 0, 0, 0.5)
+        backdrop-filter blur(5px)
+        cursor pointer
+        z-index 1000
 
-.modal
-    background-color: #fff
-    padding: 2rem
-    border-radius: 8px
-    max-width: 400px
-    width: 100%
+    .modal
+        position fixed
+        top 50%
+        left 50%
+        transform translate(-50%, -50%)
+        background-color white
+        padding 25px
+        border-radius 12px
+        box-shadow 0 4px 12px rgba(0, 0, 0, 0.2)
+        width 90%
+        max-width 400px
+        z-index 1001
+        text-align center
+        animation fadeIn 0.3s ease-in-out
 
-.modal-actions
-    display: flex
-    justify-content: flex-end
-    gap: 1rem
-    margin-top: 1rem
+    h2
+        color black
+        margin-bottom 15px
+        font-size 1.5rem
+        font-weight 500
+
+    .label
+        text-align left
+        display block
+        margin-top 15px
+        font-weight 500
+        color black
+
+    select, input
+        width 100%
+        padding 10px
+        margin-top 5px
+        border 1px solid #ddd
+        border-radius 5px
+        box-sizing border-box
+        font-size 1rem
+        background-color #f9f9f9
+        color #333
+
+    .modal-buttons
+        display flex
+        justify-content space-between
+        margin-top 20px
+
+    button
+        padding 10px 20px
+        border none
+        border-radius 5px
+        font-size 1rem
+        cursor pointer
+        transition background-color 0.3s
+
+    .confirm-button
+        background-color #e74c3c
+        color white
+
+        &:hover
+            background-color #c0392b
+
+    .cancel-button
+        background-color #ccc
+        color black
+
+        &:hover
+            background-color #999
+
+    @keyframes fadeIn
+        from
+            opacity 0
+        to
+            opacity 1
 </style>

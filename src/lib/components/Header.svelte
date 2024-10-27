@@ -42,6 +42,16 @@
       });
     };
 
+    const addLinkClickListener = () => {
+        const links = navElement?.querySelectorAll('a');
+        links?.forEach(link => {
+            link.addEventListener('click', () => {
+            if (state === 1) isActive();
+            });
+        });
+    };
+
+
     $effect(() => {
       // Přidání event listeneru pro přesun indikátoru aktivní stránky
       moveActiveIndicator();
@@ -67,6 +77,17 @@
         window.addEventListener("resize", handleResize);
     })
 
+    $effect(() => {
+        moveActiveIndicator();
+        addLinkClickListener(); // Zavolání nové funkce pro přidání event listenerů na odkazy
+
+        window.addEventListener('resize', moveActiveIndicator);
+
+        return () => {
+            window.removeEventListener('resize', moveActiveIndicator);
+        };
+    });
+    
 </script>
 
 <header>
@@ -123,7 +144,7 @@
             align-items center
             height 100%
             position relative
-            z-index 100
+            z-index 10
 
             @media $medium-up
                 width 100%
@@ -140,14 +161,12 @@
                 transform translate(0)
 
                 span:nth-child(1)
-                    transform translateY(10px) rotate(45deg)
+                    transform translate(0, 6px) rotate(45deg)
 
                 span:nth-child(2)
-                    transform translateY(0) rotate(-45deg)
+                    transform translate(0, -4px) rotate(-45deg)
 
             .hamburger
-                display inset
-                //position absolute
                 display flex
                 justify-content center
                 align-items center

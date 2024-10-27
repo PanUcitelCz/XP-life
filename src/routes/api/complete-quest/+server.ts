@@ -23,10 +23,13 @@ export const PUT = async ({ request, locals }) => {
     return json({ error: 'Quest not found' }, { status: 404 });
   }
 
-  // Nastavení questu na dokončený
+  // Nastavení questu na dokončený a přidání času dokončení
   await db
     .update(questsTable)
-    .set({ isCompleted: 1 })
+    .set({
+      isCompleted: 1,
+      completedAt: new Date().toISOString()  // Přidání času dokončení
+    })
     .where(eq(questsTable.id, questId))
     .run();
 

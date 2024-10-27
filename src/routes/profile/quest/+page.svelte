@@ -129,42 +129,49 @@
     };
 </script>
 
-<h2>Active Quests</h2>
-<p>Complete your quests to earn points!</p>
-{#if completionMessage}
-    <div class="completion-message">{completionMessage}</div>
-{/if}
-{#if deleteConfirmationMessage}
-    <div class="delete-message">{deleteConfirmationMessage}</div>
-{/if}
+<section>
+    <h2>Quest life</h2>
+    <p>Complete your quests to earn points!</p>
 
-<!-- Tlačítka pro přidání a mazání -->
-<div class="button-group">
-    <button onclick={openAddQuestModal}>Add Quest</button>
-    <button onclick={openDeleteQuestModal}>Delete Quest</button>
-</div>
+    {#if completionMessage}
+        <div class="completion-message">{completionMessage}</div>
+    {/if}
+    {#if deleteConfirmationMessage}
+        <div class="delete-message">{deleteConfirmationMessage}</div>
+    {/if}
 
-<div class="quest-grid">
-    {#each reactiveQuests.filter((quest) => quest.isCompleted === 0) as quest (quest.id)}
-      <div>
-        <QuestCard activity={quest} onAddXP={() => openCompleteQuestModal(quest)} />
-      </div>
-    {/each}
-</div>
+    <div class="button-group">
+        <button onclick={openAddQuestModal}>Add Quest</button>
+        <button onclick={openDeleteQuestModal} class="button-delete">Delete Quest</button>
+    </div>
+</section>
 
-<h2>Completed Quests</h2>
-<p>These quests have already been completed.</p>
-<div class="quest-grid completed">
-    {#each reactiveQuests.filter((quest) => quest.isCompleted === 1) as quest (quest.id)}
-        <CompletedQuestCard
-          title={quest.title}
-          category={quest.category}
-          description={quest.description}
-          createdAt={quest.createdAt}
-          completedAt={quest.completedAt ?? new Date().toISOString()}
-        />
-    {/each}
-</div>
+<section class="quest">
+    <div>
+        <h1>Active quests</h1>
+    </div>
+    <div class="quest-grid">
+        {#each reactiveQuests.filter((quest) => quest.isCompleted === 0) as quest (quest.id)}
+            <QuestCard activity={quest} onAddXP={() => openCompleteQuestModal(quest)} />
+        {/each}
+    </div>
+</section>
+
+<section class="quest">
+    <h2>Completed quests</h2>
+    <p>These quests have already been completed.</p>
+    <div class="quest-grid completed">
+        {#each reactiveQuests.filter((quest) => quest.isCompleted === 1) as quest (quest.id)}
+            <CompletedQuestCard
+              title={quest.title}
+              category={quest.category}
+              description={quest.description}
+              createdAt={quest.createdAt}
+              completedAt={quest.completedAt ?? new Date().toISOString()}
+            />
+        {/each}
+    </div>
+</section>
 
 <ModalQuest questTitle={selectedQuest?.title ?? ''} showModal={showCompleteQuestModal} onConfirm={completeQuest} />
 {#if showAddQuestModal}
@@ -180,31 +187,76 @@
 {/if}
 
 <style lang="stylus">
-.button-group
-    display: flex
-    gap: 10px
-    margin-top: 20px
 
-.quest-grid
-    display grid
-    grid-template-columns repeat(auto-fill, minmax(250px, 1fr))
-    gap 20px
+    section
+        display flex
+        flex-direction column
+        justify-content center
+        align-items center
+        margin 36px 36px
+        color white
+        background-color rgba(0, 0, 0, 0.35)
+        backdrop-filter blur(10px)
+        padding 10px
+        border-radius 10px
 
-.completion-message, .delete-message
-    margin-top 10px
-    padding 10px
-    background-color #28a745
-    color white
-    text-align center
-    border-radius 5px
+    .quest
+        //justify-content flex-start
+        min-height 350px
+        gap 10px
 
-button
-    padding 10px
-    background-color #007bff
-    color white
-    border none
-    cursor pointer
+        .quest-grid
+            display flex
+            flex-wrap wrap
+            gap 20px
+            justify-content center
+            align-items start
+            width 100%
+            margin-bottom 20px
 
-button:hover
-    background-color #0056b3
+    .button-group
+        display: flex
+        gap: 10px
+        max-width 460px
+        width 100%
+        flex-direction row
+        margin-bottom 21px
+
+        @media (max-width: 530px)
+            flex-direction column
+
+        button
+            border-radius 10px
+            padding 10px
+            background-color #3cab52
+            color white
+            border none
+            cursor pointer
+            height 3rem
+            font-size 18px
+            width 100%
+            display flex
+            justify-content center
+            align-items center
+            //min-width 160px
+
+        .button-delete
+            background-color red
+
+            &:hover
+                background-color #0056b3
+
+    .completion-message, .delete-message
+        margin-top 10px
+        padding 10px
+        background-color #28a745
+        color white
+        text-align center
+        border-radius 5px
+
+    button
+
+
+    button:hover
+        background-color #0056b3
 </style>

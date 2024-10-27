@@ -1,13 +1,16 @@
 <script lang="ts">
-    let { title, category, description, createdAt, completedAt } = $props<{
+    // Definice typů pro props
+    type CompletedQuestProps = {
       title: string;
       category: string;
       description: string;
       createdAt: string;
       completedAt: string;
-    }>();
+    };
 
-    // Formátování data
+    let { title, category, description, createdAt, completedAt }: CompletedQuestProps = $props();
+
+    // Formátování data na dd.mm.yyyy
     function formatDate(dateString: string): string {
       const date = new Date(dateString);
       return date.toLocaleDateString('cs-CZ', { day: '2-digit', month: '2-digit', year: 'numeric' });
@@ -15,26 +18,57 @@
   </script>
 
   <div class="completed-quest-card">
-    <h3>{title}</h3>
-    <p><strong>Kategorie:</strong> {category}</p>
-    <p><strong>Popis:</strong> {description}</p>
-    <p><strong>Datum vytvoření:</strong> {formatDate(createdAt)}</p>
-    <p><strong>Datum splnění:</strong> {formatDate(completedAt)}</p>
+    <div class="completed-quest-card-header">
+      <h3>{title}</h3>
+      <p>{category}</p>
+    </div>
+    <div class="completed-quest-card-content">
+      <h4>Popis</h4>
+      <p>{description}</p>
+    </div>
+    <div class="completed-quest-card-footer">
+      <p>{formatDate(createdAt)}</p>
+      <p>{formatDate(completedAt)}</p>
+    </div>
   </div>
 
   <style lang="stylus">
     .completed-quest-card
-      padding 16px
+      background-color rgba(85,92,108,0.5)
+      padding 15px
       border-radius 8px
-      background-color #f3f3f3
-      box-shadow 0 4px 6px rgba(0, 0, 0, 0.1)
-      margin-bottom 16px
+      box-shadow 0 2px 5px rgba(0, 0, 0, 0.1)
+      display flex
+      flex-direction column
+      gap 10px
+      text-align center
+      max-width 300px
+      width 100%
 
-    h3
-      margin 0 0 8px
-      font-size 1.2rem
+      &-header
+        display flex
+        justify-content space-between
+        align-items center
+        gap 36px
 
-    p
-      margin 4px 0
-      color #555
-  </style>
+        h3
+          color #ff8113
+          margin 0
+          font-size 21px
+
+        p
+          color #b4b4b8
+
+      &-content
+        h4
+          margin 0
+          font-weight 500
+        p
+          color white
+
+      &-footer
+        display flex
+        justify-content space-between
+        align-items center
+        color #b4b4b8
+</style>

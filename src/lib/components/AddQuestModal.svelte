@@ -1,59 +1,147 @@
 <script lang="ts">
-    export let onConfirm: (title: string, description: string, category: string) => void;
-    export let onCancel: () => void;
+    const { onConfirm, onCancel } = $props<{
+        onConfirm: (title: string, description: string, category: string) => void;
+        onCancel: () => void;
+    }>();
 
-    let title = '';
-    let description = '';
-    let category = '';
+    let title = $state('');
+    let description = $state('');
+    let category = $state('');
+    let errorMessage = $state('');
 
     const categories = ['Strength', 'Dexterity', 'Constitution', 'Intelligence', 'Wisdom', 'Charisma'];
 
-    function submit() {
-      if (title && description && category) {
+    const submitQuest = () => {
+        if (!title || !description || !category) {
+            errorMessage = 'All fields are required';
+            return;
+        }
+        errorMessage = '';
         onConfirm(title, description, category);
-      }
-    }
-  </script>
+    };
 
-  <div class="modal-overlay">
-    <div class="modal">
-      <h2>Add New Quest</h2>
-      <input bind:value={title} placeholder="Quest Title" />
-      <input bind:value={description} placeholder="Description" />
+    const closeModal = () => {
+        onCancel();
+    };
+</script>
 
-      <select bind:value={category}>
-        <option disabled value="">Select Category</option>
+<div class="modal-backdrop" onclick={closeModal} role="button" tabindex="0" aria-label="Close modal" onkeydown={(e) => e.key === 'Enter' && closeModal()}></div>
+
+<div class="modal fade-in">
+    <h2>Add New Quest</h2>
+
+    <label for="title" class="label">Quest Title</label>
+    <input id="title" type="text" bind:value={title} placeholder="Enter quest title" />
+
+    <label for="description" class="label">Description</label>
+    <textarea id="description" bind:value={description} placeholder="Enter quest description"></textarea>
+
+    <label for="category" class="label">Category</label>
+    <select id="category" bind:value={category}>
+        <option value="" disabled selected>Select category</option>
         {#each categories as cat}
-          <option value={cat}>{cat}</option>
+            <option value={cat}>{cat}</option>
         {/each}
-      </select>
+    </select>
 
-      <button onclick={submit}>Add Quest</button>
-      <button onclick={onCancel}>Cancel</button>
+    {#if errorMessage}
+        <p class="error-message">{errorMessage}</p>
+    {/if}
+
+    <div class="modal-buttons">
+        <button class="confirm-button" onclick={submitQuest}>Add Quest</button>
+        <button class="cancel-button" onclick={closeModal}>Cancel</button>
     </div>
-  </div>
+</div>
 
 <style lang="stylus">
-    .modal-overlay
-      position fixed
-      top 0
-      left 0
-      width 100%
-      height 100%
-      display flex
-      justify-content center
-      align-items center
-      background rgba(0, 0, 0, 0.5)
+    .modal-backdrop
+        position fixed
+        top 0
+        left 0
+        width 100vw
+        height 100vh
+        background-color rgba(0, 0, 0, 0.5)
+        backdrop-filter blur(5px)
+        cursor pointer
+        z-index 1000
 
     .modal
-      background-color white
-      padding 20px
-      border-radius 10px
-      width 300px
-      text-align center
+        position fixed
+        top 50%
+        left 50%
+        transform translate(-50%, -50%)
+        background-color white
+        padding 25px
+        border-radius 12px
+        box-shadow 0 4px 12px rgba(0, 0, 0, 0.2)
+        width 90%
+        max-width 400px
+        z-index 1001
+        text-align center
+        animation fadeIn 0.3s ease-in-out
+
+    h2
+        color black
+        margin-bottom 15px
+        font-size 1.5rem
+        font-weight 500
+
+    .label
+        text-align left
+        display block
+        margin-top 15px
+        font-weight 500
+        color black
+
+    input, textarea, select
+        width 100%
+        padding 10px
+        margin-top 5px
+        border 1px solid #ddd
+        border-radius 5px
+        box-sizing border-box
+        font-size 1rem
+        background-color #f9f9f9
+        color #333
+
+    textarea
+        resize vertical
+
+    .error-message
+        color red
+        margin-top 10px
+
+    .modal-buttons
+        display flex
+        justify-content space-between
+        margin-top 20px
 
     button
-      margin 10px
-      padding 10px
-      cursor pointer
+        padding 10px 20px
+        border none
+        border-radius 5px
+        font-size 1rem
+        cursor pointer
+        transition background-color 0.3s
+
+    .confirm-button
+        background-color #007bff
+        color white
+
+        &:hover
+            background-color #0056b3
+
+    .cancel-button
+        background-color #ccc
+        color black
+
+        &:hover
+            background-color #999
+
+    @keyframes fadeIn
+        from
+            opacity 0
+        to
+            opacity 1
 </style>

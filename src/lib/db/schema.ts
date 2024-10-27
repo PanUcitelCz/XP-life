@@ -109,5 +109,6 @@ export const questsTable = sqliteTable('quests', {
     category: text('category').notNull(), // Kategorie
     xp_value: integer('xp_value').default(100),
     createdAt: text('created_at').default(sql`CURRENT_TIMESTAMP`).notNull(), // Datum vytvoření
-    isCompleted: integer('is_completed').default(0).notNull() // Příznak, zda byl quest dokončen
+    isCompleted: integer('is_completed').default(0).notNull(), // Příznak, zda byl quest dokončen
+    completedAt: text('completed_at').default("Nesplněno")
 });
