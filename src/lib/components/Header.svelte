@@ -115,7 +115,7 @@
         z-index 10
         width 100%
         height 100px
-        max-width 1900px
+        max-width 1800px
         box-sizing border-box
         margin auto
         margin-top 36px
