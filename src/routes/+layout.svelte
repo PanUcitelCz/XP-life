@@ -84,7 +84,6 @@
 		min-height 100vh
 		margin 0
 		padding 0
-		overflow-x hidden // Zakázat horizontální přetékání
 		overflow-y scroll // Nastavení scrollování pro vertikální osu
 		font-family Geist, sans-serif
 		background-color #121212 // Fallback barva, pokud se VANTA.js nenačte správně

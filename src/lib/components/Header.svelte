@@ -139,7 +139,7 @@
             .isActive
                 transform translate(0)
 
-                span:nth-child(1) // První čára (horní)
+                span:nth-child(1)
                     transform translateY(10px) rotate(45deg)
 
                 span:nth-child(2)
