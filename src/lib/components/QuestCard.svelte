@@ -39,7 +39,7 @@
     </div>
     <div class="quest-card-footer">
         <p>Created At: {formattedDate}</p>
-        <button onclick={handleAddXP}>Add XP</button>
+        <button onclick={handleAddXP}>Add 100 XP</button>
     </div>
 </div>
 
