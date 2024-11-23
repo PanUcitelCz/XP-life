@@ -50,9 +50,10 @@
 	});
 </script>
 
-{#if data.url.startsWith('/profile')}
+{#if data.url.startsWith('/profile') || data.url.startsWith('/inf')}
 	<Header />
 {/if}
+
 
 {#key data.url}
 	<main class="main"

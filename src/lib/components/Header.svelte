@@ -105,7 +105,7 @@
     <div class="active-indicator" bind:this={activeLink}></div>
     <a href="/profile">Profile</a>
     <a href="/profile/quest">Quests</a>
-    <a href="/login">Information</a>
+    <a href="/inf">Information</a>
   </nav>
 </header>
 
