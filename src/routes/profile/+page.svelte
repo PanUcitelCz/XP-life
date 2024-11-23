@@ -190,9 +190,10 @@ async function fetchCategories() {
     }
 
 
-	function openImageModal() {
-		showImageModal = true;
-	}
+    function openImageModal() {
+        showImageModal = true;
+    }
+
 
 	function closeImageModal() {
 		showImageModal = false;
@@ -299,14 +300,15 @@ async function fetchCategories() {
 	</section>
 	<!-- Modální okno pro změnu profilového obrázku -->
     {#if showImageModal}
-        <Modalimg
-            on:confirm={() => {
-                closeImageModal(); // Zavřít modal
-                location.reload(); // Obnovit stránku po potvrzení
-            }}
-            on:cancel={closeImageModal}
-        />
+    <Modalimg
+        on:confirm={() => {
+            closeImageModal(); // Zavřít modal
+            fetchCategories(); // Aktualizace dat
+        }}
+        on:cancel={closeImageModal}
+    />
     {/if}
+
 
 {:else}
 	<p>You are not logged in.</p>
