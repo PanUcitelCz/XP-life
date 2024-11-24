@@ -2,25 +2,16 @@
 	import { createEventDispatcher } from 'svelte';
 
 	const dispatch = createEventDispatcher();
-	let profileImages = $state<string[]>([]);
+	let profileImages = $state<string[]>([
+		'/profile/Profilovka%201%20-%20Paladin.png',
+		'/profile/Profilovka%202%20-%20Ranger.png',
+		'/profile/Profilovka%203%20-%20Rogue.png',
+		'/profile/Profilovka%204%20-%20Mage.png',
+		'/profile/Profilovka%205%20-%20Ork.png'
+	]);
 	let selectedImage = $state<string | null>(null);
 	let errorMessage = $state('');
-	let loading = $state(true);
-
-	// Načítání profilových obrázků
-	$effect(() => {
-		(async () => {
-			try {
-				const response = await fetch('/api/get-profile-images');
-				if (!response.ok) throw new Error('Failed to load profile images.');
-				profileImages = await response.json();
-			} catch (error) {
-				errorMessage = 'An error occurred while loading images.';
-			} finally {
-				loading = false;
-			}
-		})();
-	});
+	let loading = $state(false);
 
 	// Uložení vybraného obrázku
 	async function handleSave() {
@@ -54,29 +45,25 @@
 <div class="modal-backdrop">
 	<div class="modal">
 		<h3>Select Profile Image</h3>
-		{#if loading}
-			<div class="loading-spinner"></div>
-		{:else}
-			{#if errorMessage}
-				<p class="error">{errorMessage}</p>
-			{/if}
-			<div class="image-grid">
-				{#each profileImages as image}
+		{#if errorMessage}
+			<p class="error">{errorMessage}</p>
+		{/if}
+		<div class="image-grid">
+			{#each profileImages as image}
                 <!-- svelte-ignore a11y_click_events_have_key_events -->
                 <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
                 <!-- svelte-ignore a11y_img_redundant_alt -->
 
-					<img
-						src={image}
-						alt="Profile Image"
-						class:selected={selectedImage === image}
-						onclick={() => (selectedImage = image)}
-					/>
-				{/each}
-			</div>
-		{/if}
+				<img
+					src={image}
+					alt="Profile Image"
+					class:selected={selectedImage === image}
+					onclick={() => (selectedImage = image)}
+				/>
+			{/each}
+		</div>
 		<div class="modal-buttons">
-			<button onclick={handleSave} disabled={loading}>Save</button>
+			<button onclick={handleSave}>Save</button>
 			<button onclick={handleCancel}>Cancel</button>
 		</div>
 	</div>
@@ -153,19 +140,4 @@
 	.error
 		color red
 		margin-top 10px
-
-	.loading-spinner
-		margin auto
-		width 50px
-		height 50px
-		border 5px solid #ccc
-		border-top: 5px solid #007bff
-		border-radius 50%
-		animation spin 1s linear infinite
-
-	@keyframes spin
-		0%
-			transform rotate(0deg)
-		100%
-			transform rotate(360deg)
 </style>
