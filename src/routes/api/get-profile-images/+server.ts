@@ -3,7 +3,7 @@ import { resolve } from 'path';
 
 export const GET = async () => {
 	try {
-		const profileImagesDir = resolve('static/profile');
+		const profileImagesDir = resolve('/profile');
 		const files = await readdir(profileImagesDir);
 		const images = files.map((file) => `/profile/${file}`);
 		return new Response(JSON.stringify(images), { status: 200 });
