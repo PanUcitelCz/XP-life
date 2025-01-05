@@ -37,7 +37,7 @@ export async function sendEmail(to: string, subject: string, html: string) {
 			Authorization: `Bearer ${SECRET_RESEND_API_KEY}`
 		},
 		body: JSON.stringify({
-			from: 'delivered@resend.dev', // Testovací adresa pro odesílání e-mailů
+			from: 'notifications@xp-life.cz', // Testovací adresa pro odesílání e-mailů
 			to,
 			subject,
 			html // Odesíláme HTML obsah
