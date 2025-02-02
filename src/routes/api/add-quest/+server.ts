@@ -3,20 +3,21 @@ import { questsTable } from '$lib/db/schema';
 import { json } from '@sveltejs/kit';
 
 export const POST = async ({ request, locals }) => {
-  const { title, description, category } = await request.json();
+  const { title, description, category, xp_value } = await request.json();
 
-  // Zkontroluj, zda je uživatel přihlášen
+  // Kontrola, zda je uživatel přihlášen
   if (!locals.user) {
     return json({ error: 'Not authenticated' }, { status: 401 });
   }
 
   try {
-    // Přidání nového questu do databáze
+    // Vložíme quest s předanou hodnotou xp_value, případně defaultně 100
     const newQuest = await db.insert(questsTable).values({
       title,
       description,
       category,
-      userId: locals.user.id,  // Změněno z 'user_id' na 'userId'
+      xp_value: xp_value || 100,
+      userId: locals.user.id,
       createdAt: new Date().toISOString(),
     }).returning();
 

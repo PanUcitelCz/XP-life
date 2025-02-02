@@ -6,14 +6,16 @@
     import CompletedQuestCard from '$lib/components/CompletedQuestCard.svelte'; // Import CompletedQuestCard
 
     type Quest = {
-      id: number;
-      title: string;
-      category: string;
-      createdAt: string;
-      description: string;
-      isCompleted: number;
-      completedAt?: string; // Přidání completedAt pro datum dokončení
+        id: number;
+        title: string;
+        description: string;
+        category: string;
+        createdAt: string;
+        isCompleted: number;
+        completedAt?: string;
+        xpValue: number; // Přidáno!
     };
+
 
     let reactiveQuests: Quest[] = $state([]);
     let showCompleteQuestModal = $state(false);
@@ -24,14 +26,25 @@
     let deleteConfirmationMessage = $state("");
 
     async function loadQuests() {
-      try {
-        const response = await fetch('/api/get-quest', { method: 'GET', headers: { 'Content-Type': 'application/json' } });
-        if (response.ok) reactiveQuests = await response.json();
-        else console.error('Failed to load quests');
-      } catch (error) {
-        console.error('Error loading quests:', error);
-      }
+        try {
+            const response = await fetch('/api/get-quest', {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' }
+            });
+            if (response.ok) {
+            const questsFromApi = await response.json();
+            reactiveQuests = questsFromApi.map((q: any) => ({
+                ...q,
+                xpValue: q.xp_value ?? 50  // Použije se hodnota z DB; pokud ji nemá, fallback je 50
+            }));
+            } else {
+            console.error('Failed to load quests');
+            }
+        } catch (error) {
+            console.error('Error loading quests:', error);
+        }
     }
+
 
     loadQuests();
 
@@ -60,19 +73,19 @@
         }
     }
 
-    async function addQuest(title: string, description: string, category: string) {
-      const response = await fetch('/api/add-quest', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title, description, category })
-      });
+    async function addQuest(title: string, description: string, category: string, xpValue: number) {
+        const response = await fetch('/api/add-quest', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ title, description, category, xp_value: xpValue })
+        });
 
-      if (response.ok) {
-        await loadQuests();
-        closeAddQuestModal();
-      } else {
-        console.error('Failed to add quest');
-      }
+        if (response.ok) {
+            await loadQuests();
+            closeAddQuestModal();
+        } else {
+            console.error('Failed to add quest');
+        }
     }
 
     async function deleteQuest(id: number | null): Promise<{ success: boolean }> {
