@@ -67,8 +67,9 @@
             } else {
                 console.error("Failed to complete quest. Response status:", response.status);
             }
+
             } catch (error) {
-            console.error("Error during quest completion process:", error);
+                console.error("Error during quest completion process:", error);
             }
         }
     }

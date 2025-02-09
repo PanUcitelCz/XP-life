@@ -13,7 +13,7 @@
 
     const categories = ['Strength', 'Dexterity', 'Constitution', 'Intelligence', 'Wisdom', 'Charisma'];
     // Možné hodnoty pro xpValue
-    const xpValues = [50, 100, 150];
+    const xpValues = [25, 50, 75, 100];
 
     const submitQuest = () => {
       if (!title || !description || !category) {
