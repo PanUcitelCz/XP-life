@@ -270,7 +270,7 @@
         </select>
 
 		{#if selectedActivity && selectedAction === 'Delete'}
-            <label for="input">If you want delete {selectedActivity} activity, you must type 'DELETE MY'</label>
+            <label for="input">If you want delete {selectedActivity} activity, you must type 'DELETE'</label>
 			<input type="text" bind:value={confirmDelete} placeholder="Type 'DELETE'" />
 		{/if}
 
