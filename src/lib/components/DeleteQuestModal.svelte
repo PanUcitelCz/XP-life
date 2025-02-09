@@ -27,7 +27,7 @@
 
     // Funkce pro potvrzení a smazání questu
     async function confirmDeleteQuest() {
-        const requiredText = `DELETE ${selectedQuestName}`;
+        const requiredText = `DELETE`;
 
         if (deleteConfirmation !== requiredText) {
             alert("Please type the correct confirmation text to delete the quest.");
@@ -61,8 +61,8 @@
             {/each}
         </select>
 
-        <p>Type "DELETE {selectedQuestName}" to confirm deletion:</p>
-        <input bind:value={deleteConfirmation} placeholder="DELETE {selectedQuestName}" />
+        <p>Type "DELETE " to confirm {selectedQuestName} deletion:</p>
+        <input bind:value={deleteConfirmation} placeholder="DELETE" />
 
         <div class="modal-buttons">
             <button class="confirm-button" onclick={confirmDeleteQuest}>Delete</button>

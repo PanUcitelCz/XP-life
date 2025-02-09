@@ -111,8 +111,8 @@
 		}
 
 		if (selectedAction === 'Delete') {
-			if (confirmDelete !== `DELETE MY ${selectedActivity}`) {
-				errorMessage = `You must type 'DELETE MY ${selectedActivity}' to delete this activity.`;
+			if (confirmDelete !== `DELETE`) {
+				errorMessage = `You must type 'DELETE' to delete this ${selectedActivity} activity.`;
 				return;
 			}
 			await deleteActivity();
@@ -270,8 +270,8 @@
         </select>
 
 		{#if selectedActivity && selectedAction === 'Delete'}
-            <label for="input">If you want delete activity, you must type 'DELETE MY {selectedActivity}'</label>
-			<input type="text" bind:value={confirmDelete} placeholder="Type 'DELETE MY {selectedActivity}'" />
+            <label for="input">If you want delete {selectedActivity} activity, you must type 'DELETE MY'</label>
+			<input type="text" bind:value={confirmDelete} placeholder="Type 'DELETE'" />
 		{/if}
 
         <div class="category">
